@@ -106,6 +106,20 @@ export function Overview({ onOpenIssue, onGoWorkspace }) {
             <IssueCard {...iss} onClick={() => onOpenIssue(iss)}/>
           </div>
         ))}
+        {DATA.licenses && DATA.licenses.mfaCoverage < 0.95 && (
+          <div className="fade-in">
+            <IssueCard
+              id="SEC-MFA"
+              severity="warning"
+              category="Security"
+              title={<>{DATA.licenses.mfaMissing} users missing MFA — including {DATA.licenses.mfaMissingList?.filter(u => u.admin).length || 0} admins</>}
+              evidence={`Only ${Math.round(DATA.licenses.mfaCoverage * 100)}% MFA coverage across ${DATA.licenses.mfaTotal} principals`}
+              impact="Access risk"
+              impactTone="warning"
+              onClick={() => {}}
+            />
+          </div>
+        )}
       </div>
 
       <div className="lp-section-head">

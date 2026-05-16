@@ -190,91 +190,194 @@ function CopilotChart({ series }) {
   );
 }
 
+const ARTIFACT_META = {
+  Dataset:   { icon: 'database',   color: 'oklch(0.69 0.17 237)', bg: 'var(--modern-icon-bg-sky)',    fg: 'var(--modern-icon-fg-sky)'    },
+  Lakehouse: { icon: 'layers',     color: 'oklch(0.62 0.16 275)', bg: 'var(--modern-icon-bg-violet)', fg: 'var(--modern-icon-fg-violet)' },
+  Notebook:  { icon: 'file-text',  color: 'oklch(0.58 0.15 150)', bg: 'var(--modern-icon-bg-emerald)',fg: 'var(--modern-icon-fg-emerald)'},
+  Dataflow:  { icon: 'git-branch', color: 'oklch(0.65 0.18 45)',  bg: 'var(--modern-icon-bg-amber)',  fg: 'var(--modern-icon-fg-amber)'  },
+};
+const CATEGORY_META = {
+  dead:    { label: 'Confirmed dead',  pill: 'tone-rose-soft',   dot: 'oklch(0.55 0.22 25)'  },
+  cold:    { label: 'Going cold',      pill: 'tone-amber-soft',  dot: 'oklch(0.65 0.18 45)'  },
+  failing: { label: 'Failing refreshes', pill: 'tone-violet-soft', dot: 'oklch(0.62 0.16 275)' },
+};
+
+function SleeperSpark({ data }) {
+  const W = 90, H = 28;
+  const max = Math.max(...data, 1);
+  const pts = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * W;
+    const y = H - (v / max) * (H - 4) - 2;
+    return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  const area = `${pts} L${W},${H} L0,${H} Z`;
+  return (
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
+      <defs>
+        <linearGradient id="slp-grad" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0%" stopColor="oklch(0.69 0.17 237)" stopOpacity="0.5"/>
+          <stop offset="70%" stopColor="oklch(0.69 0.17 237)" stopOpacity="0.15"/>
+          <stop offset="100%" stopColor="oklch(0.60 0.02 250)" stopOpacity="0.05"/>
+        </linearGradient>
+      </defs>
+      <path d={area} fill="url(#slp-grad)"/>
+      <path d={pts} fill="none" stroke="oklch(0.69 0.17 237)" strokeWidth="1.2" vectorEffect="non-scaling-stroke"/>
+      <line x1={W} y1="0" x2={W} y2={H} stroke="oklch(0.55 0.22 25)" strokeWidth="2" strokeDasharray="3 2"/>
+    </svg>
+  );
+}
+
 export function Sleepers() {
   const s = DATA.sleepers;
-  const [filter, setFilter] = React.useState('all');
-  const list = s.candidates.filter(c => filter === 'all' || c.status === filter);
+  const [typeFilter, setTypeFilter] = React.useState('all');
+  const [catFilter, setCatFilter]   = React.useState('all');
+  const [selected, setSelected]     = React.useState(null);
+
+  const filtered = s.artifacts.filter(a =>
+    (typeFilter === 'all' || a.type === typeFilter) &&
+    (catFilter === 'all' || a.category === catFilter)
+  );
+
+  const totalWaste = s.artifacts.reduce((sum, a) => sum + a.cost, 0);
+  const maxCost = Math.max(...s.artifacts.map(a => a.cost));
+  const typeOrder = ['Dataset', 'Lakehouse', 'Notebook', 'Dataflow'];
 
   return (
     <>
       <div className="lp-page-head">
         <div className="fade-in">
           <h1 className="lp-page-title">Sleepers</h1>
-          <p className="lp-page-sub">Datasets that still refresh but no one queries. Refresh-to-first-query latency and pure-waste detection.</p>
+          <p className="lp-page-sub">Artifacts still burning compute but unused — datasets, lakehouses, notebooks, and dataflows. Each card shows the 30-day access trail and exactly how much you're spending on nothing.</p>
         </div>
         <div className="fade-in d2" style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-outline btn-sm"><Icon name="external" size={14}/>Export</button>
+          <button className="btn btn-outline btn-sm"><Icon name="external" size={14}/>Export list</button>
           <button className="btn btn-sm"><Icon name="archive" size={14}/>Bulk archive</button>
         </div>
       </div>
 
-      <div className="lp-grid-4 fade-in">
-        <StatCard label="Sleeper candidates"   value={s.summary.count} sub="zero queries in 30d" icon="moon" tone="violet"/>
-        <StatCard label="Refreshes wasted"     value={s.summary.refreshes30d.toLocaleString()} sub="last 30 days" icon="refresh" tone="amber"/>
-        <StatCard label="Reclaimable spend"    value={'€' + s.summary.wastedCost.toLocaleString()} delta={-100} sub={(s.summary.wastedCU / 1000).toFixed(0) + 'k CU saved'} icon="dollar" tone="emerald"/>
-        <StatCard label="Oldest stale"         value={s.summary.biggestStale} unit="d" sub="Marketing Funnel 2024" icon="alert" tone="rose"/>
+      {/* Waste spotlight hero */}
+      <div className="slp-hero fade-in">
+        <div className="slp-hero-left">
+          <div className="slp-hero-label">Total monthly waste</div>
+          <div className="slp-hero-amount mono">€{totalWaste.toLocaleString()}</div>
+          <div className="slp-hero-sub">{s.artifacts.length} artifacts · {s.artifacts.filter(a => a.category === 'dead').length} confirmed dead</div>
+        </div>
+        <div className="slp-hero-bars">
+          {typeOrder.map(type => {
+            const items = s.artifacts.filter(a => a.type === type);
+            const cost  = items.reduce((sum, a) => sum + a.cost, 0);
+            const meta  = ARTIFACT_META[type];
+            return (
+              <div key={type} className="slp-type-row" onClick={() => setTypeFilter(f => f === type ? 'all' : type)} style={{ cursor: 'pointer', opacity: typeFilter !== 'all' && typeFilter !== type ? 0.4 : 1 }}>
+                <div className="slp-type-label">
+                  <span className="slp-type-dot" style={{ background: meta.color }}/>
+                  <span>{type}</span>
+                  <span className="slp-type-count">{items.length}</span>
+                </div>
+                <div className="slp-type-track">
+                  <div className="slp-type-fill" style={{ width: (cost / totalWaste * 100) + '%', background: meta.color }}/>
+                </div>
+                <span className="slp-type-cost mono">€{cost}</span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="slp-hero-cats">
+          {Object.entries(CATEGORY_META).map(([k, v]) => {
+            const count = s.artifacts.filter(a => a.category === k).length;
+            return (
+              <button key={k} className={'slp-cat-pill ' + (catFilter === k ? 'active' : '')} onClick={() => setCatFilter(f => f === k ? 'all' : k)}>
+                <span className="slp-cat-dot" style={{ background: v.dot }}/>
+                {v.label}<span className="slp-cat-n">{count}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="lp-section-head">
-        <h2>Archive candidates <span className="count">{list.length} of {s.candidates.length}</span></h2>
-        <span className="seg-tabs">
-          {[['all','All'],['archive','Archive'],['review','Review']].map(([k,l]) => (
-            <button key={k} className={'seg-tab' + (filter === k ? ' active' : '')} onClick={() => setFilter(k)}>{l}</button>
+      {/* Filter chips */}
+      <div className="lp-section-head" style={{ marginTop: 8 }}>
+        <h2>Artifacts <span className="count">{filtered.length} of {s.artifacts.length}</span></h2>
+        <div className="chip-row">
+          {['all', ...typeOrder].map(t => (
+            <button key={t} className={'chip' + (typeFilter === t ? ' active' : '')} onClick={() => setTypeFilter(t)}>
+              {t === 'all' ? 'All types' : t}
+              {t !== 'all' && <span className="count">{s.artifacts.filter(a => a.type === t).length}</span>}
+            </button>
           ))}
-        </span>
+        </div>
       </div>
 
-      <div className="sleeper-grid fade-in d2">
-        {list.map(c => (
-          <div key={c.id} className="sleeper-card">
-            <div className="sleeper-head">
-              <div>
-                <div className="sleeper-name">
-                  <Icon name="database" size={14}/>
-                  {c.name}
+      {/* Artifact list */}
+      <div className="slp-list fade-in d2">
+        {filtered.map(a => {
+          const meta = ARTIFACT_META[a.type];
+          const catM = CATEGORY_META[a.category];
+          const isSel = selected === a.id;
+          return (
+            <div key={a.id} className={'slp-row' + (isSel ? ' slp-row-open' : '')} onClick={() => setSelected(s => s === a.id ? null : a.id)}>
+              <div className="slp-row-icon" style={{ background: meta.bg, color: meta.fg }}>
+                <Icon name={meta.icon} size={16}/>
+              </div>
+
+              <div className="slp-row-main">
+                <div className="slp-row-name">{a.name}</div>
+                <div className="slp-row-meta">
+                  <span className="badge badge-outline">{a.ws}</span>
+                  {a.size !== '—' && <span className="muted">· {a.size}</span>}
+                  {a.schedule !== '—' && <span className="muted">· refreshes {a.schedule}</span>}
+                  {a.downstream > 0 && <span className="slp-downstream"><Icon name="git-branch" size={10}/>{a.downstream} downstream</span>}
                 </div>
-                <div className="sleeper-meta">
-                  <span className="badge badge-outline">{c.ws}</span>
-                  <span className="muted">· {c.size} · refreshes {c.refreshSched}</span>
+              </div>
+
+              <div className="slp-row-spark">
+                <div className="slp-spark-label muted">30-day access</div>
+                <SleeperSpark data={a.spark}/>
+                <div className="slp-spark-now muted">dead</div>
+              </div>
+
+              <div className="slp-row-stale">
+                <div className="slp-stale-val mono">{a.lastActive}d</div>
+                <div className="slp-stale-lbl">inactive</div>
+              </div>
+
+              <div className="slp-row-cost">
+                <div className="slp-cost-val mono">€{a.cost}</div>
+                <div className="slp-cost-bar">
+                  <div style={{ width: (a.cost / maxCost * 100) + '%', height: '100%', background: 'oklch(0.55 0.22 25)', borderRadius: 999 }}/>
                 </div>
+                <div className="slp-cost-lbl">/mo wasted</div>
               </div>
-              <span className={'badge ' + (c.status === 'archive' ? 'tone-rose-soft' : 'tone-amber-soft')}>
-                {c.status === 'archive' ? 'ARCHIVE' : 'REVIEW'}
-              </span>
-            </div>
 
-            <div className="sleeper-bleed">
-              <div className="bleed-track">
-                <div className="bleed-fill" style={{ width: Math.min(100, c.cost / 200 * 100) + '%' }}/>
-                <span className="bleed-label">€{c.cost} wasted · 30 days</span>
-              </div>
-            </div>
+              <span className={'badge ' + catM.pill} style={{ alignSelf: 'center', whiteSpace: 'nowrap' }}>{catM.label}</span>
 
-            <div className="sleeper-stats">
-              <div className="ss-cell">
-                <div className="ss-cell-val mono">{c.lastQuery}d</div>
-                <div className="ss-cell-lbl">since last query</div>
+              <div className="slp-row-actions" onClick={e => e.stopPropagation()}>
+                {a.refreshes30d > 0 && <button className="btn btn-outline btn-sm">Pause refresh</button>}
+                <button className="btn btn-sm btn-danger">Archive</button>
               </div>
-              <div className="ss-cell">
-                <div className="ss-cell-val mono">{c.refreshes30d}</div>
-                <div className="ss-cell-lbl">refreshes / 30d</div>
-              </div>
-              <div className="ss-cell">
-                <div className={'ss-cell-val mono ' + (c.queries30d === 0 ? 'val-rose' : 'val-amber')}>{c.queries30d}</div>
-                <div className="ss-cell-lbl">queries / 30d</div>
-              </div>
-            </div>
 
-            <div className="sleeper-actions">
-              <button className="btn btn-outline btn-sm">View activity</button>
-              <button className="btn btn-outline btn-sm">Pause refresh</button>
-              <button className="btn btn-sm btn-danger">Archive</button>
+              {isSel && (
+                <div className="slp-expand fade-in">
+                  <div className="slp-expand-grid">
+                    <div><span className="lp-eyebrow">Refreshes / 30d</span><div className="mono" style={{ fontSize: 18, fontWeight: 600, marginTop: 2 }}>{a.refreshes30d}</div></div>
+                    <div><span className="lp-eyebrow">Type</span><div style={{ marginTop: 2 }}><span className="badge badge-outline">{a.type}</span></div></div>
+                    {a.downstream > 0 && <div><span className="lp-eyebrow">Downstream consumers</span><div className="mono val-amber" style={{ fontSize: 18, fontWeight: 600, marginTop: 2 }}>{a.downstream} artifacts at risk</div></div>}
+                  </div>
+                  {a.downstream > 0 && (
+                    <div className="slp-warning">
+                      <Icon name="alert" size={13}/>
+                      <span>Archiving this will break {a.downstream} downstream artifact{a.downstream > 1 ? 's' : ''}. Check lineage before proceeding.</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
+        {filtered.length === 0 && <div className="empty">No artifacts match the current filters.</div>}
       </div>
 
-      <div className="lp-section-head"><h2>Refresh-to-first-query latency <span className="count">Right-size your refresh schedules</span></h2></div>
+      <div className="lp-section-head"><h2>Refresh-to-first-query latency <span className="count">Right-size your schedules</span></h2></div>
       <div className="lp-card lp-card-flush fade-in d3">
         <div className="latency-head">
           <div>Dataset</div>

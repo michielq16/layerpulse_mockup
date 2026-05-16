@@ -111,13 +111,16 @@ export function Users({ onOpenUser }) {
         <div className="leader-head">
           <div>User</div>
           <div>Consumption (last 30d)</div>
-          <div>Cost</div>
+          <div>Capacity cost</div>
+          <div>License</div>
+          <div>TCO</div>
           <div>Queries</div>
-          <div>Datasets</div>
           <div>Copilot</div>
         </div>
-        {filtered.map((user, i) => (
-          <button key={user.id} className="leader-row" onClick={() => onOpenUser(user.id)}>
+        {filtered.map((user, i) => {
+          const tco = user.cost + (user.licenseCost || 0);
+          return (
+          <button key={user.id} className="leader-row leader-row-tco" onClick={() => onOpenUser(user.id)}>
             <div className="leader-rank mono">{i + 1}</div>
             <div className="leader-user">
               <Avatar name={user.name}/>
@@ -137,8 +140,12 @@ export function Users({ onOpenUser }) {
               <Sparkline data={user.spark} tone="sky" w={56} h={20}/>
             </div>
             <div className="leader-cost mono">€{user.cost}</div>
+            <div>
+              <span className="badge badge-outline" style={{ fontSize: 10 }}>{user.licenseSku || '—'}</span>
+              <div className="muted" style={{ fontSize: 11, marginTop: 2 }}>€{user.licenseCost || 0}/mo</div>
+            </div>
+            <div className="leader-cost mono" style={{ color: 'var(--foreground)', fontWeight: 700 }}>€{tco}</div>
             <div className="leader-num mono">{user.queries.toLocaleString()}</div>
-            <div className="leader-num mono">{user.datasets}</div>
             <div className="leader-copilot">
               {user.copilot > 0 ? (
                 <>
@@ -149,7 +156,7 @@ export function Users({ onOpenUser }) {
             </div>
             <Icon name="chevron-right" size={14} className="leader-arrow"/>
           </button>
-        ))}
+        );})}
         {filtered.length === 0 && <div className="empty">No users match your filters.</div>}
       </div>
     </>

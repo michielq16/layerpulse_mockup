@@ -147,14 +147,41 @@ export function LineageExplorer() {
         <div className="lp-grid-money fade-in d3">
           <div className="lp-card">
             <div className="lp-card-header">
-              <div>
-                <div className="lp-card-title">{sel.label}</div>
-                <div className="lp-card-sub">{sel.kind} · last seen {sel.lastSeen}{sel.cost ? ' · €' + sel.cost + '/mo' : ''}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 8, background: layerColors[sel.type] + '20', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
+                  <span style={{ width: 12, height: 12, borderRadius: '50%', background: layerColors[sel.type], display: 'block' }}/>
+                </div>
+                <div>
+                  <div className="lp-card-title">{sel.label}</div>
+                  <div className="lp-card-sub">{sel.kind} · last seen {sel.lastSeen}</div>
+                </div>
               </div>
-              <span className="badge tone-sky-soft">{sel.type}</span>
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                {(sel.status === 'sleeper' || sel.status === 'orphan' || sel.status === 'dormant') && <span className="badge tone-amber-soft">Sleeper</span>}
+                <span className="badge badge-outline">{sel.type}</span>
+              </div>
             </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, padding: '12px 0', borderBottom: '1px solid var(--border)', marginBottom: 14 }}>
+              <div style={{ textAlign: 'center' }}>
+                <div className="mono" style={{ fontSize: 20, fontWeight: 700 }}>{upstream.size}</div>
+                <div className="lp-eyebrow">upstream</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div className="mono" style={{ fontSize: 20, fontWeight: 700 }}>{downstream.size}</div>
+                <div className="lp-eyebrow">downstream</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div className={'mono ' + (sel.cost > 0 ? (sel.status === 'sleeper' || sel.status === 'orphan' ? 'val-rose' : '') : '')} style={{ fontSize: 20, fontWeight: 700 }}>
+                  {sel.cost > 0 ? '€' + sel.cost : '—'}
+                </div>
+                <div className="lp-eyebrow">/mo</div>
+              </div>
+            </div>
+
             <div className="trace-section">
               <div className="lp-eyebrow">Upstream sources <span className="mono muted"> · {upstream.size}</span></div>
+              {upstream.size === 0 && <div className="muted" style={{ fontSize: 12, padding: '6px 0' }}>Source node — no upstream dependencies.</div>}
               {Array.from(upstream).map(id => {
                 const n = l.nodes.find(x => x.id === id);
                 return (
@@ -169,6 +196,7 @@ export function LineageExplorer() {
             </div>
             <div className="trace-section">
               <div className="lp-eyebrow">Downstream consumers <span className="mono muted"> · {downstream.size}</span></div>
+              {downstream.size === 0 && <div className="muted" style={{ fontSize: 12, padding: '6px 0' }}>Leaf node — no downstream consumers.</div>}
               {Array.from(downstream).map(id => {
                 const n = l.nodes.find(x => x.id === id);
                 return (
@@ -180,6 +208,11 @@ export function LineageExplorer() {
                   </button>
                 );
               })}
+            </div>
+
+            <div style={{ marginTop: 14, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <button className="btn btn-outline btn-sm"><Icon name="external" size={12}/>Open in Fabric</button>
+              {(sel.status === 'sleeper' || sel.status === 'orphan') && <button className="btn btn-sm btn-danger">Archive</button>}
             </div>
           </div>
           <div className="lp-card">

@@ -114,8 +114,8 @@ export default function App() {
   else if (top === 'adoption')   page = <Adoption/>;
   else if (top === 'sleepers')   page = <Sleepers/>;
   else if (top === 'audit')      page = <Audit/>;
-  else if (top === 'licenses')   page = <Licenses/>;
-  else if (top === 'reports')    page = <ReportsApps/>;
+  else if (top === 'licenses')   page = <Licenses onOpenUser={(id) => setRoute('users/' + id)}/>;
+  else if (top === 'reports')    page = <ReportsApps onGoModel={(ws, m) => setRoute('workspaces/' + ws + '/' + m)}/>;
   else if (top === 'lineage')    page = <LineageExplorer/>;
   else if (top === 'access')     page = <Access/>;
   else if (top === 'users') {

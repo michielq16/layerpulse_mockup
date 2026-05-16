@@ -2,7 +2,7 @@ import React from 'react';
 import Icon from './Icon';
 import DATA from './data';
 import { EnvBadge, Provenance, IssueCard, Badge } from './components';
-import { ModelDiagram, ModelDocs, ModelAI, ModelHealth, ModelReports } from './ModelTabs';
+import { ModelDiagram, ModelDocs, ModelAI, ModelHealth, ModelReports, ModelDataflows } from './ModelTabs';
 
 export function ModelView({ wsId, modelId, onBack }) {
   const [tab, setTab] = React.useState('overview');
@@ -41,6 +41,7 @@ export function ModelView({ wsId, modelId, onBack }) {
           { k: 'ai',         l: 'AI Analysis' },
           { k: 'health',     l: 'Health' },
           { k: 'reports',    l: 'Reports' },
+          { k: 'dataflows',  l: 'Dataflows' },
         ].map(t => (
           <button key={t.k} className={'model-tab' + (tab === t.k ? ' active' : '')} onClick={() => setTab(t.k)}>
             {t.l}
@@ -57,6 +58,7 @@ export function ModelView({ wsId, modelId, onBack }) {
         {tab === 'ai' && <ModelAI/>}
         {tab === 'health' && <ModelHealth/>}
         {tab === 'reports' && <ModelReports/>}
+        {tab === 'dataflows' && <ModelDataflows/>}
       </div>
     </>
   );
@@ -155,15 +157,110 @@ function ModelOverview({ m }) {
 }
 
 function ModelMeasures() {
+  const measures = DATA.modelExtras.measures;
+  const [q, setQ] = React.useState('');
+  const [filter, setFilter] = React.useState('all');
+  const [daxPanel, setDaxPanel] = React.useState(null);
+
+  const filtered = measures.filter(m =>
+    (filter === 'all' || (filter === 'used' ? m.used : !m.used)) &&
+    (q === '' || m.name.toLowerCase().includes(q.toLowerCase()))
+  );
+
+  const selected = daxPanel ? measures.find(m => m.id === daxPanel) : null;
+
   return (
     <>
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 14 }}>
-        <span className="seg-tabs"><button className="seg-tab active">Dependencies</button><button className="seg-tab">Lineage</button></span>
-        <span className="lp-eyebrow" style={{ marginLeft: 'auto' }}>41 connected · 6 orphans · 34 edges</span>
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 14, flexWrap: 'wrap' }}>
+        <div className="lp-search" style={{ flex: 1, minWidth: 220 }}>
+          <Icon name="search" size={14}/>
+          <input placeholder="Search measures…" value={q} onChange={e => setQ(e.target.value)}/>
+        </div>
+        <span className="seg-tabs">
+          {[['all','All · ' + measures.length], ['used','Used · ' + measures.filter(m => m.used).length], ['unused','Unused · ' + measures.filter(m => !m.used).length]].map(([k,l]) => (
+            <button key={k} className={'seg-tab' + (filter === k ? ' active' : '')} onClick={() => setFilter(k)}>{l}</button>
+          ))}
+        </span>
+        <span className="lp-eyebrow">{measures.filter(m => m.deps.length > 1).length} chained · {measures.filter(m => !m.used).length} orphans</span>
       </div>
-      <div className="lp-card" style={{ padding: 0 }}>
-        <div className="lineage-pane">
-          <LineagePreview/>
+
+      <div className="lp-grid-money" style={{ alignItems: 'start' }}>
+        <div className="lp-card lp-card-flush">
+          {filtered.map(m => (
+            <button key={m.id} className={'measure-row' + (daxPanel === m.id ? ' active' : '') + (!m.used ? ' measure-unused' : '')}
+              onClick={() => setDaxPanel(p => p === m.id ? null : m.id)}>
+              <span className="measure-icon" style={{ background: m.used ? 'var(--modern-icon-bg-sky)' : 'var(--muted)', color: m.used ? 'var(--modern-icon-fg-sky)' : 'var(--muted-foreground)' }}>
+                <Icon name="bar-chart" size={13}/>
+              </span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="measure-name">{m.name}</div>
+                <div className="measure-meta">
+                  <span className="badge badge-outline" style={{ fontSize: 10 }}>{m.table}</span>
+                  {m.deps.slice(0, 2).map(d => <span key={d} className="measure-dep mono">{d}</span>)}
+                  {m.deps.length > 2 && <span className="measure-dep mono">+{m.deps.length - 2}</span>}
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span className={'badge ' + (m.complexity === 'complex' ? 'tone-violet-soft' : m.complexity === 'medium' ? 'tone-sky-soft' : 'tone-slate-soft')} style={{ fontSize: 10 }}>{m.complexity}</span>
+                {m.reports > 0
+                  ? <span className="measure-reports"><Icon name="bar-chart" size={10}/>{m.reports}</span>
+                  : <span className="muted" style={{ fontSize: 11 }}>unused</span>}
+                <Icon name="chevron-right" size={12} style={{ color: 'var(--muted-foreground)', transform: daxPanel === m.id ? 'rotate(90deg)' : 'none', transition: 'transform .15s' }}/>
+              </div>
+            </button>
+          ))}
+          {filtered.length === 0 && <div className="empty">No measures match your search.</div>}
+        </div>
+
+        <div className="lp-card" style={{ position: 'sticky', top: 16 }}>
+          {selected ? (
+            <>
+              <div className="lp-card-header">
+                <div>
+                  <div className="lp-card-title">{selected.name}</div>
+                  <div className="lp-card-sub">{selected.table} · last used {selected.lastUsed}</div>
+                </div>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <span className={'badge ' + (selected.used ? 'tone-emerald-soft' : 'tone-rose-soft')}>{selected.used ? 'In use' : 'Unused'}</span>
+                  <button className="btn btn-ghost btn-sm" onClick={() => setDaxPanel(null)}><Icon name="x" size={14}/></button>
+                </div>
+              </div>
+              <div className="dax-editor">
+                <div className="dax-toolbar">
+                  <span className="lp-eyebrow">DAX Expression</span>
+                  <button className="btn btn-ghost btn-sm"><Icon name="external" size={12}/>Copy</button>
+                </div>
+                <pre className="dax-code">{selected.dax}</pre>
+              </div>
+              <div style={{ marginTop: 14 }}>
+                <div className="lp-eyebrow" style={{ marginBottom: 8 }}>Dependencies</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {selected.deps.map(d => (
+                    <span key={d} className="badge badge-outline mono" style={{ fontSize: 11 }}>{d}</span>
+                  ))}
+                </div>
+              </div>
+              <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div className="mono" style={{ fontSize: 20, fontWeight: 600 }}>{selected.reports}</div>
+                  <div className="lp-eyebrow">reports</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div className="mono" style={{ fontSize: 20, fontWeight: 600 }}>{selected.deps.length}</div>
+                  <div className="lp-eyebrow">dependencies</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div className="mono" style={{ fontSize: 20, fontWeight: 600 }}>{selected.complexity}</div>
+                  <div className="lp-eyebrow">complexity</div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--muted-foreground)' }}>
+              <Icon name="bar-chart" size={28}/>
+              <div style={{ marginTop: 10, fontSize: 14 }}>Select a measure to inspect its DAX expression and dependencies</div>
+            </div>
+          )}
         </div>
       </div>
     </>

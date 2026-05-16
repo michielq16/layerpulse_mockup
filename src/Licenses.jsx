@@ -8,7 +8,7 @@ function fmtEur(amount) {
   return '€' + amount.toLocaleString('de-DE', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
-export function Licenses() {
+export function Licenses({ onOpenUser }) {
   const [tab, setTab] = React.useState('reclaim');
   const l = DATA.licenses;
   const totalSeats = l.skus.reduce((s, k) => s + k.total, 0);
@@ -91,7 +91,7 @@ export function Licenses() {
           </div>
           {l.reclaimList.map((u, i) => (
             <div key={i} className="reclaim-row">
-              <div className="audit-user"><Avatar name={u.name} size={24}/><span>{u.name}</span></div>
+              <div className="audit-user" style={{ cursor: onOpenUser ? 'pointer' : undefined }} onClick={() => { const usr = DATA.users?.top?.find(x => x.name === u.name); if (usr && onOpenUser) onOpenUser(usr.id); }}><Avatar name={u.name} size={24}/><span>{u.name}</span></div>
               <div><span className="badge badge-outline">{u.dept}</span></div>
               <div><span className="badge tone-sky-soft">{u.sku}</span></div>
               <div className={'mono ' + (u.lastActive > 30 ? 'val-rose' : 'val-amber')}>{u.lastActive}d ago</div>

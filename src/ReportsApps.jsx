@@ -3,7 +3,7 @@ import Icon from './Icon';
 import DATA from './data';
 import { StatCard } from './components';
 
-export function ReportsApps() {
+export function ReportsApps({ onGoModel }) {
   const [tab, setTab] = React.useState('reports');
   const [filter, setFilter] = React.useState('all');
   const r = DATA.reports, a = DATA.apps;
@@ -83,7 +83,10 @@ export function ReportsApps() {
                 <div className="rep-card-row">
                   <Icon name="database" size={11}/>
                   <span className="muted">Source dataset</span>
-                  <span className={'mono' + (rep.dataset === '(deleted)' ? ' val-rose' : '')}>{rep.dataset}</span>
+                  <span className={'mono' + (rep.dataset === '(deleted)' ? ' val-rose' : '')} style={{ cursor: rep.modelId && onGoModel ? 'pointer' : undefined, color: rep.modelId && onGoModel ? 'var(--primary)' : undefined }}
+                    onClick={() => rep.modelId && onGoModel && onGoModel(rep.wsId || 'finance-prod', rep.modelId || 'sales-analytics')}>
+                    {rep.dataset}
+                  </span>
                   <span className={'refresh-pill refresh-' + rep.refresh}>{rep.refresh === 'ok' ? '✓' : rep.refresh === 'stale' ? '↻ stale' : rep.refresh === 'failed' ? '✗ failed' : 'n/a'}</span>
                 </div>
 
