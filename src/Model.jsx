@@ -41,7 +41,7 @@ export function ModelView({ wsId, modelId, onBack }) {
           { k: 'ai',         l: 'AI Analysis' },
           { k: 'health',     l: 'Health' },
           { k: 'reports',    l: 'Reports' },
-          { k: 'dataflows',  l: 'Dataflows' },
+          { k: 'dataflows',  l: 'Refresh Chain' },
         ].map(t => (
           <button key={t.k} className={'model-tab' + (tab === t.k ? ' active' : '')} onClick={() => setTab(t.k)}>
             {t.l}
