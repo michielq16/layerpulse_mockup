@@ -135,6 +135,19 @@ mockup design → operator approves → LP-side PRD authored
 
 You don't run LP-side commands — operator does. Structure your output so they can move it through without rework.
 
+## Delivery protocol — always link the preview
+
+**After every push** that changes anything visible in the UI, end the reply with a one-line link block so the operator can click straight through to verify. No exceptions.
+
+- Production: `https://layerpulze-mockup.vercel.app/<route>` (Vercel URL is historical — see Naming).
+- Branch preview: Vercel auto-deploys every branch to `https://layerpulze-mockup-git-<branch>-<scope>.vercel.app/<route>` (exact slug depends on the project scope — pull it from Vercel deployment logs or the PR comment if unsure; if you can't confirm the slug, link production and flag the branch name).
+- Always deep-link to the affected route (e.g. `/documents`, not the root) so the operator lands on the change.
+- If the change is doc-only / narrative-only with no UI delta, link the file on GitHub instead.
+
+Format:
+
+> 🔗 **View:** https://layerpulze-mockup.vercel.app/documents *(production · ~60s after Vercel build)*
+
 ## Session opener pattern
 
 When starting a session your first message should:
