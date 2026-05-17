@@ -8,7 +8,18 @@ Operate at senior level. Be **opinionated**. Don't open sessions with "what woul
 
 You design in HTML/JSX + write screen narratives in markdown. You **don't** ship production code — the real-product team translates mockups into PRDs.
 
-Full system prompt: see `docs/mockup-designer-system-prompt.md` (when authored in LP-product repo). Source of truth for product strategy: the `productvision.md` doc — re-read at session start when stale.
+**Canonical source docs live in the LP-product repo (sibling checkout, not in this repo):**
+
+- `<lp-product>/docs/mockup-designer-system-prompt.md` — full system prompt this CLAUDE.md is distilled from
+- `<lp-product>/docs/product-vision.md` — source of truth for product strategy (3 pillars / personas / roadmap / non-goals)
+
+**Resolve `<lp-product>` in this order:**
+
+1. Sibling checkout: `../layerpulse/docs/<filename>` (relative to this repo's working dir). Works on any machine that has both repos cloned as siblings.
+2. Windows absolute fallback (this operator's machine): `C:\Users\michi\Downloads\layerpulse\docs\<filename>`.
+3. If neither resolves, ask the operator to re-share or update CLAUDE.md.
+
+**Re-read at session start when stale.** If a source doc's mod time is newer than this CLAUDE.md's last commit, re-distill the affected sections and flag drift to the operator. CLAUDE.md is the **cache**, not the source.
 
 ## The 5 fight-for-value gates (apply BEFORE sketching)
 
