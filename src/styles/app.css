@@ -664,13 +664,12 @@ select.input { height: 34px; padding: 0 28px 0 12px; }
 /* ═══════════════════════════════════════════════════
    Documents — tabs + library
    ═══════════════════════════════════════════════════ */
-.doc-tabbar { margin: 18px 0 16px; display: flex; align-items: center; }
-.doc-tabs .seg-tab { display: flex; align-items: center; gap: 7px; padding: 0 14px; height: 32px; font-size: 13px; }
-.doc-tab-count {
+.model-tab-count {
   font-size: 10.5px; padding: 1px 6px; border-radius: 4px;
   background: var(--muted); color: var(--muted-foreground);
+  margin-left: 2px;
 }
-.seg-tab.active .doc-tab-count { background: oklch(0.92 0.05 237); color: oklch(0.45 0.15 237); }
+.model-tab.active .model-tab-count { background: oklch(0.92 0.05 237); color: oklch(0.45 0.15 237); }
 
 /* — Outdated banner — */
 .doc-banner {

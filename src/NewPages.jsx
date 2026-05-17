@@ -28,15 +28,16 @@ export function Documents() {
         <StatCard label="Median gen time"   value={d.stats.medianGenSec}     unit="s" sub="across all models" icon="zap" tone="violet"/>
       </div>
 
-      <div className="doc-tabbar fade-in d2">
-        <div className="seg-tabs doc-tabs">
-          <button className={'seg-tab' + (tab === 'library' ? ' active' : '')} onClick={() => setTab('library')}>
-            <Icon name="folders" size={13}/>Library<span className="doc-tab-count mono">{d.items.length}</span>
+      <div className="model-tabs fade-in d2" style={{ marginTop: 18 }}>
+        {[
+          ['library',  `Library`,  'folders'],
+          ['generate', 'Generate', 'wand'],
+        ].map(([k, l, ic]) => (
+          <button key={k} className={'model-tab' + (tab === k ? ' active' : '')} onClick={() => setTab(k)}>
+            <Icon name={ic} size={14}/>{l}
+            {k === 'library' && <span className="model-tab-count mono">{d.items.length}</span>}
           </button>
-          <button className={'seg-tab' + (tab === 'generate' ? ' active' : '')} onClick={() => setTab('generate')}>
-            <Icon name="wand" size={13}/>Generate
-          </button>
-        </div>
+        ))}
       </div>
 
       {tab === 'library' && <DocumentsLibrary onGenerate={() => setTab('generate')}/>}
