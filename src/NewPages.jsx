@@ -5,6 +5,219 @@ import { StatCard } from './components';
 
 export function Documents() {
   const d = DATA.documents;
+  const [tab, setTab] = React.useState('library');
+  const outdatedCount = d.items.filter(i => i.status === 'outdated').length;
+
+  return (
+    <>
+      <div className="lp-page-head">
+        <div className="fade-in">
+          <h1 className="lp-page-title">Documents</h1>
+          <p className="lp-page-sub">Your vault of auto-generated Word, PDF, and Markdown documentation for every semantic model. Browse, regenerate, schedule, or generate something new.</p>
+        </div>
+        <div className="fade-in d2" style={{ display: 'flex', gap: 8 }}>
+          <button className="btn btn-outline btn-sm"><Icon name="refresh" size={14}/>Regenerate outdated{outdatedCount > 0 ? ` (${outdatedCount})` : ''}</button>
+          <button className="btn btn-sm doc-gen-cta" onClick={() => setTab('generate')}><Icon name="plus" size={14}/>Generate new</button>
+        </div>
+      </div>
+
+      <div className="lp-grid-4 fade-in">
+        <StatCard label="Models documented" value={d.stats.modelsDocumented} unit="/34" sub={Math.round(d.stats.modelsDocumented / 34 * 100) + '% coverage'} icon="file-text" tone="emerald"/>
+        <StatCard label="Generated / 30d"   value={d.stats.generated30d}     icon="wand"      tone="sky"/>
+        <StatCard label="Outdated"          value={d.stats.outdated}         sub="Model changed since gen" icon="alert-triangle" tone="amber"/>
+        <StatCard label="Median gen time"   value={d.stats.medianGenSec}     unit="s" sub="across all models" icon="zap" tone="violet"/>
+      </div>
+
+      <div className="doc-tabbar fade-in d2">
+        <div className="seg-tabs doc-tabs">
+          <button className={'seg-tab' + (tab === 'library' ? ' active' : '')} onClick={() => setTab('library')}>
+            <Icon name="folders" size={13}/>Library<span className="doc-tab-count mono">{d.items.length}</span>
+          </button>
+          <button className={'seg-tab' + (tab === 'generate' ? ' active' : '')} onClick={() => setTab('generate')}>
+            <Icon name="wand" size={13}/>Generate
+          </button>
+        </div>
+      </div>
+
+      {tab === 'library' && <DocumentsLibrary onGenerate={() => setTab('generate')}/>}
+      {tab === 'generate' && <DocumentsGenerate onBackToLibrary={() => setTab('library')}/>}
+    </>
+  );
+}
+
+const SCHEDULE_LABELS = {
+  off:      { label: 'Off',           icon: 'moon',     tone: 'slate'   },
+  daily:    { label: 'Daily',         icon: 'refresh',  tone: 'sky'     },
+  weekly:   { label: 'Weekly',        icon: 'calendar', tone: 'emerald' },
+  monthly:  { label: 'Monthly',       icon: 'calendar', tone: 'sky'     },
+  onchange: { label: 'On change',     icon: 'zap',      tone: 'violet'  },
+};
+
+const AUDIENCE_LABELS = {
+  auditor:   { label: 'Auditor',   tone: 'rose'    },
+  analyst:   { label: 'Analyst',   tone: 'sky'     },
+  executive: { label: 'Executive', tone: 'amber'   },
+  engineer:  { label: 'Engineer',  tone: 'violet'  },
+};
+
+function DocumentsLibrary({ onGenerate }) {
+  const d = DATA.documents;
+  const [q, setQ] = React.useState('');
+  const [statusFilter, setStatusFilter] = React.useState('all');
+  const [ws, setWs] = React.useState('all');
+  const [aud, setAud] = React.useState('all');
+  const [sort, setSort] = React.useState('recent');
+  const [schedOpen, setSchedOpen] = React.useState(null);
+
+  const allWs = Array.from(new Set(d.items.map(i => i.ws)));
+  const allAud = Array.from(new Set(d.items.map(i => i.audience)));
+  const outdated = d.items.filter(i => i.status === 'outdated');
+
+  const counts = {
+    all:       d.items.length,
+    current:   d.items.filter(i => i.status === 'current').length,
+    outdated:  outdated.length,
+    scheduled: d.items.filter(i => i.schedule && i.schedule !== 'off').length,
+  };
+
+  const filtered = d.items.filter(it => {
+    if (statusFilter === 'current'   && it.status !== 'current')   return false;
+    if (statusFilter === 'outdated'  && it.status !== 'outdated')  return false;
+    if (statusFilter === 'scheduled' && (!it.schedule || it.schedule === 'off')) return false;
+    if (ws  !== 'all' && it.ws  !== ws)  return false;
+    if (aud !== 'all' && it.audience !== aud) return false;
+    if (q && !(it.model + it.ws).toLowerCase().includes(q.toLowerCase())) return false;
+    return true;
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (sort === 'name')     return a.model.localeCompare(b.model);
+    if (sort === 'outdated') return (a.status === 'outdated' ? 0 : 1) - (b.status === 'outdated' ? 0 : 1);
+    // recent — using existing string order as proxy; backend would sort on `generatedAt` desc
+    return d.items.indexOf(a) - d.items.indexOf(b);
+  });
+
+  return (
+    <>
+      {outdated.length > 0 && (
+        <div className="doc-banner fade-in">
+          <Icon name="alert" size={16}/>
+          <div className="doc-banner-body">
+            <div className="doc-banner-title">{outdated.length} document{outdated.length > 1 ? 's are' : ' is'} outdated</div>
+            <div className="doc-banner-sub">The source model has changed since last generation. Regenerate to refresh — or set up auto-regen so you never see this again.</div>
+          </div>
+          <div className="doc-banner-actions">
+            <button className="btn btn-outline btn-sm"><Icon name="settings" size={13}/>Set up auto-regen</button>
+            <button className="btn btn-sm"><Icon name="refresh" size={13}/>Regenerate all</button>
+          </div>
+        </div>
+      )}
+
+      <div className="lp-card lp-card-flush fade-in d2" style={{ padding: 14, marginBottom: 14 }}>
+        <div className="doc-lib-filters">
+          <div className="lp-search" style={{ flex: 1, minWidth: 240 }}>
+            <Icon name="search" size={14}/>
+            <input placeholder="Search by model, workspace…" value={q} onChange={e => setQ(e.target.value)}/>
+          </div>
+          <div className="chip-row">
+            {[['all','All',counts.all],['current','Current',counts.current],['outdated','Outdated',counts.outdated],['scheduled','Scheduled',counts.scheduled]].map(([k,l,n]) => (
+              <button key={k} className={'chip' + (statusFilter === k ? ' active' : '')} onClick={() => setStatusFilter(k)}>
+                {l}<span className="count">{n}</span>
+              </button>
+            ))}
+          </div>
+          <select className="input input-sm" value={ws} onChange={e => setWs(e.target.value)}>
+            <option value="all">All workspaces</option>
+            {allWs.map(w => <option key={w} value={w}>{w}</option>)}
+          </select>
+          <select className="input input-sm" value={aud} onChange={e => setAud(e.target.value)}>
+            <option value="all">All audiences</option>
+            {allAud.map(a => <option key={a} value={a}>{AUDIENCE_LABELS[a]?.label || a}</option>)}
+          </select>
+          <select className="input input-sm" value={sort} onChange={e => setSort(e.target.value)}>
+            <option value="recent">Recently generated</option>
+            <option value="name">Name A–Z</option>
+            <option value="outdated">Outdated first</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="lp-section-head">
+        <h2>Library <span className="count">{sorted.length} of {d.items.length}</span></h2>
+      </div>
+
+      <div className="doc-list fade-in d3">
+        {sorted.map(it => {
+          const sched = SCHEDULE_LABELS[it.schedule || 'off'];
+          const audMeta = AUDIENCE_LABELS[it.audience] || { label: it.audience, tone: 'slate' };
+          const isSchedOpen = schedOpen === it.id;
+          return (
+            <div key={it.id} className={'doc-row' + (it.status === 'outdated' ? ' doc-row-outdated' : '')}>
+              <div className="doc-icon" style={{
+                background: `var(--modern-icon-bg-${it.tone})`,
+                color:      `var(--modern-icon-fg-${it.tone})`,
+              }}>
+                <Icon name="file-text" size={18}/>
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div className="doc-title">
+                  {it.model}
+                  <span className={'doc-aud-pill doc-aud-pill-' + audMeta.tone}>{audMeta.label}</span>
+                  <span className={'doc-status ' + it.status}>
+                    <span className="dot"/>{it.status === 'current' ? 'Current' : 'Outdated'}
+                  </span>
+                </div>
+                <div className="doc-meta">
+                  <span className="mono">{it.ws}</span>
+                  <span className="sep">·</span>
+                  <span className="mono doc-format">{it.format.toUpperCase()}</span>
+                  <span className="sep">·</span>
+                  <span title={it.updatedAbs}>updated {it.updated}</span>
+                  <span className="sep">·</span>
+                  <span className="mono">{it.size}</span>
+                </div>
+              </div>
+              <div className="doc-sched-wrap">
+                <button className={'doc-sched-chip doc-sched-' + sched.tone} onClick={() => setSchedOpen(o => o === it.id ? null : it.id)}>
+                  <Icon name={sched.icon} size={11}/>
+                  <span>{sched.label}</span>
+                  {it.scheduleNext && it.schedule !== 'off' && <span className="doc-sched-next mono">{it.scheduleNext}</span>}
+                  <Icon name="chevron-down" size={10}/>
+                </button>
+                {isSchedOpen && (
+                  <div className="doc-sched-pop" onClick={e => e.stopPropagation()}>
+                    <div className="lp-eyebrow" style={{ padding: '8px 10px 4px' }}>Auto-regenerate</div>
+                    {Object.entries(SCHEDULE_LABELS).map(([k, meta]) => (
+                      <button key={k} className={'doc-sched-opt' + (it.schedule === k ? ' active' : '')} onClick={() => setSchedOpen(null)}>
+                        <Icon name={meta.icon} size={12}/>
+                        <span>{meta.label}</span>
+                        {it.schedule === k && <Icon name="check" size={11}/>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="doc-actions">
+                <button className="btn btn-ghost btn-sm" title="View"><Icon name="external" size={14}/></button>
+                <button className="btn btn-ghost btn-sm" title="Regenerate"><Icon name="refresh" size={14}/></button>
+                <button className="btn btn-outline btn-sm"><Icon name="arrow-down" size={12}/>Download</button>
+              </div>
+            </div>
+          );
+        })}
+        {sorted.length === 0 && (
+          <div className="empty doc-empty">
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>No documents match.</div>
+            <div style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>Adjust the filters above, or <a onClick={onGenerate} style={{ color: 'oklch(0.55 0.18 237)', cursor: 'pointer', fontWeight: 500 }}>generate a new document</a>.</div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+function DocumentsGenerate({ onBackToLibrary }) {
+  const d = DATA.documents;
   const [selectedId, setSelectedId] = React.useState(d.pickerModels[0].id);
   const [pickerQ, setPickerQ] = React.useState('');
   const [pickerFilter, setPickerFilter] = React.useState('all');
@@ -12,7 +225,6 @@ export function Documents() {
   const [format, setFormat] = React.useState('docx');
   const [includeLogo, setIncludeLogo] = React.useState(true);
   const [customSel, setCustomSel] = React.useState(null);
-  const [libQ, setLibQ] = React.useState('');
 
   const selected = d.pickerModels.find(m => m.id === selectedId) || d.pickerModels[0];
 
@@ -44,32 +256,10 @@ export function Documents() {
     (pickerFilter === 'all' || m.status === pickerFilter)
   );
 
-  const libItems = d.items.filter(it =>
-    libQ === '' || it.model.toLowerCase().includes(libQ.toLowerCase()) || it.ws.toLowerCase().includes(libQ.toLowerCase())
-  );
-
   const previewSections = d.sections.flatMap(grp => grp.items.filter(s => isOn(s.key)).map(s => ({ ...s, count: sectionCount(s), group: grp.group })));
 
   return (
     <>
-      <div className="lp-page-head">
-        <div className="fade-in">
-          <h1 className="lp-page-title">Documents</h1>
-          <p className="lp-page-sub">Auto-generate Word documents from any semantic model. Pick a model, choose what to include, preview, and ship to your auditor or new analyst in seconds.</p>
-        </div>
-        <div className="fade-in d2" style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-outline btn-sm"><Icon name="refresh" size={14}/>Regenerate outdated</button>
-          <button className="btn btn-outline btn-sm"><Icon name="external" size={14}/>Open library</button>
-        </div>
-      </div>
-
-      <div className="lp-grid-4 fade-in">
-        <StatCard label="Models documented" value={d.stats.modelsDocumented} unit="/34" sub={Math.round(d.stats.modelsDocumented / 34 * 100) + '% coverage'} icon="file-text" tone="emerald"/>
-        <StatCard label="Generated / 30d"   value={d.stats.generated30d}     icon="wand"      tone="sky"/>
-        <StatCard label="Outdated"          value={d.stats.outdated}         sub="Model changed since gen" icon="alert-triangle" tone="amber"/>
-        <StatCard label="Median gen time"   value={d.stats.medianGenSec}     unit="s" sub="across all models" icon="zap" tone="violet"/>
-      </div>
-
       <div className="lp-section-head">
         <h2>Generate a document</h2>
         <span className="lp-eyebrow">3 steps · ~{d.stats.medianGenSec}s</span>
@@ -256,7 +446,7 @@ export function Documents() {
           <div className="doc-gen-actions">
             <button className="btn btn-outline btn-sm" disabled={selectedCount === 0}><Icon name="external" size={13}/>Share link</button>
             <button className="btn btn-outline btn-sm" disabled={selectedCount === 0}><Icon name="refresh" size={13}/>Schedule weekly</button>
-            <button className="btn doc-gen-cta" disabled={selectedCount === 0}>
+            <button className="btn doc-gen-cta" disabled={selectedCount === 0} onClick={onBackToLibrary}>
               <Icon name="arrow-down" size={14}/>Generate .{format}
             </button>
           </div>
@@ -274,52 +464,6 @@ export function Documents() {
             </div>
           )}
         </div>
-      </div>
-
-      <div className="lp-section-head" style={{ marginTop: 28 }}>
-        <h2>Recently generated <span className="count">{libItems.length} of {d.items.length}</span></h2>
-        <div className="lp-search" style={{ width: 240 }}>
-          <Icon name="search" size={13}/>
-          <input placeholder="Search library…" value={libQ} onChange={e => setLibQ(e.target.value)}/>
-        </div>
-      </div>
-
-      <div className="doc-list fade-in d3">
-        {libItems.map(it => (
-          <div key={it.id} className="doc-row">
-            <div className="doc-icon" style={{
-              background: `var(--modern-icon-bg-${it.tone})`,
-              color:      `var(--modern-icon-fg-${it.tone})`,
-            }}>
-              <Icon name="file-text" size={18}/>
-            </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <div className="doc-title">
-                {it.model}
-                <span className={'doc-status ' + it.status}>
-                  <span className="dot"/>{it.status === 'current' ? 'Current' : 'Outdated'}
-                </span>
-              </div>
-              <div className="doc-meta">
-                <span>{it.type}</span>
-                <span className="sep">·</span>
-                <span className="mono">{it.ws}</span>
-                <span className="sep">·</span>
-                <span>{it.tables}t · {it.measures}m</span>
-                <span className="sep">·</span>
-                <span>updated {it.updated}</span>
-                <span className="sep">·</span>
-                <span className="mono">{it.size}</span>
-              </div>
-            </div>
-            <div className="doc-actions">
-              <button className="btn btn-ghost btn-sm" title="View"><Icon name="external" size={14}/></button>
-              <button className="btn btn-ghost btn-sm" title="Regenerate"><Icon name="refresh" size={14}/></button>
-              <button className="btn btn-outline btn-sm">Download</button>
-            </div>
-          </div>
-        ))}
-        {libItems.length === 0 && <div className="empty">No documents match. Generate one above to see it appear here.</div>}
       </div>
     </>
   );
