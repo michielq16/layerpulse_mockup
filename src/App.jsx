@@ -21,8 +21,31 @@ const TWEAK_DEFAULTS = {
   accent: 'sky',
 };
 
+function getInitialRoute() {
+  if (typeof window === 'undefined') return 'overview';
+  const p = window.location.pathname;
+  if (!p || p === '/') return 'overview';
+  return p.replace(/^\/+/, '').replace(/\/+$/, '') || 'overview';
+}
+
 export default function App() {
-  const [route, setRoute] = React.useState('overview');
+  const [route, setRouteState] = React.useState(getInitialRoute);
+  const setRoute = React.useCallback((r) => setRouteState(r), []);
+
+  // Keep URL in sync with route state so deep links work + back/forward navigates.
+  React.useEffect(() => {
+    const desired = route === 'overview' ? '/' : '/' + route;
+    if (typeof window !== 'undefined' && window.location.pathname !== desired) {
+      window.history.pushState({}, '', desired);
+    }
+  }, [route]);
+
+  React.useEffect(() => {
+    const onPop = () => setRouteState(getInitialRoute());
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
   const [issue, setIssue] = React.useState(null);
   const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
   const [tweaksOpen, setTweaksOpen] = React.useState(false);
