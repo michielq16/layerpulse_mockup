@@ -8,6 +8,7 @@ import { Capacity, Costs } from './CostAttribution';
 import { Alerts, Settings, DrillSheet, TweaksPanel } from './Pages';
 import { Documents, Governance, Activity } from './NewPages';
 import { Users, UserDetail } from './UserIntel';
+import { UsersNew } from './UsersNew';
 import { Adoption, Sleepers, Audit } from './UserIntel2';
 import { Licenses } from './Licenses';
 import { ReportsApps } from './ReportsApps';
@@ -87,6 +88,7 @@ export default function App() {
       }
       return base2;
     }
+    if (top === 'users-new') return [{ label: 'Users · new sketch' }];
     if (top === 'workspaces') {
       base.push({ label: 'Workspaces', go: wsId ? () => setRoute('workspaces') : undefined });
       if (wsId) {
@@ -122,6 +124,7 @@ export default function App() {
     if (parts[1]) page = <UserDetail userId={parts[1]} onBack={() => setRoute('users')}/>;
     else          page = <Users onOpenUser={(id) => setRoute('users/' + id)}/>;
   }
+  else if (top === 'users-new') page = <UsersNew onOpenLegacyUser={() => setRoute('users')}/>;
   else if (top === 'workspaces') {
     if (modelId)   page = <ModelView wsId={wsId} modelId={modelId} onBack={() => setRoute('workspaces/' + wsId)}/>;
     else if (wsId) page = <WorkspaceDetail wsId={wsId} onBack={() => setRoute('workspaces')} onOpenModel={(ws, m) => setRoute('workspaces/' + ws + '/' + m)}/>;

@@ -120,6 +120,7 @@ export function Sidebar({ route, setRoute }) {
     ]},
     { group: 'User intelligence', items: [
       { key: 'users',     label: 'Users',     icon: 'users' },
+      { key: 'users-new', label: 'Users (new sketch)', icon: 'users' },
       { key: 'adoption',  label: 'Adoption',  icon: 'activity' },
       { key: 'sleepers',  label: 'Sleepers',  icon: 'moon', count: 17 },
       { key: 'audit',     label: 'Audit',     icon: 'shield' },

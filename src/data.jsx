@@ -894,6 +894,40 @@ const DATA = {
       { workspace: 'Sales',            principal: 'svc-bi-runner',       kind: 'ServicePrincipal', role: 'Admin', members: 1, lastUsed: '4m ago', risk: 'high' },
     ],
   },
+
+  // /users-new — sketch of UPN-first Users page (priority #2). Keeps `users` shape untouched.
+  usersNew: {
+    summary: {
+      seats:             487,
+      wastedLicensesCost: 1820,   // Pro/PPU assigned, 0 activity 30d → € reclaimable
+      wastedSeats:        17,
+      admins:             34,
+      adminsRatio:        '34 : 453',
+      highRiskCount:      4,
+    },
+    // Per-user extension keyed by users.top id. Adds dimensions the new page needs without
+    // disturbing the existing /users page that reads users.top.
+    ext: {
+      u1:  { upn: 'sara.patel@contoso.onmicrosoft.com',     lastActive: '2h',   lastActiveAbs: '2026-05-17 12:14 UTC', ws30d: 8,  reports30d: 14, adminCount: 1, risk: 'amber', riskReasons: ['Admin on Ops-Legacy-2022 · unused 94d'] },
+      u2:  { upn: 'michiel.v@contoso.onmicrosoft.com',      lastActive: '14m',  lastActiveAbs: '2026-05-17 14:02 UTC', ws30d: 12, reports30d: 27, adminCount: 4, risk: 'sky',   riskReasons: [] },
+      u3:  { upn: 'anita.v@contoso.onmicrosoft.com',        lastActive: '1d',   lastActiveAbs: '2026-05-16 16:08 UTC', ws30d: 5,  reports30d: 9,  adminCount: 0, risk: 'amber', riskReasons: ['Export-heavy · 198 exports / 30d'] },
+      u4:  { upn: 'daniel.o@contoso.onmicrosoft.com',       lastActive: '3h',   lastActiveAbs: '2026-05-17 11:42 UTC', ws30d: 4,  reports30d: 6,  adminCount: 2, risk: 'rose',  riskReasons: ['High export · 312/30d', 'Off-hours access · 9 sessions', 'Admin on Sales-Prod'] },
+      u5:  { upn: 'emilia.r@contoso.onmicrosoft.com',       lastActive: '6h',   lastActiveAbs: '2026-05-17 08:21 UTC', ws30d: 3,  reports30d: 4,  adminCount: 0, risk: 'sky',   riskReasons: [] },
+      u6:  { upn: 'hans.b@contoso.onmicrosoft.com',         lastActive: '12m',  lastActiveAbs: '2026-05-17 14:04 UTC', ws30d: 14, reports30d: 8,  adminCount: 3, risk: 'sky',   riskReasons: [] },
+      u7:  { upn: 'yuki.t@contoso.onmicrosoft.com',         lastActive: '4h',   lastActiveAbs: '2026-05-17 10:38 UTC', ws30d: 3,  reports30d: 11, adminCount: 0, risk: 'sky',   riskReasons: [] },
+      u8:  { upn: 'maya.g@contoso.onmicrosoft.com',         lastActive: '2d',   lastActiveAbs: '2026-05-15 10:08 UTC', ws30d: 2,  reports30d: 6,  adminCount: 0, risk: 'sky',   riskReasons: [] },
+      u9:  { upn: 'jakub.n@contoso.onmicrosoft.com',        lastActive: '67d',  lastActiveAbs: '2026-03-11 09:14 UTC', ws30d: 0,  reports30d: 0,  adminCount: 0, risk: 'amber', riskReasons: ['Dormant 67d · Free license'] },
+      u10: { upn: 'priya.s@contoso.onmicrosoft.com',        lastActive: '5h',   lastActiveAbs: '2026-05-17 09:33 UTC', ws30d: 4,  reports30d: 7,  adminCount: 1, risk: 'amber', riskReasons: ['Export-heavy · 156/30d'] },
+      u11: { upn: 'felix.b@contoso.onmicrosoft.com',        lastActive: '2d',   lastActiveAbs: '2026-05-15 16:42 UTC', ws30d: 6,  reports30d: 5,  adminCount: 0, risk: 'sky',   riskReasons: [] },
+      u12: { upn: 'lena.h@contoso.onmicrosoft.com',         lastActive: '8h',   lastActiveAbs: '2026-05-17 06:24 UTC', ws30d: 9,  reports30d: 3,  adminCount: 2, risk: 'sky',   riskReasons: [] },
+    },
+    // Extra users that only appear on /users-new — chosen to seed clear high-risk + wasted-license cases.
+    extras: [
+      { id: 'u13', upn: 'jens.muller@contoso.onmicrosoft.com',   name: 'Jens Müller',      dept: 'Sales',      role: 'Regional Mgr',  licenseSku: 'PPU',  licenseCost: 200, lastActive: '184d', lastActiveAbs: '2025-11-15 11:42 UTC', ws30d: 0,  reports30d: 0,  adminCount: 0, risk: 'rose',  riskReasons: ['Dormant 184d · PPU $200/mo wasted'] },
+      { id: 'u14', upn: 'svc-finance-runner@contoso.onmicrosoft.com', name: 'svc-finance-runner', dept: 'IT',  role: 'Service Acct',  licenseSku: 'Fabric F1', licenseCost: 262, lastActive: '92d',  lastActiveAbs: '2026-02-15 03:00 UTC', ws30d: 0,  reports30d: 0,  adminCount: 8, risk: 'rose',  riskReasons: ['Service account · Admin on 8 workspaces', 'No activity 92d', 'Off-hours pattern: 03:00 UTC'] },
+      { id: 'u15', upn: 'amelia.shaw@contoso.onmicrosoft.com',   name: 'Amelia Shaw',      dept: 'Finance',    role: 'Auditor',       licenseSku: 'Pro',  licenseCost: 10,  lastActive: '38d',  lastActiveAbs: '2026-04-09 14:20 UTC', ws30d: 0,  reports30d: 0,  adminCount: 1, risk: 'amber', riskReasons: ['Dormant 38d', 'Admin on Audit-2025 unused 38d'] },
+    ],
+  },
 };
 
 export default DATA;
