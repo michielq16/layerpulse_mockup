@@ -162,7 +162,62 @@ const DATA = {
 
   // ─── Documents, Governance, Activity (Data2.jsx) ─────────────────────────
   documents: {
-    stats: { modelsDocumented: 13, total: 52, outdated: 3, storage: '2.3 MB' },
+    stats: { modelsDocumented: 13, total: 52, outdated: 3, generated30d: 18, medianGenSec: 24 },
+    pickerModels: [
+      { id: 'sales-analytics',   name: 'Sales Analytics',       ws: 'Finance-Prod', env: 'PROD', tables: 12, measures: 42, columns: 156, rels: 18, lastGen: '9d ago',  status: 'outdated', tone: 'sky',     glossary: 38, owner: 'A. Rivera'    },
+      { id: 'budget-planning',   name: 'Budget Planning',       ws: 'Finance-Prod', env: 'PROD', tables: 8,  measures: 15, columns: 84,  rels: 10, lastGen: '2d ago',  status: 'current',  tone: 'violet',  glossary: 21, owner: 'M. Qureshi'   },
+      { id: 'kpi-dashboard',     name: 'KPI Dashboard',         ws: 'Finance-Prod', env: 'PROD', tables: 4,  measures: 28, columns: 52,  rels: 6,  lastGen: '1d ago',  status: 'current',  tone: 'emerald', glossary: 12, owner: 'M. Qureshi'   },
+      { id: 'rev-forecast',      name: 'Revenue Forecast',      ws: 'Finance-Prod', env: 'PROD', tables: 9,  measures: 31, columns: 102, rels: 12, lastGen: '6h ago',  status: 'current',  tone: 'sky',     glossary: 19, owner: 'A. Rivera'    },
+      { id: 'expense-pnl',       name: 'Expense P&L',           ws: 'Finance-Prod', env: 'PROD', tables: 11, measures: 38, columns: 124, rels: 14, lastGen: '2d ago',  status: 'current',  tone: 'amber',   glossary: 24, owner: 'A. Rivera'    },
+      { id: 'gl-balances',       name: 'GL Balances',           ws: 'Finance-Prod', env: 'PROD', tables: 7,  measures: 22, columns: 64,  rels: 8,  lastGen: '5d ago',  status: 'outdated', tone: 'rose',    glossary: 14, owner: 'M. Qureshi'   },
+      { id: 'retail-ops',        name: 'RetailOperations',      ws: 'RetailOps',    env: 'PROD', tables: 13, measures: 47, columns: 178, rels: 22, lastGen: '11m ago', status: 'current',  tone: 'rose',    glossary: 31, owner: 'S. Lindqvist' },
+      { id: 'mgmt-change',       name: 'Management of Change',  ws: 'Operations',   env: 'PROD', tables: 46, measures: 30, columns: 412, rels: 38, lastGen: '1h ago',  status: 'current',  tone: 'amber',   glossary: 47, owner: 'S. Lindqvist' },
+      { id: 'ops-scorecard',     name: 'Operations Scorecard',  ws: 'Ops-Score',    env: 'PROD', tables: 74, measures: 579,columns: 982, rels: 91, lastGen: '6h ago',  status: 'current',  tone: 'emerald', glossary: 88, owner: 'K. Andersen'  },
+      { id: 'hr-headcount',      name: 'HR Headcount',          ws: 'HR-Data',      env: 'DEV',  tables: 6,  measures: 22, columns: 48,  rels: 7,  lastGen: '3d ago',  status: 'current',  tone: 'emerald', glossary: 11, owner: 'J. Patel'     },
+      { id: 'marketing-funnel',  name: 'Marketing Funnel',      ws: 'Marketing',    env: 'DEV',  tables: 11, measures: 38, columns: 96,  rels: 13, lastGen: '5h ago',  status: 'current',  tone: 'sky',     glossary: 18, owner: 'P. Nguyen'    },
+      { id: 'supply-pipeline',   name: 'Supply Chain Pipeline', ws: 'Supply-Chain', env: 'UAT',  tables: 18, measures: 54, columns: 198, rels: 24, lastGen: null,      status: 'never',    tone: 'amber',   glossary: 0,  owner: 'T. Hoffmann'  },
+      { id: 'mooring-dash',      name: 'Mooring Dashboard',     ws: 'Operations',   env: 'PROD', tables: 9,  measures: 24, columns: 72,  rels: 11, lastGen: null,      status: 'never',    tone: 'violet',  glossary: 0,  owner: 'S. Lindqvist' },
+    ],
+    sections: [
+      { group: 'Cover & summary', items: [
+        { key: 'cover',   label: 'Cover page',          count: 1, default: true,  audiences: ['auditor','analyst','executive','engineer'] },
+        { key: 'exec',    label: 'Executive summary',   count: 1, default: true,  audiences: ['auditor','executive']                     },
+        { key: 'toc',     label: 'Table of contents',   count: 1, default: true,  audiences: ['auditor','analyst','engineer']            },
+      ]},
+      { group: 'Schema', items: [
+        { key: 'tables',  label: 'Tables',                  countKey: 'tables',   default: true,  audiences: ['auditor','analyst','engineer'] },
+        { key: 'columns', label: 'Columns + data types',    countKey: 'columns',  default: true,  audiences: ['auditor','analyst','engineer'] },
+        { key: 'rels',    label: 'Relationships',           countKey: 'rels',     default: true,  audiences: ['auditor','analyst','engineer'] },
+        { key: 'erd',     label: 'ER diagram',              count: 1,             default: false, audiences: ['analyst','engineer']           },
+      ]},
+      { group: 'Logic', items: [
+        { key: 'measures',  label: 'Measures',              countKey: 'measures', default: true,  audiences: ['analyst','engineer','auditor'] },
+        { key: 'dax',       label: 'DAX expressions',       countKey: 'measures', default: false, audiences: ['engineer']                     },
+        { key: 'calc-cols', label: 'Calculated columns',    count: 14,            default: false, audiences: ['engineer']                     },
+      ]},
+      { group: 'Lineage', items: [
+        { key: 'upstream',  label: 'Upstream sources',      count: 8,  default: false, audiences: ['analyst','engineer','auditor'] },
+        { key: 'downstream',label: 'Downstream reports',    count: 11, default: false, audiences: ['analyst','engineer']           },
+        { key: 'impact',    label: 'Impact analysis list',  count: 1,  default: false, audiences: ['engineer']                     },
+      ]},
+      { group: 'Governance', items: [
+        { key: 'rls',       label: 'Row-level security rules', count: 6, default: false, audiences: ['auditor'] },
+        { key: 'sens',      label: 'Sensitivity labels',       count: 4, default: false, audiences: ['auditor'] },
+        { key: 'findings',  label: 'Governance findings',      count: 3, default: false, audiences: ['auditor'] },
+      ]},
+      { group: 'Context', items: [
+        { key: 'glossary',  label: 'Business glossary',        countKey: 'glossary', default: false, audiences: ['analyst','executive'] },
+        { key: 'owners',    label: 'Owners & stewards',        count: 4,             default: false, audiences: ['auditor','analyst']   },
+        { key: 'changelog', label: 'Change log (last 90d)',    count: 12,            default: false, audiences: ['engineer','auditor']  },
+      ]},
+    ],
+    audiences: [
+      { key: 'auditor',   label: 'Auditor',     sub: 'SOC 2 / HIPAA evidence' },
+      { key: 'analyst',   label: 'New analyst', sub: 'Onboarding handoff'    },
+      { key: 'executive', label: 'Executive',   sub: 'QBR-ready summary'      },
+      { key: 'engineer',  label: 'Engineer',    sub: 'Full technical detail'  },
+      { key: 'custom',    label: 'Custom',      sub: 'Pick sections manually' },
+    ],
     items: [
       { id: 'd1', model: 'RetailOperations',        ws: 'RetailOps',     type: 'Data Dictionary',       status: 'current',  tables: 13, measures: 47, docs: 11, updated: '11m ago', size: '24.6 KB', tone: 'rose' },
       { id: 'd2', model: 'Management of Change',    ws: 'Operations',    type: 'Full Documentation',    status: 'current',  tables: 46, measures: 30, docs: 9,  updated: '1h ago',  size: '38.1 KB', tone: 'amber' },

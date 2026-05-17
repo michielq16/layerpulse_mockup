@@ -4,88 +4,312 @@ import DATA from './data';
 import { StatCard } from './components';
 
 export function Documents() {
-  const [q, setQ] = React.useState('');
-  const [ws, setWs] = React.useState('all');
-  const [status, setStatus] = React.useState('all');
+  const d = DATA.documents;
+  const [selectedId, setSelectedId] = React.useState(d.pickerModels[0].id);
+  const [pickerQ, setPickerQ] = React.useState('');
+  const [pickerFilter, setPickerFilter] = React.useState('all');
+  const [audience, setAudience] = React.useState('analyst');
+  const [format, setFormat] = React.useState('docx');
+  const [includeLogo, setIncludeLogo] = React.useState(true);
+  const [customSel, setCustomSel] = React.useState(null);
+  const [libQ, setLibQ] = React.useState('');
 
-  const allWs = Array.from(new Set(DATA.documents.items.map(d => d.ws)));
-  const items = DATA.documents.items.filter(d =>
-    (q === '' || d.model.toLowerCase().includes(q.toLowerCase()) || d.type.toLowerCase().includes(q.toLowerCase())) &&
-    (ws === 'all' || d.ws === ws) &&
-    (status === 'all' || d.status === status)
+  const selected = d.pickerModels.find(m => m.id === selectedId) || d.pickerModels[0];
+
+  const audienceDefaults = React.useMemo(() => {
+    const set = new Set();
+    d.sections.forEach(grp => grp.items.forEach(s => {
+      if (s.audiences && s.audiences.includes(audience)) set.add(s.key);
+    }));
+    return set;
+  }, [audience]);
+
+  const activeSel = customSel != null ? customSel : audienceDefaults;
+  const isOn = (k) => activeSel.has(k);
+  const toggle = (k) => {
+    const next = new Set(activeSel);
+    if (next.has(k)) next.delete(k); else next.add(k);
+    setCustomSel(next);
+  };
+  const resetToAudience = () => setCustomSel(null);
+
+  const sectionCount = (s) => s.countKey ? (selected[s.countKey] || 0) : (s.count || 0);
+  const selectedCount = d.sections.reduce((n, grp) => n + grp.items.filter(s => isOn(s.key)).length, 0);
+  const totalItems = d.sections.reduce((n, grp) => n + grp.items.filter(s => isOn(s.key)).reduce((m, s) => m + sectionCount(s), 0), 0);
+  const estPages = Math.max(3, Math.round(selectedCount * 1.4 + totalItems / 18));
+  const estKB = Math.round(8 + selectedCount * 2.2 + totalItems * 0.12);
+
+  const filteredPicker = d.pickerModels.filter(m =>
+    (pickerQ === '' || m.name.toLowerCase().includes(pickerQ.toLowerCase()) || m.ws.toLowerCase().includes(pickerQ.toLowerCase())) &&
+    (pickerFilter === 'all' || m.status === pickerFilter)
   );
 
-  const s = DATA.documents.stats;
+  const libItems = d.items.filter(it =>
+    libQ === '' || it.model.toLowerCase().includes(libQ.toLowerCase()) || it.ws.toLowerCase().includes(libQ.toLowerCase())
+  );
+
+  const previewSections = d.sections.flatMap(grp => grp.items.filter(s => isOn(s.key)).map(s => ({ ...s, count: sectionCount(s), group: grp.group })));
+
   return (
     <>
       <div className="lp-page-head">
         <div className="fade-in">
           <h1 className="lp-page-title">Documents</h1>
-          <p className="lp-page-sub">Every document generated for every scanned model. Sourced from the last scan snapshot.</p>
+          <p className="lp-page-sub">Auto-generate Word documents from any semantic model. Pick a model, choose what to include, preview, and ship to your auditor or new analyst in seconds.</p>
         </div>
         <div className="fade-in d2" style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-outline btn-sm"><Icon name="refresh" size={14}/>Regenerate all</button>
-          <button className="btn btn-sm"><Icon name="plus" size={14}/>New document</button>
+          <button className="btn btn-outline btn-sm"><Icon name="refresh" size={14}/>Regenerate outdated</button>
+          <button className="btn btn-outline btn-sm"><Icon name="external" size={14}/>Open library</button>
         </div>
       </div>
 
       <div className="lp-grid-4 fade-in">
-        <StatCard label="Documented models" value={s.modelsDocumented} unit="/34" icon="file-text" tone="emerald"/>
-        <StatCard label="Total documents"   value={s.total}           icon="folders"    tone="sky"/>
-        <StatCard label="Outdated"          value={s.outdated}         icon="alert-triangle" tone="amber" sub="Model changed since generation"/>
-        <StatCard label="Storage used"      value={s.storage}          icon="database"   tone="violet"/>
+        <StatCard label="Models documented" value={d.stats.modelsDocumented} unit="/34" sub={Math.round(d.stats.modelsDocumented / 34 * 100) + '% coverage'} icon="file-text" tone="emerald"/>
+        <StatCard label="Generated / 30d"   value={d.stats.generated30d}     icon="wand"      tone="sky"/>
+        <StatCard label="Outdated"          value={d.stats.outdated}         sub="Model changed since gen" icon="alert-triangle" tone="amber"/>
+        <StatCard label="Median gen time"   value={d.stats.medianGenSec}     unit="s" sub="across all models" icon="zap" tone="violet"/>
       </div>
 
       <div className="lp-section-head">
-        <h2>Library <span className="count">{items.length} of {DATA.documents.items.length}</span></h2>
+        <h2>Generate a document</h2>
+        <span className="lp-eyebrow">3 steps · ~{d.stats.medianGenSec}s</span>
       </div>
 
-      <div className="lp-card lp-card-flush" style={{ padding: 14, marginBottom: 14 }}>
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          <div className="lp-search" style={{ flex: 1, minWidth: 240 }}>
-            <Icon name="search" size={14}/>
-            <input placeholder="Search documents, models, types…" value={q} onChange={e => setQ(e.target.value)}/>
+      <div className="doc-gen-grid fade-in d2">
+        {/* ── STEP 1: Model picker ── */}
+        <div className="doc-gen-col doc-gen-pick">
+          <div className="doc-gen-step"><span className="doc-gen-step-n">1</span>Pick a model</div>
+
+          <div className="lp-search doc-pick-search">
+            <Icon name="search" size={13}/>
+            <input placeholder="Search models or workspaces…" value={pickerQ} onChange={e => setPickerQ(e.target.value)}/>
           </div>
-          <select className="input input-sm" value={ws} onChange={e => setWs(e.target.value)}>
-            <option value="all">All workspaces</option>
-            {allWs.map(w => <option key={w} value={w}>{w}</option>)}
-          </select>
-          <div className="chip-row">
-            {[['all','All'],['current','Current'],['outdated','Outdated']].map(([k,l]) => (
-              <button key={k} className={'chip' + (status === k ? ' active' : '')} onClick={() => setStatus(k)}>{l}</button>
+
+          <div className="chip-row" style={{ marginBottom: 8 }}>
+            {[['all','All',d.pickerModels.length],['outdated','Outdated',d.pickerModels.filter(m=>m.status==='outdated').length],['never','Never',d.pickerModels.filter(m=>m.status==='never').length]].map(([k,l,n]) => (
+              <button key={k} className={'chip chip-sm' + (pickerFilter === k ? ' active' : '')} onClick={() => setPickerFilter(k)}>
+                {l}<span className="count">{n}</span>
+              </button>
             ))}
           </div>
+
+          <div className="doc-pick-list">
+            {filteredPicker.map(m => (
+              <button key={m.id} className={'doc-pick-row' + (m.id === selectedId ? ' selected' : '')} onClick={() => { setSelectedId(m.id); setCustomSel(null); }}>
+                <div className="doc-pick-icon" style={{
+                  background: `var(--modern-icon-bg-${m.tone})`,
+                  color:      `var(--modern-icon-fg-${m.tone})`,
+                }}>
+                  <Icon name="boxes" size={14}/>
+                </div>
+                <div className="doc-pick-main">
+                  <div className="doc-pick-name">{m.name}</div>
+                  <div className="doc-pick-meta">
+                    <span className="mono">{m.ws}</span>
+                    <span className="sep">·</span>
+                    <span className="mono">{m.tables}t · {m.measures}m</span>
+                  </div>
+                </div>
+                <span className={'doc-pick-stat doc-pick-stat-' + m.status}>
+                  {m.status === 'current'  && <><span className="dot"/>Current</>}
+                  {m.status === 'outdated' && <><span className="dot"/>Outdated</>}
+                  {m.status === 'never'    && <><span className="dot"/>Never</>}
+                </span>
+              </button>
+            ))}
+            {filteredPicker.length === 0 && <div className="empty" style={{ padding: '20px 0', fontSize: 12 }}>No models match.</div>}
+          </div>
+        </div>
+
+        {/* ── STEP 2: Sections + options ── */}
+        <div className="doc-gen-col doc-gen-config">
+          <div className="doc-gen-step"><span className="doc-gen-step-n">2</span>Choose sections</div>
+
+          <div className="doc-aud-row">
+            <div className="lp-eyebrow" style={{ marginBottom: 6 }}>Audience preset</div>
+            <div className="doc-aud-tabs">
+              {d.audiences.filter(a => a.key !== 'custom').map(a => (
+                <button key={a.key} className={'doc-aud-tab' + (audience === a.key && customSel == null ? ' active' : '')} onClick={() => { setAudience(a.key); setCustomSel(null); }}>
+                  <span className="doc-aud-label">{a.label}</span>
+                  <span className="doc-aud-sub">{a.sub}</span>
+                </button>
+              ))}
+            </div>
+            {customSel != null && (
+              <div className="doc-aud-custom">
+                <span><Icon name="sliders" size={11}/> Custom selection — <b>{selectedCount} sections</b></span>
+                <button className="btn btn-ghost btn-sm" onClick={resetToAudience}>Reset to {d.audiences.find(a=>a.key===audience).label}</button>
+              </div>
+            )}
+          </div>
+
+          <div className="doc-sections">
+            {d.sections.map(grp => {
+              const onCount = grp.items.filter(s => isOn(s.key)).length;
+              return (
+                <div key={grp.group} className="doc-section-grp">
+                  <div className="doc-section-grp-head">
+                    <span className="doc-section-grp-name">{grp.group}</span>
+                    <span className="doc-section-grp-count mono">{onCount}/{grp.items.length}</span>
+                  </div>
+                  <div className="doc-section-grp-body">
+                    {grp.items.map(s => {
+                      const on = isOn(s.key);
+                      const cnt = sectionCount(s);
+                      return (
+                        <label key={s.key} className={'doc-section-row' + (on ? ' on' : '')}>
+                          <input type="checkbox" checked={on} onChange={() => toggle(s.key)}/>
+                          <span className="doc-section-check"><Icon name="check" size={10}/></span>
+                          <span className="doc-section-label">{s.label}</span>
+                          {cnt > 0 && <span className="doc-section-count mono">{cnt}</span>}
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="doc-options">
+            <div className="doc-option-row">
+              <span className="lp-eyebrow">Format</span>
+              <div className="seg-tabs" style={{ marginLeft: 'auto' }}>
+                {[['docx','.docx'],['pdf','.pdf'],['md','Markdown']].map(([k,l]) => (
+                  <button key={k} className={'seg-tab' + (format === k ? ' active' : '')} onClick={() => setFormat(k)}>{l}</button>
+                ))}
+              </div>
+            </div>
+            <div className="doc-option-row">
+              <span className="lp-eyebrow">Cover</span>
+              <label className="doc-toggle" style={{ marginLeft: 'auto' }}>
+                <input type="checkbox" checked={includeLogo} onChange={e => setIncludeLogo(e.target.checked)}/>
+                <span className="doc-toggle-track"><span className="doc-toggle-thumb"/></span>
+                <span style={{ fontSize: 12 }}>Include partner logo</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* ── STEP 3: Preview + actions ── */}
+        <div className="doc-gen-col doc-gen-preview">
+          <div className="doc-gen-step"><span className="doc-gen-step-n">3</span>Preview & download</div>
+
+          <div className="doc-preview-card">
+            <div className="doc-preview-chrome">
+              <div className="doc-preview-tabs">
+                <span className="doc-preview-tab active">Page 1</span>
+                <span className="doc-preview-tab">Page 2</span>
+                <span className="doc-preview-tab">…</span>
+                <span className="doc-preview-tab">Page {estPages}</span>
+              </div>
+              <span className="doc-preview-fmt mono">{format.toUpperCase()}</span>
+            </div>
+            <div className="doc-preview-page">
+              {includeLogo && (
+                <div className="doc-preview-header">
+                  <div className="doc-preview-logo">L</div>
+                  <span className="doc-preview-partner">LayerPulse · Contoso Fabric</span>
+                </div>
+              )}
+              <div className="doc-preview-title">{selected.name}</div>
+              <div className="doc-preview-sub">{d.audiences.find(a => a.key === audience).label} report · {selected.ws} · {selected.env}</div>
+              <div className="doc-preview-rule"/>
+              {previewSections.length === 0 && (
+                <div className="doc-preview-empty">No sections selected. Pick at least one section in step 2 to see the document take shape.</div>
+              )}
+              {previewSections.slice(0, 8).map((s, i) => (
+                <div key={s.key} className="doc-preview-section">
+                  <div className="doc-preview-section-h">
+                    <span className="doc-preview-section-n mono">{i + 1}.</span>
+                    <span>{s.label}</span>
+                    {s.count > 1 && <span className="doc-preview-section-c mono">{s.count}</span>}
+                  </div>
+                  <div className="doc-preview-section-lines">
+                    <span style={{ width: '78%' }}/>
+                    <span style={{ width: '64%' }}/>
+                    <span style={{ width: '82%' }}/>
+                  </div>
+                </div>
+              ))}
+              {previewSections.length > 8 && (
+                <div className="doc-preview-more">+ {previewSections.length - 8} more section{previewSections.length - 8 > 1 ? 's' : ''} on later pages</div>
+              )}
+            </div>
+          </div>
+
+          <div className="doc-est-strip">
+            <div className="doc-est-cell">
+              <div className="doc-est-k mono">{estPages}</div>
+              <div className="doc-est-l">pages</div>
+            </div>
+            <div className="doc-est-cell">
+              <div className="doc-est-k mono">~{estKB} KB</div>
+              <div className="doc-est-l">size</div>
+            </div>
+            <div className="doc-est-cell">
+              <div className="doc-est-k mono">~{Math.max(6, Math.round(selectedCount * 2))}s</div>
+              <div className="doc-est-l">to generate</div>
+            </div>
+          </div>
+
+          <div className="doc-gen-actions">
+            <button className="btn btn-outline btn-sm" disabled={selectedCount === 0}><Icon name="external" size={13}/>Share link</button>
+            <button className="btn btn-outline btn-sm" disabled={selectedCount === 0}><Icon name="refresh" size={13}/>Schedule weekly</button>
+            <button className="btn doc-gen-cta" disabled={selectedCount === 0}>
+              <Icon name="arrow-down" size={14}/>Generate .{format}
+            </button>
+          </div>
+
+          {selected.status === 'outdated' && (
+            <div className="doc-gen-hint">
+              <Icon name="alert" size={12}/>
+              <span>Last generated {selected.lastGen}. Model has changed since — regenerate to refresh.</span>
+            </div>
+          )}
+          {selected.status === 'never' && (
+            <div className="doc-gen-hint doc-gen-hint-info">
+              <Icon name="info" size={12}/>
+              <span>No prior document for this model. First generation will become the baseline.</span>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="doc-list fade-in d2">
-        {items.map(d => (
-          <div key={d.id} className="doc-row">
+      <div className="lp-section-head" style={{ marginTop: 28 }}>
+        <h2>Recently generated <span className="count">{libItems.length} of {d.items.length}</span></h2>
+        <div className="lp-search" style={{ width: 240 }}>
+          <Icon name="search" size={13}/>
+          <input placeholder="Search library…" value={libQ} onChange={e => setLibQ(e.target.value)}/>
+        </div>
+      </div>
+
+      <div className="doc-list fade-in d3">
+        {libItems.map(it => (
+          <div key={it.id} className="doc-row">
             <div className="doc-icon" style={{
-              background: `var(--modern-icon-bg-${d.tone})`,
-              color:      `var(--modern-icon-fg-${d.tone})`,
+              background: `var(--modern-icon-bg-${it.tone})`,
+              color:      `var(--modern-icon-fg-${it.tone})`,
             }}>
               <Icon name="file-text" size={18}/>
             </div>
             <div style={{ minWidth: 0, flex: 1 }}>
               <div className="doc-title">
-                {d.model}
-                <span className={'doc-status ' + d.status}>
-                  <span className="dot"/>{d.status === 'current' ? 'Current' : 'Outdated'}
+                {it.model}
+                <span className={'doc-status ' + it.status}>
+                  <span className="dot"/>{it.status === 'current' ? 'Current' : 'Outdated'}
                 </span>
               </div>
               <div className="doc-meta">
-                <span>{d.type}</span>
+                <span>{it.type}</span>
                 <span className="sep">·</span>
-                <span className="mono">{d.ws}</span>
+                <span className="mono">{it.ws}</span>
                 <span className="sep">·</span>
-                <span>{d.tables}t · {d.measures}m</span>
+                <span>{it.tables}t · {it.measures}m</span>
                 <span className="sep">·</span>
-                <span>{d.docs} documents</span>
+                <span>updated {it.updated}</span>
                 <span className="sep">·</span>
-                <span>updated {d.updated}</span>
-                <span className="sep">·</span>
-                <span className="mono">{d.size}</span>
+                <span className="mono">{it.size}</span>
               </div>
             </div>
             <div className="doc-actions">
@@ -95,7 +319,7 @@ export function Documents() {
             </div>
           </div>
         ))}
-        {items.length === 0 && <div className="empty">No documents match your filters.</div>}
+        {libItems.length === 0 && <div className="empty">No documents match. Generate one above to see it appear here.</div>}
       </div>
     </>
   );
