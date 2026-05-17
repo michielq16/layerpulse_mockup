@@ -139,7 +139,7 @@ export function Sidebar({ route, setRoute }) {
       <div className="lp-sidebar-dots"/>
       <div className="lp-sidebar-logo">
         <div className="lp-mark">L</div>
-        <div className="lp-word">Layer<span>Pulze</span></div>
+        <div className="lp-word">Layer<span>Pulse</span></div>
       </div>
       <div className="lp-tenant" onClick={() => {}}>
         <div className="t-dot"/>
