@@ -1,4 +1,4 @@
-// Consolidated data for LayerPulze — combines Data.jsx through Data5.jsx
+// Consolidated data for LayerPulse — combines Data.jsx through Data5.jsx
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const __spark = (n, base = 10, vol = 0.5) =>
