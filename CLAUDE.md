@@ -135,18 +135,34 @@ mockup design → operator approves → LP-side PRD authored
 
 You don't run LP-side commands — operator does. Structure your output so they can move it through without rework.
 
-## Delivery protocol — always link the preview
+## Delivery protocol — always open a PR and link the preview
 
-**After every push** that changes anything visible in the UI, end the reply with a one-line link block so the operator can click straight through to verify. No exceptions.
+**What you actually have in this repo:** push access to feature branches. **No CI/CD, no auto-deploy, no auto-merge.** The Vercel project visible from your MCP token watches a *different* repo (`michielq16/layerpulse` — the real product), so pushes to `layerpulse_mockup` do not trigger any deploy that you can observe. If the operator has a separate Vercel project hooked to this repo, it lives in a scope outside your token and you cannot confirm its slug.
 
-- Production: `https://layerpulze-mockup.vercel.app/<route>` (Vercel URL is historical — see Naming).
-- Branch preview: Vercel auto-deploys every branch to `https://layerpulze-mockup-git-<branch>-<scope>.vercel.app/<route>` (exact slug depends on the project scope — pull it from Vercel deployment logs or the PR comment if unsure; if you can't confirm the slug, link production and flag the branch name).
-- Always deep-link to the affected route (e.g. `/documents`, not the root) so the operator lands on the change.
-- If the change is doc-only / narrative-only with no UI delta, link the file on GitHub instead.
+**The flow that actually works:**
 
-Format:
+1. Develop on the assigned feature branch (`claude/<topic>-<id>`).
+2. Push the branch with `git push -u origin <branch>`.
+3. **Open a PR** against `main` via `mcp__github__create_pull_request` (this is the operator's signal + the only place a Vercel-preview bot would post a working URL).
+4. End the reply with a link block pointing to the PR — and, if you've seen a Vercel preview bot comment land on it, the deep-linked preview route too.
 
-> 🔗 **View:** https://layerpulze-mockup.vercel.app/documents *(production · ~60s after Vercel build)*
+**Never:**
+- Auto-merge a PR (use `mcp__github__merge_pull_request` only when explicitly asked).
+- Claim a preview URL works without proof — production (`layerpulze-mockup.vercel.app`) only reflects `main`, not your branch.
+- Link an unmerged branch to the production URL.
+
+**Link block format (after every PR-opening turn):**
+
+> 🔗 **PR:** https://github.com/michielq16/layerpulse_mockup/pull/N
+> 🔗 **Preview:** *(check PR for Vercel bot comment — branch-preview URL lands there ~60s after build, if Vercel is hooked to this repo)*
+
+**Link block format (when work is doc-only with no UI delta):**
+
+> 🔗 **File:** https://github.com/michielq16/layerpulse_mockup/blob/<branch>/<path>
+
+**Subsequent commits on an existing PR:** push the commit, then reply with the PR URL again so the operator knows where to look. The Vercel bot will redeploy on each push.
+
+**If the operator confirms a separate Vercel scope for the mockup repo:** update this section with the real project slug, then start linking branch-preview URLs directly.
 
 ## Session opener pattern
 
