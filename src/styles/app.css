@@ -2122,15 +2122,24 @@ select.input { height: 34px; padding: 0 28px 0 12px; }
 }
 .settings-danger-cta:hover { background: oklch(0.48 0.22 25); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
 
-/* Settings · Planned ingestion axes (roadmap teaser) */
+/* Settings · Planned ingestion axes — greyed-out roadmap tiles, BACKLOG-sequenced */
 .ing-planned { background: linear-gradient(180deg, oklch(0.99 0.02 290) 0%, var(--card) 50%); }
 .dark .ing-planned { background: linear-gradient(180deg, oklch(0.22 0.05 290 / 0.4) 0%, var(--card) 60%); }
 .ing-planned-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border-radius: 8px; overflow: hidden; margin-top: 4px; }
 .ing-planned-row {
-  display: grid; grid-template-columns: 1fr auto;
+  display: grid; grid-template-columns: 28px 1fr auto;
   gap: 14px; align-items: center;
   padding: 12px 14px;
   background: var(--card);
+  opacity: 0.78;
+  transition: opacity 0.15s;
+}
+.ing-planned-row:hover { opacity: 1; }
+.ing-planned-seq {
+  display: grid; place-items: center;
+  width: 24px; height: 24px;
+  background: var(--muted); color: var(--muted-foreground);
+  border-radius: 50%; font-size: 11px; font-weight: 600;
 }
 .ing-planned-main { min-width: 0; }
 .ing-planned-name {
@@ -2139,10 +2148,17 @@ select.input { height: 34px; padding: 0 28px 0 12px; }
 }
 .ing-planned-dot {
   width: 8px; height: 8px; border-radius: 50%;
-  background: oklch(0.55 0.18 290);
-  box-shadow: 0 0 0 3px oklch(0.55 0.18 290 / 0.2);
+  background: transparent;
+  border: 1.5px dashed oklch(0.55 0.05 250);
 }
-.ing-planned-meta { font-size: 11px; color: var(--muted-foreground); margin-top: 4px; }
-.ing-planned-tier { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; flex-shrink: 0; }
-.ing-planned-prd { font-size: 10.5px; color: oklch(0.50 0.17 237); }
+.ing-planned-meta { font-size: 11px; color: var(--muted-foreground); margin-top: 4px; line-height: 1.4; }
+.ing-planned-surface {
+  font-size: 11px; color: oklch(0.45 0.16 290); margin-top: 4px;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.dark .ing-planned-surface { color: oklch(0.82 0.10 290); }
+.ing-planned-surface b { font-weight: 600; }
+
+.ing-planned-tier { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; flex-shrink: 0; min-width: 130px; }
+.ing-planned-prd { font-size: 10.5px; color: oklch(0.50 0.17 237); text-decoration: none; }
 .ing-planned-prd:hover { text-decoration: underline; }
