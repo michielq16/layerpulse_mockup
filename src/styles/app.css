@@ -1780,13 +1780,13 @@ select.input { height: 34px; padding: 0 28px 0 12px; }
 .lp-sidebar-logo-row {
   display: flex; align-items: center; justify-content: space-between;
   gap: 10px;
-  padding: 16px 14px 10px;
+  padding: 20px 14px 14px;
   position: relative; z-index: 2;
 }
 .lp-sidebar-logo-img {
-  height: 28px;
+  height: 44px;
   width: auto;
-  max-width: calc(100% - 32px);
+  max-width: calc(100% - 36px);
   object-fit: contain;
   display: block;
 }
