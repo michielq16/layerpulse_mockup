@@ -1541,7 +1541,7 @@ select.input { height: 34px; padding: 0 28px 0 12px; }
 .ws-health-dot.tone-rose-solid    { background: oklch(0.55 0.22 25);  }
 
 /* Filter bar */
-.ws-filter-card { padding: 10px 12px; margin-bottom: 14px; }
+.ws-filter-card { padding: 14px; margin-bottom: 14px; }
 .ws-filter-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
 /* Capacity selector */

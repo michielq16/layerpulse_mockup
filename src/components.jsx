@@ -2,6 +2,50 @@ import React from 'react';
 import Icon from './Icon';
 import DATA from './data';
 
+// Shared capacity-scope selector — used in the page-head top-right of every page
+// where the underlying KPIs / lists are capacity-attributable.
+// Visual matches the /workspaces head-pill style (ws-cap-* classes).
+export function CapacityScopeSelector({ value, onChange }) {
+  const [open, setOpen] = React.useState(false);
+  const capacities = DATA.workspaces.capacities;
+  const selected = capacities.find(c => c.id === value);
+  React.useEffect(() => {
+    if (!open) return;
+    const h = () => setOpen(false);
+    const t = setTimeout(() => window.addEventListener('click', h), 0);
+    return () => { clearTimeout(t); window.removeEventListener('click', h); };
+  }, [open]);
+  return (
+    <div className="ws-cap-wrap ws-cap-wrap-head" onClick={e => e.stopPropagation()}>
+      <button className={'ws-cap-btn' + (open ? ' open' : '')} onClick={() => setOpen(o => !o)}>
+        <span className={'ws-cap-dot' + (value === 'all' ? '' : ' active')}/>
+        <span className="ws-cap-name">{value === 'all' ? 'All capacities' : selected?.name}</span>
+        {value !== 'all' && selected && <span className="badge badge-outline ws-cap-sku">{selected.sku}</span>}
+        {value === 'all' && <span className="ws-cap-count mono">{capacities.length}</span>}
+        <Icon name="chevron-down" size={12}/>
+      </button>
+      {open && (
+        <div className="ws-cap-pop ws-cap-pop-right">
+          <div className="ws-cap-pop-head">CAPACITIES · {capacities.length}</div>
+          <button className={'ws-cap-pop-row' + (value === 'all' ? ' active' : '')} onClick={() => { onChange('all'); setOpen(false); }}>
+            <span className="ws-cap-pop-name">All capacities</span>
+            {value === 'all' && <Icon name="check" size={13}/>}
+          </button>
+          {capacities.map(c => (
+            <button key={c.id} className={'ws-cap-pop-row' + (value === c.id ? ' active' : '')} onClick={() => { onChange(c.id); setOpen(false); }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="ws-cap-pop-name">{c.name} <span className="badge badge-outline ws-cap-sku-sm">{c.sku}</span></div>
+                <div className="ws-cap-pop-sub mono">${c.monthlyCost.toLocaleString()}/mo · {c.region}</div>
+              </div>
+              {value === c.id && <Icon name="check" size={13}/>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function StatCard({ label, value, unit, sub, delta, icon, tone = 'sky', spark }) {
   return (
     <div className="lp-card lp-stat">

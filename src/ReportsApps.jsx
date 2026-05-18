@@ -1,7 +1,7 @@
 import React from 'react';
 import Icon from './Icon';
 import DATA from './data';
-import { StatCard } from './components';
+import { StatCard, CapacityScopeSelector } from './components';
 
 const DOT_COLOR = { healthy: 'oklch(0.55 0.17 145)', dormant: 'oklch(0.65 0.18 55)', orphan: 'oklch(0.55 0.22 25)', broken: 'oklch(0.55 0.22 25)' };
 const APP_TONES = {
@@ -111,6 +111,7 @@ export function ReportsApps({ onGoModel }) {
   const [search, setSearch] = React.useState('');
   const [statusFilter, setStatusFilter] = React.useState('all');
   const [sort, setSort] = React.useState('opens');
+  const [capacityId, setCapId] = React.useState('all');                          // page-scope filter (top-right head)
   const r = DATA.reports;
   const a = DATA.apps;
 
@@ -146,7 +147,8 @@ export function ReportsApps({ onGoModel }) {
           <h1 className="lp-page-title">Report Catalog</h1>
           <p className="lp-page-sub">Your full report estate — active, dormant, and orphaned reports joined to dataset health, viewer activity, and published apps.</p>
         </div>
-        <div className="fade-in d2" style={{ display:'flex', gap:8 }}>
+        <div className="fade-in d2 ws-head-actions">
+          <CapacityScopeSelector value={capacityId} onChange={setCapId}/>
           <button className="btn btn-outline btn-sm"><Icon name="refresh" size={12}/>Re-scan</button>
           <button className="btn btn-sm"><Icon name="external" size={12}/>Export</button>
         </div>

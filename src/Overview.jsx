@@ -1,10 +1,11 @@
 import React from 'react';
 import Icon from './Icon';
 import DATA from './data';
-import { StatCard, Provenance, IssueCard, HealthRibbon, EnvBadge } from './components';
+import { StatCard, Provenance, IssueCard, HealthRibbon, EnvBadge, CapacityScopeSelector } from './components';
 
 export function Overview({ onOpenIssue, onGoWorkspace }) {
   const o = DATA.overview;
+  const [capacityId, setCapId] = React.useState('all');
 
   return (
     <>
@@ -16,7 +17,8 @@ export function Overview({ onOpenIssue, onGoWorkspace }) {
             <span className="mono">Last sync 4m ago · F64 / west-europe</span>
           </p>
         </div>
-        <div className="fade-in d2" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div className="fade-in d2 ws-head-actions">
+          <CapacityScopeSelector value={capacityId} onChange={setCapId}/>
           <Provenance level="silver"/>
           <button className="btn btn-outline btn-sm"><Icon name="refresh" size={14}/>Re-sync</button>
           <button className="btn btn-sm"><Icon name="wand" size={14}/>Generate report</button>

@@ -1,7 +1,7 @@
 import React from 'react';
 import Icon from './Icon';
 import DATA from './data';
-import { StatCard, Sparkline } from './components';
+import { StatCard, Sparkline, CapacityScopeSelector } from './components';
 import { Avatar } from './UserIntel';
 
 const OP_GROUP_BY_KEY = (groups) => Object.fromEntries(groups.map(g => [g.key, g]));
@@ -38,6 +38,7 @@ export function TenantActivity({ onOpenUser }) {
 
   const [q, setQ]                 = React.useState('');
   const [range, setRange]         = React.useState('24h');
+  const [capacityId, setCapId]    = React.useState('all');                     // page-scope filter (top-right head)
   const [groupSel, setGroupSel]   = React.useState(new Set());                 // empty = all
   const [ws, setWs]               = React.useState('all');
   const [sens, setSens]           = React.useState('all');
@@ -123,7 +124,8 @@ export function TenantActivity({ onOpenUser }) {
           <h1 className="lp-page-title">Tenant Activity <span className="badge badge-outline" style={{ marginLeft: 10, fontSize: 10, color: 'oklch(0.45 0.18 290)', borderColor: 'oklch(0.85 0.05 290)' }}>FORENSIC</span></h1>
           <p className="lp-page-sub">Searchable, exportable history of every Fabric operation across this tenant. Source: <span className="mono">/admin/activityevents</span> (1-hour windows, 30-day retention). Auditor-grade — every timestamp is UTC, every actor is a UPN.</p>
         </div>
-        <div className="fade-in d2" style={{ display: 'flex', gap: 8 }}>
+        <div className="fade-in d2 ws-head-actions">
+          <CapacityScopeSelector value={capacityId} onChange={setCapId}/>
           <button className="btn btn-outline btn-sm"><Icon name="star" size={13}/>Save current query</button>
           <button className="btn btn-outline btn-sm"><Icon name="bell" size={13}/>Watch this query</button>
           <button className="btn btn-sm"><Icon name="arrow-down" size={14}/>Export CSV ({filtered.length})</button>
