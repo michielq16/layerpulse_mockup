@@ -1003,6 +1003,56 @@ const DATA = {
       { id: 'e040', at: '2026-05-15T09:42:08Z', upn: 'michiel.v@contoso.onmicrosoft.com',      actor: 'Michiel Vermeer',     group: 'view',   op: 'ViewReport',                       item: 'Operations Scorecard · cycle-times',  ws: 'Ops-Score',    sens: 'Confidential', status: 'ok',   ip: '85.144.12.18'   },
     ],
   },
+
+  // /portfolio — F-2 partner wedge (priority #S3). Partner sees ALL their customer Fabric tenants in one pane.
+  partnerPortfolio: {
+    partner: { name: 'Acme Data Partners', customerCount: 12, invitedPending: 2 },
+    summary: {
+      customers:       12,
+      invitedPending:  2,
+      totalCUSpend:    47820,                                                          // €/mo aggregate across portfolio
+      spendSpark:      __wkSpark(14, 45, 0.15, 31),                                    // 14d total-spend trend
+      throttlingNow:   2,                                                              // active throttling customers
+      aggregateHealth: 71,
+      healthDelta:     -3,                                                             // week-over-week
+      criticalIssues:  7,                                                              // open critical findings across all 12
+    },
+    customers: [
+      { id: 'contoso',   name: 'Contoso Fabric',        tier: 'F64', region: 'west-europe',     env: 'F64-prod-we', health: 74, healthDelta: +3,  cuSpark: __wkSpark(7, 62, 0.4, 11),  cuPercent: 62, monthlySpend: 12400, currency: '€', star: true,  throttling: false, lastSync: '2h ago',  topIssue: { sev: 'critical', text: '3 Import models > 50M rows' } },
+      { id: 'nw-trade',  name: 'Northwind Traders',     tier: 'F32', region: 'east-us',         env: 'F32-prod-eu', health: 88, healthDelta: +2,  cuSpark: __wkSpark(7, 38, 0.3, 12),  cuPercent: 38, monthlySpend: 6200,  currency: '€', star: false, throttling: false, lastSync: '14m ago', topIssue: null },
+      { id: 'adv-works', name: 'Adventure Works',       tier: 'F16', region: 'south-central-us',env: 'F16-prod-us', health: 62, healthDelta: -1,  cuSpark: __wkSpark(7, 78, 0.6, 13),  cuPercent: 78, monthlySpend: 3100,  currency: '€', star: false, throttling: false, lastSync: '1h ago',  topIssue: { sev: 'warning', text: 'Refresh failure rate 18% / 7d' } },
+      { id: 'wwi',       name: 'Wide World Importers',  tier: 'F64', region: 'west-europe',     env: 'F64-prod-we', health: 81, healthDelta: +4,  cuSpark: __wkSpark(7, 55, 0.3, 14),  cuPercent: 55, monthlySpend: 11800, currency: '€', star: true,  throttling: false, lastSync: '6h ago',  topIssue: { sev: 'info',    text: 'Doc coverage 41% — under target' } },
+      { id: 'fabrikam',  name: 'Fabrikam',              tier: 'F32', region: 'north-europe',    env: 'F32-prod-ne', health: 54, healthDelta: -8,  cuSpark: __wkSpark(7, 92, 0.3, 15),  cuPercent: 92, monthlySpend: 5900,  currency: '€', star: false, throttling: true,  lastSync: '8h ago',  topIssue: { sev: 'critical', text: 'Throttling 12h/wk on F32' } },
+      { id: 'tw-trade',  name: 'Tailwind Traders',      tier: 'F16', region: 'west-europe',     env: 'F16-prod-we', health: 79, healthDelta: 0,   cuSpark: __wkSpark(7, 44, 0.3, 16),  cuPercent: 44, monthlySpend: 2900,  currency: '€', star: false, throttling: false, lastSync: '22m ago', topIssue: null },
+      { id: 'litware',   name: 'Litware',               tier: 'F8',  region: 'west-us',         env: 'F8-prod-wus', health: 91, healthDelta: +1,  cuSpark: __wkSpark(7, 41, 0.3, 17),  cuPercent: 41, monthlySpend: 1540,  currency: '$', star: false, throttling: false, lastSync: '3h ago',  topIssue: null },
+      { id: 'proseware', name: 'Proseware',             tier: 'F32', region: 'south-europe',    env: 'F32-prod-se', health: 67, healthDelta: -2,  cuSpark: __wkSpark(7, 58, 0.4, 18),  cuPercent: 58, monthlySpend: 6100,  currency: '€', star: false, throttling: false, lastSync: '4h ago',  topIssue: { sev: 'warning', text: '14 dormant Power BI reports' } },
+      { id: 'lucerne',   name: 'Lucerne Publishing',    tier: 'F2',  region: 'north-europe',    env: 'F2-prod-ne',  health: 84, healthDelta: +1,  cuSpark: __wkSpark(7, 35, 0.3, 19),  cuPercent: 35, monthlySpend: 380,   currency: '€', star: false, throttling: false, lastSync: '1h ago',  topIssue: null },
+      { id: 'margie',    name: "Margie's Travel",        tier: 'F8',  region: 'uk-south',        env: 'F8-prod-uks', health: 58, healthDelta: -4,  cuSpark: __wkSpark(7, 0, 0.0, 20),   cuPercent: 0,  monthlySpend: 1490,  currency: '£', star: false, throttling: false, lastSync: '3d ago',  topIssue: { sev: 'critical', text: 'Partner-read REVOKED · re-invite needed' } },
+      { id: 'coho',      name: 'Coho Vineyard',         tier: 'F4',  region: 'west-europe',     env: 'F4-prod-we',  health: 76, healthDelta: 0,   cuSpark: __wkSpark(7, 51, 0.4, 21),  cuPercent: 51, monthlySpend: 760,   currency: '€', star: false, throttling: false, lastSync: '5h ago',  topIssue: null },
+      { id: 'trey',      name: 'Trey Research',         tier: 'F16', region: 'brazil-south',    env: 'F16-prod-br', health: 43, healthDelta: -12, cuSpark: __wkSpark(7, 88, 0.6, 22),  cuPercent: 88, monthlySpend: 2900,  currency: '$', star: false, throttling: true,  lastSync: '12m ago', topIssue: { sev: 'critical', text: 'Capacity migration unstable · 4 refresh failures' } },
+    ],
+    // Worst-N by combined movement (delta of health + cost + wasted-spend). Ammo for the partner's QBR / outbound calls.
+    worstMovement: [
+      { id: 'trey',     name: 'Trey Research',  env: 'F16-prod-br', healthDelta: -12, costDeltaPct: +8,  wastedSpendDelta: +220, topAction: 'Capacity migration to F16-prod-br destabilized refresh schedule; 4 datasets failing nightly', cta: 'Schedule call' },
+      { id: 'fabrikam', name: 'Fabrikam',       env: 'F32-prod-ne', healthDelta: -8,  costDeltaPct: +24, wastedSpendDelta: +840, topAction: 'Throttling 12h/wk on F32 — recommend F64 upgrade OR rebalance workload off peak windows', cta: 'Schedule call' },
+      { id: 'margie',   name: "Margie's Travel", env: 'F8-prod-uks', healthDelta: -4,  costDeltaPct: 0,   wastedSpendDelta: 0,   topAction: 'Customer admin revoked partner-read access 3d ago; visibility blocked until re-invite is accepted', cta: 'Re-invite' },
+      { id: 'adv-works',name: 'Adventure Works',env: 'F16-prod-us', healthDelta: -1,  costDeltaPct: +6,  wastedSpendDelta: +180, topAction: 'Refresh failure rate climbed 11% → 18% over 7d; root cause traces to one Power BI dataset', cta: 'Open issue' },
+      { id: 'proseware',name: 'Proseware',      env: 'F32-prod-se', healthDelta: -2,  costDeltaPct: +3,  wastedSpendDelta: +320, topAction: '14 Power BI reports unopened in 90d still consuming refresh CU — recommend deprecation review', cta: 'Open report' },
+    ],
+    // F-2 activity feed — invitations, access grants/revocations, capacity changes across the portfolio.
+    f2Activity: [
+      { id: 'fa1',  at: '2h ago',  atAbs: '2026-05-17 13:08 UTC', tone: 'emerald', type: 'access_granted',     customer: 'Northwind Traders',     detail: 'granted partner-read access',                            icon: 'shield-check' },
+      { id: 'fa2',  at: '4h ago',  atAbs: '2026-05-17 11:24 UTC', tone: 'emerald', type: 'invite_accepted',    customer: 'Trey Research',         detail: 'invitation accepted · partner-of-record live',          icon: 'check' },
+      { id: 'fa3',  at: '8h ago',  atAbs: '2026-05-17 07:42 UTC', tone: 'rose',    type: 'throttle_event',     customer: 'Fabrikam',              detail: 'capacity hit 100% CU — sustained 22 min',               icon: 'alert' },
+      { id: 'fa4',  at: '12h ago', atAbs: '2026-05-17 03:14 UTC', tone: 'sky',     type: 'workspaces_added',   customer: 'Wide World Importers',  detail: '3 new workspaces added under partner-of-record scope',  icon: 'folders' },
+      { id: 'fa5',  at: '1d ago',  atAbs: '2026-05-16 14:38 UTC', tone: 'amber',   type: 'invite_expired',     customer: 'Coho Vineyard',         detail: 'invitation expired · ready to re-send',                 icon: 'alert-triangle' },
+      { id: 'fa6',  at: 'yesterday', atAbs: '2026-05-16 09:22 UTC', tone: 'sky',   type: 'admin_added',        customer: 'Lucerne Publishing',    detail: 'new customer admin added (jen.k@lucernepublishing.com)',icon: 'users' },
+      { id: 'fa7',  at: '2d ago',  atAbs: '2026-05-15 16:12 UTC', tone: 'sky',     type: 'sku_downgrade',      customer: 'Tailwind Traders',      detail: 'F-SKU downgraded F16 → F8 (-€480/mo)',                  icon: 'arrow-down' },
+      { id: 'fa8',  at: '3d ago',  atAbs: '2026-05-14 11:48 UTC', tone: 'rose',    type: 'access_revoked',     customer: "Margie's Travel",       detail: 'customer admin revoked partner-read · visibility lost', icon: 'shield' },
+      { id: 'fa9',  at: '3d ago',  atAbs: '2026-05-14 09:08 UTC', tone: 'sky',     type: 'invoice_settled',    customer: 'Litware',               detail: 'monthly invoice settled',                                icon: 'check' },
+      { id: 'fa10', at: '4d ago',  atAbs: '2026-05-13 18:32 UTC', tone: 'amber',   type: 'refresh_alert',      customer: 'Adventure Works',       detail: 'alert fired — refresh failure rate exceeded 15% / 7d',  icon: 'bell' },
+    ],
+  },
 };
 
 export default DATA;
