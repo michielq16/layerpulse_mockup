@@ -1506,3 +1506,114 @@ select.input { height: 34px; padding: 0 28px 0 12px; }
 .rep-trend-chart { width: 100%; height: 120px; }
 .rep-rank-num { font-family: var(--font-mono); font-size: 11px; color: var(--muted-foreground); font-weight: 600; }
 .mini-spark { display: inline-block; vertical-align: middle; }
+
+/* ─── /workspaces v2 (capacity-scoped, 5-KPI, cost-aware cards) ─── */
+
+.ws-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+@media (max-width: 1280px) {
+  .ws-grid-5 { grid-template-columns: repeat(3, 1fr); }
+  .ws-grid-5 > :nth-child(n+4) { grid-column: span 1; }
+}
+
+/* Health-score card: nested pillar breakdown */
+.ws-health-card .lp-stat-body { gap: 6px; }
+.ws-health-sub {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 6px;
+}
+.ws-health-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 8px;
+  background: var(--muted);
+  border-radius: 999px;
+  font-size: 10.5px; color: var(--foreground);
+}
+.ws-health-pill b { font-weight: 600; font-size: 10.5px; }
+.ws-health-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.ws-health-dot.tone-sky-solid     { background: oklch(0.55 0.18 237); }
+.ws-health-dot.tone-violet-solid  { background: oklch(0.55 0.18 290); }
+.ws-health-dot.tone-amber-solid   { background: oklch(0.62 0.16 65);  }
+.ws-health-dot.tone-emerald-solid { background: oklch(0.55 0.16 150); }
+.ws-health-dot.tone-rose-solid    { background: oklch(0.55 0.22 25);  }
+
+/* Filter bar */
+.ws-filter-card { padding: 12px; margin-bottom: 14px; }
+.ws-filter-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+/* Capacity selector — left of search */
+.ws-cap-wrap { position: relative; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.ws-cap-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  color: var(--muted-foreground); text-transform: uppercase;
+}
+.ws-cap-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 34px; padding: 0 10px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit; font-size: 12.5px; font-weight: 500;
+  cursor: pointer;
+  min-width: 220px;
+  transition: all 0.12s;
+}
+.ws-cap-btn:hover { border-color: oklch(0.78 0.04 250); }
+.ws-cap-btn.open  { border-color: oklch(0.55 0.18 237); box-shadow: 0 0 0 3px oklch(0.69 0.17 237 / 0.15); }
+.ws-cap-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--muted-foreground);
+  flex-shrink: 0;
+}
+.ws-cap-dot.active { background: oklch(0.55 0.18 237); }
+.ws-cap-name { flex: 1; min-width: 0; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ws-cap-count {
+  font-size: 10px;
+  padding: 1px 6px;
+  background: var(--muted);
+  border-radius: 4px;
+  color: var(--muted-foreground);
+}
+.ws-cap-sku, .ws-cap-sku-sm {
+  font-family: var(--font-mono); font-size: 10px; height: 18px;
+  padding: 0 6px;
+}
+
+.ws-cap-pop {
+  position: absolute; top: 40px; left: 70px; z-index: 20;
+  min-width: 280px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg, 0 8px 24px rgb(0 0 0 / 0.12));
+  padding: 6px;
+}
+.ws-cap-pop-head {
+  padding: 6px 10px 4px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em;
+  color: var(--muted-foreground); text-transform: uppercase;
+}
+.ws-cap-pop-row {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; padding: 8px 10px;
+  background: transparent; border: 0; border-radius: 6px;
+  font-family: inherit; font-size: 12.5px;
+  cursor: pointer; text-align: left;
+  color: var(--foreground);
+}
+.ws-cap-pop-row:hover { background: var(--muted); }
+.ws-cap-pop-row.active { background: oklch(0.97 0.03 237); }
+.dark .ws-cap-pop-row.active { background: oklch(0.22 0.05 237); }
+.ws-cap-pop-name { font-weight: 500; display: flex; align-items: center; gap: 6px; }
+.ws-cap-pop-sub  { font-size: 11px; color: var(--muted-foreground); margin-top: 2px; }
+
+/* Env chips with colored dots */
+.ws-env-chips .ws-env-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.ws-env-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* Workspace card v2 — add 3rd stat for $/mo, drop tables/measures */
+/* .ws-card / .ws-card-head / .ws-card-stats already styled in app.css; */
+/* the 3-column stat grid still fits when models/reports/$ replace models/tables/measures */

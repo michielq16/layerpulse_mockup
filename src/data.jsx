@@ -83,15 +83,39 @@ const DATA = {
 
   workspaces: {
     counts: { workspaces: 12, models: 34, tables: 496, measures: 976 },
+    // Capacities feed the /workspaces capacity selector + per-workspace $ cost math.
+    // Pricing $ comes from the Capacity Pricing card in Settings; CU-share allocates spend across workspaces.
+    capacities: [
+      { id: 'cap-prd', name: 'Contoso Fabric — PROD',   sku: 'F64', region: 'west-europe', monthlyCost: 12400, currency: '$', avgCUPercent: 71, throttling: false },
+      { id: 'cap-dev', name: 'Contoso Fabric — DEV/UAT', sku: 'F8',  region: 'west-europe', monthlyCost: 620,   currency: '$', avgCUPercent: 38, throttling: false },
+    ],
+    // Aggregate KPIs for the /workspaces strip. Recomputed at view time when capacity filter narrows.
+    summary: {
+      totalWorkspaces:    12,
+      totalModels:        34,
+      totalReports:       91,
+      // Health Score (weighted: FinOps 40% · Quality 35% · Governance 25%)
+      // FinOps  = (adoption 64 + capacity-eff 71 + license-eff 92) / 3 = 75.7
+      // Quality = (doc coverage 78 + model quality avg 70) / 2     = 74
+      // Gov     = governance compliance score                       = 48
+      // Weighted = (75.7×40 + 74×35 + 48×25) / 100                  = 67
+      health: { score: 67, finops: 76, quality: 74, governance: 48, weights: { finops: 40, quality: 35, governance: 25 } },
+      totalCost:          { value: 17820, currency: '$', capacityCost: 13020, licenseCost: 4800 },
+      wastedSpend:        { value: 2680,  currency: '$', sources: [
+        { label: 'Unused Pro/PPU licenses',          amount: 1820, count: 17, hint: '17 seats with 0 activity / 30d — reclaim or downgrade' },
+        { label: 'Dormant reports refresh CU',       amount: 552,  count: 14, hint: '14 reports unopened 90d still consuming refresh budget' },
+        { label: 'Over-provisioned DEV/UAT capacity', amount: 308, count: 1,  hint: 'DEV F8 avg 38% — could downsize to F4 (–$310/mo)' },
+      ]},
+    },
     items: [
-      { id: 'sales-prod', name: 'Sales-Prod',   env: 'PROD', star: true,  models: 5, tables: 68, measures: 172, scanned: '2h ago',  owner: 'A. Rivera',     iconTone: 'sky',     health: 88 },
-      { id: 'finance-prod', name: 'Finance-Prod', env: 'PROD', star: true,  models: 8, tables: 120, measures: 301, scanned: '1d ago',  owner: 'M. Qureshi',    iconTone: 'violet',  health: 62 },
-      { id: 'hr-data',    name: 'HR-Data',      env: 'DEV',  star: false, models: 2, tables: 18, measures: 42,  scanned: '—',       owner: 'J. Patel',      iconTone: 'emerald', health: null, scanCta: true },
-      { id: 'supply-uat', name: 'Supply-Chain', env: 'UAT',  star: false, models: 4, tables: 52, measures: 98,  scanned: '6h ago',  owner: 'T. Hoffmann',   iconTone: 'amber',   health: 74 },
-      { id: 'retail-ops', name: 'RetailOps',    env: 'PROD', star: true,  models: 7, tables: 94, measures: 210, scanned: '12h ago', owner: 'S. Lindqvist',  iconTone: 'rose',    health: 92 },
-      { id: 'mkt-dev',    name: 'Marketing',    env: 'DEV',  star: false, models: 3, tables: 38, measures: 74,  scanned: '3d ago',  owner: 'P. Nguyen',      iconTone: 'sky',     health: 55 },
-      { id: 'ops-score',  name: 'Operations Scorecard', env: 'PROD', star: false, models: 3, tables: 47, measures: 59, scanned: '1d ago', owner: 'K. Andersen', iconTone: 'emerald', health: 81 },
-      { id: 'ana-sbx',    name: 'Analytics-Sandbox', env: 'DEV', star: false, models: 2, tables: 59, measures: 20, scanned: '—', owner: 'D. Okafor', iconTone: 'violet', health: null, scanCta: true },
+      { id: 'sales-prod',   name: 'Sales-Prod',          env: 'PROD', capacityId: 'cap-prd', star: true,  models: 5, reports: 18, scanned: '2h ago',  owner: 'A. Rivera',     iconTone: 'sky',     health: 88, costPerMo: 3420 },
+      { id: 'finance-prod', name: 'Finance-Prod',        env: 'PROD', capacityId: 'cap-prd', star: true,  models: 8, reports: 26, scanned: '1d ago',  owner: 'M. Qureshi',    iconTone: 'violet',  health: 62, costPerMo: 4180 },
+      { id: 'hr-data',      name: 'HR-Data',             env: 'DEV',  capacityId: 'cap-dev', star: false, models: 2, reports: 4,  scanned: '—',       owner: 'J. Patel',      iconTone: 'emerald', health: null, scanCta: true, costPerMo: 84 },
+      { id: 'supply-uat',   name: 'Supply-Chain',        env: 'UAT',  capacityId: 'cap-dev', star: false, models: 4, reports: 9,  scanned: '6h ago',  owner: 'T. Hoffmann',   iconTone: 'amber',   health: 74, costPerMo: 168 },
+      { id: 'retail-ops',   name: 'RetailOps',           env: 'PROD', capacityId: 'cap-prd', star: true,  models: 7, reports: 22, scanned: '12h ago', owner: 'S. Lindqvist',  iconTone: 'rose',    health: 92, costPerMo: 2980 },
+      { id: 'mkt-dev',      name: 'Marketing',           env: 'DEV',  capacityId: 'cap-dev', star: false, models: 3, reports: 7,  scanned: '3d ago',  owner: 'P. Nguyen',      iconTone: 'sky',     health: 55, costPerMo: 142 },
+      { id: 'ops-score',    name: 'Operations Scorecard',env: 'PROD', capacityId: 'cap-prd', star: false, models: 3, reports: 8,  scanned: '1d ago',  owner: 'K. Andersen',   iconTone: 'emerald', health: 81, costPerMo: 1820 },
+      { id: 'ana-sbx',      name: 'Analytics-Sandbox',   env: 'DEV',  capacityId: 'cap-dev', star: false, models: 2, reports: 3,  scanned: '—',       owner: 'D. Okafor',     iconTone: 'violet',  health: null, scanCta: true, costPerMo: 56 },
     ],
   },
 
