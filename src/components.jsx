@@ -126,10 +126,11 @@ export function Sidebar({ route, setRoute }) {
       { key: 'audit',     label: 'Audit',     icon: 'shield' },
     ]},
     { group: 'Governance', items: [
-      { key: 'governance', label: 'Governance', icon: 'shield' },
-      { key: 'access',     label: 'Access',     icon: 'users' },
-      { key: 'activity',   label: 'Activity',   icon: 'activity' },
-      { key: 'alerts',     label: 'Alerts',     icon: 'bell', live: true },
+      { key: 'governance',      label: 'Governance',      icon: 'shield' },
+      { key: 'access',          label: 'Access',          icon: 'users' },
+      { key: 'activity',        label: 'Activity (LP)',   icon: 'activity' },
+      { key: 'tenant-activity', label: 'Tenant Activity', icon: 'bar-chart' },
+      { key: 'alerts',          label: 'Alerts',          icon: 'bell', live: true },
     ]},
   ];
 

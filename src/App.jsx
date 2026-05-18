@@ -9,6 +9,7 @@ import { Alerts, Settings, DrillSheet, TweaksPanel } from './Pages';
 import { Documents, Governance, Activity } from './NewPages';
 import { Users, UserDetail } from './UserIntel';
 import { UsersNew } from './UsersNew';
+import { TenantActivity } from './TenantActivity';
 import { Adoption, Sleepers, Audit } from './UserIntel2';
 import { Licenses } from './Licenses';
 import { ReportsApps } from './ReportsApps';
@@ -20,8 +21,31 @@ const TWEAK_DEFAULTS = {
   accent: 'sky',
 };
 
+function getInitialRoute() {
+  if (typeof window === 'undefined') return 'overview';
+  const p = window.location.pathname;
+  if (!p || p === '/') return 'overview';
+  return p.replace(/^\/+/, '').replace(/\/+$/, '') || 'overview';
+}
+
 export default function App() {
-  const [route, setRoute] = React.useState('overview');
+  const [route, setRouteState] = React.useState(getInitialRoute);
+  const setRoute = React.useCallback((r) => setRouteState(r), []);
+
+  // Keep URL in sync with route state so deep links work + back/forward navigates.
+  React.useEffect(() => {
+    const desired = route === 'overview' ? '/' : '/' + route;
+    if (typeof window !== 'undefined' && window.location.pathname !== desired) {
+      window.history.pushState({}, '', desired);
+    }
+  }, [route]);
+
+  React.useEffect(() => {
+    const onPop = () => setRouteState(getInitialRoute());
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
   const [issue, setIssue] = React.useState(null);
   const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
   const [tweaksOpen, setTweaksOpen] = React.useState(false);
@@ -72,7 +96,8 @@ export default function App() {
     if (top === 'settings')   return [{ label: 'Settings' }];
     if (top === 'documents')  return [{ label: 'Documents' }];
     if (top === 'governance') return [{ label: 'Governance' }];
-    if (top === 'activity')   return [{ label: 'Activity' }];
+    if (top === 'activity')   return [{ label: 'Activity (LP audit)' }];
+    if (top === 'tenant-activity') return [{ label: 'Tenant Activity (forensic)' }];
     if (top === 'adoption')   return [{ label: 'Adoption' }];
     if (top === 'sleepers')   return [{ label: 'Sleepers' }];
     if (top === 'audit')      return [{ label: 'Audit & Compliance' }];
@@ -125,6 +150,7 @@ export default function App() {
     else          page = <Users onOpenUser={(id) => setRoute('users/' + id)}/>;
   }
   else if (top === 'users-new') page = <UsersNew onOpenLegacyUser={() => setRoute('users')}/>;
+  else if (top === 'tenant-activity') page = <TenantActivity onOpenUser={(id) => setRoute('users-new')}/>;
   else if (top === 'workspaces') {
     if (modelId)   page = <ModelView wsId={wsId} modelId={modelId} onBack={() => setRoute('workspaces/' + wsId)}/>;
     else if (wsId) page = <WorkspaceDetail wsId={wsId} onBack={() => setRoute('workspaces')} onOpenModel={(ws, m) => setRoute('workspaces/' + ws + '/' + m)}/>;
