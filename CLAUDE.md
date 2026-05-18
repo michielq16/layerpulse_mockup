@@ -242,6 +242,12 @@ action, activity-log, advanced-activity-logs, alert, annotation, approval-polici
 
 Per the MCP instructions: **prioritize skills over tools** when both apply. Tool schemas are deferred — load with `ToolSearch` (e.g. `select:mcp__claude_ai_PostHog__exec` locally, or `select:mcp__69da6aa2-a3df-4104-9a26-fdc28f53eacf__exec` on web) before invoking.
 
+## Session memory (read at session start)
+
+The durable session log lives at `docs/sessions/2026-05-18-mockup-overhaul.md`. Read it **after** CLAUDE.md and **before** the chat transcript on any fresh session. Captures: what's on production, operator preferences locked this cycle, ingestion arm canonical names, IA decisions, and open threads.
+
+Future sessions should append a new dated log (`docs/sessions/YYYY-MM-DD-<slug>.md`) for their own deltas — don't edit prior logs (they're frozen snapshots).
+
 ## Naming
 
 Product is **LayerPulse** (since 2026-04-26). Earlier "LayerPulze" spelling is deprecated. The Vercel URL `layerpulze-mockup.vercel.app` is historical and not renamed.
