@@ -106,6 +106,9 @@ export function HealthRibbon({ composition, score }) {
 
 export function Sidebar({ route, setRoute }) {
   const nav = [
+    { group: 'Partner', items: [
+      { key: 'portfolio', label: 'Portfolio', icon: 'layers', count: 12 },
+    ]},
     { items: [{ key: 'overview', label: 'Overview', icon: 'dashboard' }] },
     { group: 'Explore', items: [
       { key: 'workspaces', label: 'Workspaces', icon: 'folders', count: 12 },
