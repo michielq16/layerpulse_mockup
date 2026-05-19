@@ -6,7 +6,9 @@ import { Avatar } from './UserIntel';
 
 export function Adoption() {
   const a = DATA.adoption;
-  const [tab, setTab] = React.useState('funnel');
+  // Default tab = 'reports' (Report adoption is the most-used lens per
+  // operator feedback — opens directly on this view).
+  const [tab, setTab] = React.useState('reports');
 
   return (
     <>
@@ -27,6 +29,8 @@ export function Adoption() {
         <StatCard label="MAU"          value={a.mau.v} delta={a.mau.delta} sub="last 30 days" icon="users" tone="amber"  spark={a.mau.spark}/>
         <StatCard label="Stickiness"   value={Math.round(a.stickiness * 100) + '%'} sub="DAU / MAU" icon="activity" tone="violet"/>
       </div>
+
+      <AdoptionTrends a={a}/>
 
       <div className="lp-section-head">
         <h2>Onboarding & Copilot <span className="count">Pick a lens</span></h2>
@@ -158,13 +162,106 @@ export function Adoption() {
   );
 }
 
-function ReportAdoption({ rc }) {
-  const W = 600, H = 120;
-  const max = Math.max(...rc.trend30) * 1.1;
-  const stepX = W / (rc.trend30.length - 1);
-  const pts = rc.trend30.map((v, i) => [i * stepX, H - (v / max) * H]);
+/* ── AdoptionTrends — 4 trend graphs for the most-watched metrics ─────────
+   DAU · WAU · MAU · Stickiness (DAU/MAU%). Each card shows a 30d line
+   chart with min/max, current value, and a small annotation. Sits
+   between the KPI strip and the Onboarding & Copilot tabs. */
+
+function AdoptionTrends({ a }) {
+  // Derive a daily stickiness series from DAU/MAU sparklines.
+  const stick = a.dau.spark.map((d, i) => {
+    const m = a.mau.spark[i] || 1;
+    return Math.round((d / m) * 100);
+  });
+
+  const cards = [
+    { label: 'DAU',        tone: 'sky',     series: a.dau.spark, current: a.dau.v, unit: '',  delta: a.dau.delta, note: 'Daily active users · 30d' },
+    { label: 'WAU',        tone: 'emerald', series: a.wau.spark, current: a.wau.v, unit: '',  delta: a.wau.delta, note: 'Weekly active users · 30d' },
+    { label: 'MAU',        tone: 'amber',   series: a.mau.spark, current: a.mau.v, unit: '',  delta: a.mau.delta, note: 'Monthly active users · 30d' },
+    { label: 'Stickiness', tone: 'violet',  series: stick,       current: Math.round(a.stickiness * 100), unit: '%', delta: null, note: 'DAU / MAU · 30d' },
+  ];
+
+  return (
+    <div className="adoption-trends fade-in d2">
+      {cards.map(c => <TrendCard key={c.label} {...c}/>)}
+    </div>
+  );
+}
+
+function TrendCard({ label, tone, series, current, unit, delta, note }) {
+  const W = 300, H = 90;
+  if (!series || series.length === 0) return null;
+  const min = Math.min(...series);
+  const max = Math.max(...series);
+  const range = max - min || 1;
+  const stepX = W / (series.length - 1);
+  const yOf = (v) => H - 6 - ((v - min) / range) * (H - 18);
+  const pts = series.map((v, i) => [i * stepX, yOf(v)]);
   const linePath = pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
   const areaPath = `${linePath} L${W},${H} L0,${H} Z`;
+  const stroke = {
+    sky:     'oklch(0.56 0.18 237)',
+    emerald: 'oklch(0.55 0.16 145)',
+    amber:   'oklch(0.62 0.16 65)',
+    violet:  'oklch(0.55 0.18 290)',
+  }[tone];
+  const fillId = `adoption-trend-grad-${label}`;
+
+  return (
+    <div className={'adoption-trend-card adoption-trend-card-' + tone}>
+      <div className="adoption-trend-head">
+        <div className="adoption-trend-label">{label}</div>
+        <div className="adoption-trend-current mono">
+          {current.toLocaleString()}{unit}
+          {delta != null && <span className={'delta ' + (delta >= 0 ? 'up' : 'down')}>{delta >= 0 ? '▲' : '▼'} {Math.abs(delta)}%</span>}
+        </div>
+      </div>
+      <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="adoption-trend-svg">
+        <defs>
+          <linearGradient id={fillId} x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%"   stopColor={stroke} stopOpacity="0.22"/>
+            <stop offset="100%" stopColor={stroke} stopOpacity="0.02"/>
+          </linearGradient>
+        </defs>
+        <path d={areaPath} fill={`url(#${fillId})`}/>
+        <path d={linePath} fill="none" stroke={stroke} strokeWidth="1.2" vectorEffect="non-scaling-stroke"/>
+      </svg>
+      <div className="adoption-trend-foot">
+        <span className="adoption-trend-note">{note}</span>
+        <span className="adoption-trend-range mono">{min}{unit} · {max}{unit}</span>
+      </div>
+    </div>
+  );
+}
+
+function ReportAdoption({ rc }) {
+  const W = 600, H = 140;
+  const max = Math.max(...rc.trend30) * 1.15;
+  const stepX = W / (rc.trend30.length - 1);
+  const pts = rc.trend30.map((v, i) => [i * stepX, H - 18 - (v / max) * (H - 36)]);
+  const linePath = pts.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+  const areaPath = `${linePath} L${W},${H - 18} L0,${H - 18} Z`;
+
+  // Day-labeled timeline — 30d trend with ticks every 5 days. We anchor
+  // "today" to the right edge and walk backwards so the rightmost label
+  // is the most recent day.
+  const today = new Date();
+  const dayLabel = (offset) => {
+    const d = new Date(today);
+    d.setDate(d.getDate() - offset);
+    return { iso: d.toISOString().slice(5, 10), dow: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()] };
+  };
+  const tickIdx = [0, 5, 10, 15, 20, 25, 29];   // 7 ticks across the 30d series
+  const ticks = tickIdx.map(i => {
+    const offset = (rc.trend30.length - 1) - i;
+    const { iso, dow } = dayLabel(offset);
+    return { x: i * stepX, iso, dow, offset, value: rc.trend30[i] };
+  });
+
+  // Min/max annotations for context
+  const trendMin = Math.min(...rc.trend30);
+  const trendMax = Math.max(...rc.trend30);
+  const avg = Math.round(rc.trend30.reduce((s, v) => s + v, 0) / rc.trend30.length);
 
   const STATUS_PILL = {
     broken:  { bg: 'oklch(0.94 0.06 25)',  fg: 'oklch(0.42 0.17 25)',  label: 'Broken' },
@@ -185,19 +282,36 @@ function ReportAdoption({ rc }) {
         <div className="lp-card-header">
           <div>
             <div className="lp-card-title">Daily report opens · 30 days</div>
-            <div className="lp-card-sub">{rc.totalOpens30.toLocaleString()} total opens</div>
+            <div className="lp-card-sub">{rc.totalOpens30.toLocaleString()} total opens · avg <b>{avg}</b>/day · range {trendMin}–{trendMax}</div>
           </div>
         </div>
         <div className="rep-trend-chart">
-          <svg width="100%" height="120" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
+          <svg width="100%" height={H + 8} viewBox={`0 0 ${W} ${H + 8}`} preserveAspectRatio="none">
             <defs>
               <linearGradient id="rep-area-grad" x1="0" x2="0" y1="0" y2="1">
                 <stop offset="0%"   stopColor="oklch(0.69 0.17 237)" stopOpacity="0.28"/>
                 <stop offset="100%" stopColor="oklch(0.69 0.17 237)" stopOpacity="0.02"/>
               </linearGradient>
             </defs>
+            {/* Faint horizontal gridlines at 25/50/75% of chart height */}
+            {[0.25, 0.5, 0.75].map(p => (
+              <line key={p} x1="0" x2={W} y1={H - 18 - (H - 36) * p} y2={H - 18 - (H - 36) * p}
+                    stroke="oklch(0.92 0.005 250)" strokeWidth="0.5" vectorEffect="non-scaling-stroke"/>
+            ))}
             <path d={areaPath} fill="url(#rep-area-grad)"/>
-            <path d={linePath} fill="none" stroke="oklch(0.56 0.18 237)" strokeWidth="0.8" vectorEffect="non-scaling-stroke"/>
+            <path d={linePath} fill="none" stroke="oklch(0.56 0.18 237)" strokeWidth="1.2" vectorEffect="non-scaling-stroke"/>
+            {/* Day tick markers — short vertical lines + dow label + iso date */}
+            {ticks.map((t, i) => (
+              <g key={i}>
+                <line x1={t.x} x2={t.x} y1={H - 18} y2={H - 14}
+                      stroke="oklch(0.55 0.02 250)" strokeWidth="0.8" vectorEffect="non-scaling-stroke"/>
+                <text x={t.x} y={H - 2} textAnchor="middle"
+                      fontSize="9" fontFamily="JetBrains Mono, monospace"
+                      fill="oklch(0.55 0.02 250)">
+                  {i === 0 ? '30d ago' : i === ticks.length - 1 ? 'today' : t.iso}
+                </text>
+              </g>
+            ))}
           </svg>
         </div>
       </div>
@@ -218,8 +332,8 @@ function ReportAdoption({ rc }) {
               </tr>
             </thead>
             <tbody>
-              {rc.topReports.map((rep, i) => (
-                <tr key={rep.name} style={{ borderBottom: i < rc.topReports.length - 1 ? '1px solid var(--border)' : 'none' }}>
+              {rc.topReports.slice(0, 5).map((rep, i) => (
+                <tr key={rep.name} style={{ borderBottom: i < 4 ? '1px solid var(--border)' : 'none' }}>
                   <td style={{ padding:'8px 12px' }}><span className="rep-rank-num">{i + 1}</span></td>
                   <td style={{ padding:'8px 12px', fontWeight:600, maxWidth:160, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{rep.name}</td>
                   <td style={{ padding:'8px 12px', color:'var(--muted-foreground)', fontSize:11 }}>{rep.ws}</td>
@@ -228,6 +342,11 @@ function ReportAdoption({ rc }) {
                   <td style={{ padding:'8px 12px' }}><MiniSparkline data={rep.trend}/></td>
                 </tr>
               ))}
+              {rc.topReports.length > 5 && (
+                <tr><td colSpan={6} style={{ padding:'10px 12px', textAlign:'center', fontSize:11, color:'var(--muted-foreground)' }}>
+                  + {rc.topReports.length - 5} more · <a style={{ color: 'oklch(0.55 0.18 237)', cursor: 'pointer' }}>view all</a>
+                </td></tr>
+              )}
             </tbody>
           </table>
         </div>

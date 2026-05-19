@@ -3254,6 +3254,63 @@ select.input::-ms-expand { display: none; }
 .gloss-form-hint { font-size: 11.5px; color: var(--muted-foreground); }
 
 /* ─────────────────────────────────────────────────────────────────────────
+   /adoption — Trend graphs row (DAU · WAU · MAU · Stickiness)
+   ───────────────────────────────────────────────────────────────────────── */
+
+.adoption-trends {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+@media (max-width: 1200px) { .adoption-trends { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 720px)  { .adoption-trends { grid-template-columns: 1fr; } }
+
+.adoption-trend-card {
+  display: flex; flex-direction: column;
+  padding: 14px 16px 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: var(--shadow-xs);
+  border-top: 3px solid var(--border);
+}
+.adoption-trend-card-sky     { border-top-color: oklch(0.62 0.17 237); }
+.adoption-trend-card-emerald { border-top-color: oklch(0.55 0.16 145); }
+.adoption-trend-card-amber   { border-top-color: oklch(0.65 0.16 65);  }
+.adoption-trend-card-violet  { border-top-color: oklch(0.55 0.18 290); }
+
+.adoption-trend-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 6px;
+}
+.adoption-trend-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10.5px; color: var(--muted-foreground);
+  text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
+}
+.adoption-trend-current {
+  font-size: 19px; font-weight: 700;
+  display: flex; align-items: baseline; gap: 8px;
+}
+.adoption-trend-current .delta {
+  font-size: 11px; font-weight: 500;
+  font-family: var(--font-mono);
+}
+.adoption-trend-current .delta.up   { color: oklch(0.55 0.16 145); }
+.adoption-trend-current .delta.down { color: oklch(0.55 0.22 25); }
+
+.adoption-trend-svg { display: block; }
+
+.adoption-trend-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 6px;
+  font-size: 10.5px; color: var(--muted-foreground);
+}
+.adoption-trend-note  { font-style: italic; }
+.adoption-trend-range { font-size: 10px; }
+
+/* ─────────────────────────────────────────────────────────────────────────
    /glossary — A–Z dictionary view (toggleable alternative to card grid)
    ───────────────────────────────────────────────────────────────────────── */
 
