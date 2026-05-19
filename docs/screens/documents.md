@@ -26,12 +26,54 @@ The page is **library-first** (vault is the daily door; generator is a tab away)
    3. Doc rows show: tone-colored icon, model name, **audience pill** (Auditor / Analyst / Executive / Engineer), **status pill** (Current / Outdated), workspace · format · last-gen relative time (tooltip with absolute UTC) · size, **schedule chip** (Off / Daily / Weekly / Monthly / On change with next-fire time), row actions (View / Regenerate / Download).
    4. Outdated rows get a left-edge amber accent.
    5. Schedule chip click → small popover with the 5 frequency options + checkmark on current; pick one to set/cancel schedule.
-3. **Generate tab:** the 3-step flow (Pick model → Choose sections → Preview & download) — unchanged from v1 of this screen.
+3. **Generate tab:** the 3-step flow (Pick model → Choose sections → Preview & download).
    - Step 1 — Pick a model: search, filter chips (All / Outdated / Never), scrollable list with status pills.
    - Step 2 — Choose sections: audience preset (auto-toggles section bundles), section catalogue grouped by Cover & summary / Schema / Logic / Lineage / Governance / Context, format toggle, cover-logo switch.
-   - Step 3 — Preview & download: Word-shaped paginated preview, estimate strip (pages / size / gen time), Share link / Schedule weekly / Generate .docx actions, status-aware hint card.
-   - Clicking the gradient `Generate` CTA navigates back to the Library tab where the new doc is now top of the list.
+   - Step 3 — Preview & download: section-schematic preview (sets expectation before commit), estimate strip (pages / size / gen time), Share link / Schedule weekly / Generate .{format} actions, status-aware hint card.
+   - Clicking the gradient `Generate` CTA opens the **DocumentPreviewModal** (see below) with the just-built doc. Closing the modal returns to where the user was; Download commits and returns to Library w/ the new doc at the top.
 4. The `[+ Generate new]` header CTA jumps to the Generate tab from anywhere on the page.
+5. **Library row click anywhere → DocumentPreviewModal** opens with that row's audience-bound render. The row's `View` icon, `Download` button, and the row body itself all open the same modal — the `Regenerate` icon is the only row affordance that doesn't.
+
+## DocumentPreviewModal — rendered Word-shaped preview
+
+The modal is where the screen earns its "biggest single bet" framing — it shows the *actual* generated document, not a schematic, with Fabric-plausible content joined from the source model.
+
+**Shape:** fullscreen drawer (≈92vw / 92vh), 4-region grid (header · optional outdated banner · scrollable page strip · footer).
+
+**Header** — sticky:
+- Title block: file-text icon · model name · audience pill · format badge · sub-line (workspace · env · "Generated {time}" · section count if from Generate tab).
+- Toolbar: 4-way audience seg-switch (Auditor / Analyst / Executive / Engineer — clicking re-renders the body w/o closing the modal so all 4 variants are reachable in one session), format select (`.docx` / `.pdf` / `.md`), Regenerate, Download .{format}, Close (Esc).
+
+**Body** — scrollable strip of Word-shaped pages:
+- 816px × 1056px each (US Letter @ 96dpi).
+- Serif body font (Cambria / Georgia stack), 11pt, line-height 1.45.
+- DM Sans for headings (H1 24pt navy / H2 15pt navy w/ underline / H3 12pt slate).
+- JetBrains Mono for numbers, DAX, identifiers, paths.
+- Running head: `LayerPulse · Contoso Fabric` left, `{model} · {audience} · {time}` right.
+- Running foot: italic brand label + `n / N` page number.
+- Page gutter on the left shows "Page n of N" outside the white surface.
+
+**Footer** — sticky: prev / next page nav (mono `Page X of Y`), live-updates from scroll position; meta strip explaining "mockup preview · real .docx renderer ships server-side."
+
+**Audience renders** — each preset produces a distinct page sequence:
+
+| Audience | Pages | Sequence |
+|---|---:|---|
+| **Auditor** (rose) | 8 | Cover · Exec summary + scope/method · Tables + Fact columns · Dim columns · Relationships · RLS + Sensitivity · Findings · Owners + Changelog + sign-off block |
+| **Analyst** (sky) | 6 | Cover · Exec summary + TOC · Tables + Fact columns · Dim columns + Relationships · Measures (no DAX) · Glossary + Owners |
+| **Executive** (amber) | 3 | Cover · Exec summary (big KPIs) + Top measures · Where this model shows up (top-5 downstream) + Glossary |
+| **Engineer** (violet) | 10 | Cover · TOC · Tables + Fact columns · Dim columns · ER diagram · Measures + DAX (1-4) · Measures + DAX (5-8) · Relationships + Calc columns · Lineage (up + down) · Change log |
+
+**Sample-data contract:** the canonical content block is `DATA.documents.sample` (Sales Analytics, Finance-Prod). Currently the body content is fixed (mockup), only the heading + brand line swap with the operator's model selection. The real backend will join live joins per the model_id.
+
+### Edge states (modal)
+
+- **Outdated status** (from library row OR picker): yellow banner directly under the header — "Source model has changed since this document was last generated" + `Regenerate now` button.
+- **Audience swap mid-modal:** body re-renders, scroll resets to page 1, format selection persists, audience pill in the title updates.
+- **ESC key:** closes the modal, returns to library/generate tab where user was.
+- **Click backdrop:** same as ESC.
+- **Body scroll lock** on `body` while modal open (no background scroll bleed).
+- **Mobile <900px:** modal fills viewport (no radius), page width adapts, toolbar wraps.
 
 ## Edge states
 
@@ -69,9 +111,27 @@ The page is **library-first** (vault is the daily door; generator is a tab away)
 - `doc-aud-tab` — 2×2 audience preset grid with active state
 - `doc-section-grp` + `doc-section-row` — checkbox rows grouped by section family
 - `doc-toggle` — iOS-style switch for partner logo
-- `doc-preview-card` + `doc-preview-page` — Word-shaped paginated preview
+- `doc-preview-card` + `doc-preview-page` — schematic preview (pre-commit hint shape)
 - `doc-est-strip` — pages / size / gen-time estimate
 - `doc-gen-hint` — inline status hint (amber for outdated, info-blue for never)
+
+**DocumentPreviewModal (new):**
+- `doc-modal-backdrop` + `doc-modal` — backdrop + fullscreen drawer shell
+- `doc-modal-header` + `doc-modal-title-block` + `doc-modal-toolbar` — sticky header w/ audience switcher + actions
+- `doc-modal-banner` — outdated banner under header
+- `doc-modal-body` + `doc-modal-page-wrap` + `doc-modal-page` — scrollable Word-shaped page strip
+- `doc-page-running-head` + `doc-page-running-foot` — per-page brand strip
+- `doc-h1` / `doc-h2` / `doc-h3` / `doc-p` / `doc-p-sub` — paper typography
+- `doc-cover` family — first-page brand-heavy layout w/ audience-toned eyebrow
+- `doc-kpi-grid` (+ `.big`) + `doc-kpi-tile` — exec summary KPI tiles
+- `doc-toc` — table-of-contents w/ dotted leaders
+- `doc-table` (+ `.doc-table-cols`) — paper-table styling (navy header, striped rows)
+- `doc-measure` + `doc-dax` — measure cards with monospace DAX block
+- `doc-finding` (+ `.doc-finding-critical/warning/info`) — governance finding callouts
+- `doc-glossary` — dt/dd grid
+- `doc-erd` — star-schema SVG
+- `doc-signoff` — auditor sign-off block
+- `doc-modal-footer` + `doc-modal-page-nav` — sticky page navigation
 
 ## Metrics surfaced on the screen
 
