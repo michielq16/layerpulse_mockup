@@ -87,11 +87,11 @@ const STATUS = {
 };
 
 /* Inline cell — 3 stacked bars for Owner / SME / Stewards coverage.
-   Each bar is FULL-WIDTH and tone-coded by threshold:
-     · 100%     → green  (full)
-     · 50-99%   → amber  (partial)
-     · 1-49%    → red    (low)
-     · 0%       → faded red (empty)
+   Width is PROPORTIONAL to coverage; color is threshold-tone:
+     · 100%   → green  (full bar)
+     · 50-99% → amber  (~half-to-full)
+     · 1-49%  → red    (short bar)
+     · 0%     → no fill (track only; 0/N text carries the signal)
    Role label on the left keeps its role-tone (sky/emerald/amber)
    so you can still see which role is which at a glance. */
 function RoleCoverageCell({ cov }) {
@@ -110,13 +110,18 @@ function RoleCoverageCell({ cov }) {
   ];
   return (
     <span className="role-cov-cell">
-      {rows.map(r => (
-        <span key={r.label} className="role-cov-row" title={`${r.name}: ${r.n}/${cov.total} models`}>
-          <span className={'role-cov-label role-cov-label-' + r.tone}>{r.label}</span>
-          <span className={'role-cov-bar role-cov-bar-tier-' + tier(r.n)}/>
-          <span className="mono role-cov-num">{r.n}/{cov.total}</span>
-        </span>
-      ))}
+      {rows.map(r => {
+        const pct = Math.round((r.n / cov.total) * 100);
+        return (
+          <span key={r.label} className="role-cov-row" title={`${r.name}: ${r.n}/${cov.total} models`}>
+            <span className={'role-cov-label role-cov-label-' + r.tone}>{r.label}</span>
+            <span className="role-cov-bar">
+              <span className={'role-cov-bar-fill role-cov-bar-fill-' + tier(r.n)} style={{ width: pct + '%' }}/>
+            </span>
+            <span className="mono role-cov-num">{r.n}/{cov.total}</span>
+          </span>
+        );
+      })}
     </span>
   );
 }
