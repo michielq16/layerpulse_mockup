@@ -3460,3 +3460,145 @@ select.input::-ms-expand { display: none; }
   border-top: 1px dashed var(--border);
 }
 .model-docs-preset-foot svg { flex-shrink: 0; opacity: 0.7; }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   VocabularyPanel — model Overview (below RolePanel)
+   ───────────────────────────────────────────────────────────────────────── */
+
+.vocab-panel {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  margin-bottom: 18px;
+}
+.vocab-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.vocab-head-meta {
+  font-size: 11px; color: var(--muted-foreground);
+  display: flex; align-items: center; gap: 10px;
+}
+
+.vocab-sections {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 16px;
+}
+@media (max-width: 1100px) { .vocab-sections { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 720px)  { .vocab-sections { grid-template-columns: 1fr; } }
+
+.vocab-section {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--muted);
+  min-height: 70px;
+}
+.vocab-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.vocab-section-count {
+  font-size: 10.5px; color: var(--muted-foreground);
+}
+.vocab-chip-row {
+  display: flex; flex-wrap: wrap; gap: 5px;
+}
+.vocab-chip {
+  font-size: 11px; padding: 3px 9px; border-radius: 4px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: border-color .12s ease, background .12s ease;
+}
+.vocab-chip:hover {
+  border-color: oklch(0.65 0.10 237);
+  background: oklch(0.96 0.02 237);
+}
+.dark .vocab-chip:hover { background: oklch(0.22 0.05 237); }
+.vocab-empty {
+  font-size: 10.5px; color: var(--muted-foreground); font-style: italic;
+}
+.vocab-empty a { color: oklch(0.55 0.18 237); cursor: pointer; font-style: normal; }
+
+/* ── Attach Term drawer · used by Vocabulary + Measure-drawer + future ──── */
+
+.vocab-attach-list { display: flex; flex-direction: column; gap: 6px; }
+.vocab-attach-row {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .12s ease, transform .12s ease;
+}
+.vocab-attach-row:hover {
+  border-color: oklch(0.65 0.10 237);
+  transform: translateY(-1px);
+}
+.vocab-attach-row-head {
+  display: flex; align-items: center; gap: 8px;
+}
+.vocab-attach-row-term {
+  font-weight: 700; font-size: 13px;
+}
+.vocab-attach-row-def {
+  font-size: 11.5px; color: var(--muted-foreground); line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* ── Measure-drawer glossary subsection (inside ModelMeasures right pane) ── */
+
+.measure-glossary {
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+}
+.measure-glossary-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.measure-glossary-empty {
+  font-size: 12px; color: var(--muted-foreground); font-style: italic;
+  line-height: 1.5;
+}
+.measure-glossary-empty a {
+  color: oklch(0.55 0.18 237); cursor: pointer; font-weight: 500; font-style: normal;
+}
+.measure-glossary-list {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.measure-glossary-card {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-left: 3px solid oklch(0.55 0.18 237);
+  border-radius: 8px;
+  background: var(--card);
+  display: flex; flex-direction: column; gap: 4px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .12s ease, transform .12s ease;
+}
+.measure-glossary-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.measure-glossary-card-head {
+  display: flex; align-items: center; gap: 8px;
+}
+.measure-glossary-card-term {
+  font-weight: 700; font-size: 13px;
+}
+.measure-glossary-card-def {
+  font-size: 12px; color: var(--foreground);
+  line-height: 1.4;
+}
+.measure-glossary-card-foot {
+  font-size: 10.5px; color: var(--muted-foreground);
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+.measure-glossary-card-foot svg { opacity: 0.7; flex-shrink: 0; }
+.measure-glossary-card-foot .sep { opacity: 0.5; }

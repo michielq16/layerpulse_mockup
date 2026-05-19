@@ -3,6 +3,45 @@ import Icon from './Icon';
 import DATA from './data';
 import { StatCard } from './components';
 
+/* ── Helpers — glossary attachments to semantic-model objects ──────────── */
+
+// Return ALL glossary terms attached to a given model, optionally filtered by
+// the attachment level (model / measure / column / table).
+export function getModelGlossaryAttachments(modelName) {
+  if (!modelName) return [];
+  return DATA.glossary.items.filter(t => {
+    const lt = t.linkedTo;
+    if (!lt) return false;
+    if ((lt.models || []).includes(modelName)) return true;
+    // Models with measures attached count as attached at model level too
+    if ((lt.measures || []).length > 0 && (lt.models || []).includes(modelName)) return true;
+    return false;
+  });
+}
+
+// Group attached terms by type (returns { metric: [...], kpi: [...], ... })
+export function groupAttachmentsByType(items) {
+  const byType = {};
+  items.forEach(it => {
+    const k = it.type || 'other';
+    if (!byType[k]) byType[k] = [];
+    byType[k].push(it);
+  });
+  return byType;
+}
+
+// Terms attached specifically to a measure (by DAX name e.g. '[AOV (LCY)]').
+export function getMeasureGlossaryAttachments(measureName) {
+  if (!measureName) return [];
+  return DATA.glossary.items.filter(t => (t.linkedTo?.measures || []).includes(measureName));
+}
+
+// Terms attached to a column (by 'Table[Column]' notation).
+export function getColumnGlossaryAttachments(columnRef) {
+  if (!columnRef) return [];
+  return DATA.glossary.items.filter(t => (t.linkedTo?.columns || []).includes(columnRef));
+}
+
 /* ─────────────────────────────────────────────────────────────────────────
    /glossary — tenant-wide single dictionary
    DAMA-DMBOK-ish shape: term · definition · type · domain · status ·
@@ -294,6 +333,139 @@ function GlossaryCard({ item, onOpen }) {
 }
 
 /* ── Drawer (detail / add / edit) ──────────────────────────────────────── */
+
+/* ── VocabularyPanel — read-only chips, used on /models/[id]/overview ─── */
+
+export function VocabularyPanel({ modelName }) {
+  const g = DATA.glossary;
+  const attachments = React.useMemo(() => getModelGlossaryAttachments(modelName), [modelName]);
+  const byType      = React.useMemo(() => groupAttachmentsByType(attachments), [attachments]);
+  const [openTerm, setOpenTerm] = React.useState(null);
+  const [adding, setAdding]     = React.useState(false);
+
+  // Display order — most-semantic first
+  const displayOrder = ['metric', 'kpi', 'dimension', 'business', 'acronym', 'process'];
+
+  const sections = displayOrder.map(typeKey => {
+    const meta = g.types.find(t => t.key === typeKey);
+    return { typeKey, meta, items: byType[typeKey] || [] };
+  });
+
+  const total = attachments.length;
+
+  return (
+    <div className="vocab-panel fade-in">
+      <div className="vocab-head">
+        <div className="lp-eyebrow">Business vocabulary</div>
+        <div className="vocab-head-meta">
+          <span>{total} term{total === 1 ? '' : 's'} attached</span>
+          <button className="btn btn-ghost btn-sm" onClick={() => setAdding(true)}><Icon name="plus" size={11}/>Attach term</button>
+        </div>
+      </div>
+
+      <div className="vocab-sections">
+        {sections.map(({ typeKey, meta, items }) => (
+          <div key={typeKey} className="vocab-section">
+            <div className="vocab-section-head">
+              <span className={'gloss-type-pill gloss-type-pill-' + (meta?.tone || 'slate')}>{meta?.label || typeKey}</span>
+              <span className="vocab-section-count mono">{items.length}</span>
+            </div>
+            {items.length === 0 ? (
+              <div className="vocab-empty">
+                <span>No {meta?.label?.toLowerCase() || typeKey} attached yet · </span>
+                <a onClick={() => setAdding(true)}>Attach →</a>
+              </div>
+            ) : (
+              <div className="vocab-chip-row">
+                {items.map(it => (
+                  <button key={it.id} className="vocab-chip" title={it.definition?.split('. ')[0]} onClick={() => setOpenTerm(it.id)}>
+                    <span>{it.term}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {openTerm && <GlossaryDrawer termId={openTerm} onClose={() => setOpenTerm(null)} onNavigate={(id) => setOpenTerm(id)}/>}
+      {adding && (
+        <AttachTermDrawer
+          modelName={modelName}
+          onClose={() => setAdding(false)}
+          onAttach={(termId) => { setAdding(false); setOpenTerm(termId); }}
+        />
+      )}
+    </div>
+  );
+}
+
+/* AttachTermDrawer — drawer w/ glossary search + type filter; user picks
+   a term to attach to the current object (model / measure / column).
+   Mockup-only: no actual mutation; selecting opens the term's detail drawer. */
+function AttachTermDrawer({ modelName, measureName, columnRef, onClose, onAttach }) {
+  const g = DATA.glossary;
+  const [q, setQ]     = React.useState('');
+  const [type, setType] = React.useState('all');
+  const target = measureName ? `measure ${measureName}` : columnRef ? `column ${columnRef}` : `model ${modelName}`;
+
+  React.useEffect(() => {
+    const h = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [onClose]);
+
+  const filtered = g.items.filter(it => {
+    if (type !== 'all' && it.type !== type) return false;
+    if (q && !(it.term + ' ' + it.definition + ' ' + (it.synonyms || []).join(' ')).toLowerCase().includes(q.toLowerCase())) return false;
+    return true;
+  });
+
+  return (
+    <div className="own-drawer-backdrop" onClick={onClose}>
+      <div className="own-drawer gloss-drawer" onClick={e => e.stopPropagation()}>
+        <div className="own-drawer-head">
+          <div>
+            <div className="own-drawer-title">Attach a glossary term</div>
+            <div className="gloss-drawer-sub">to <b>{target}</b></div>
+          </div>
+          <button className="btn btn-ghost btn-sm" onClick={onClose} title="Close (Esc)"><Icon name="x" size={14}/></button>
+        </div>
+        <div className="own-drawer-body" style={{ paddingTop: 12 }}>
+          <div className="lp-search" style={{ width: '100%', marginBottom: 12 }}>
+            <Icon name="search" size={14}/>
+            <input placeholder="Search terms…" value={q} onChange={e => setQ(e.target.value)} autoFocus/>
+          </div>
+          <div className="chip-row" style={{ marginBottom: 14, flexWrap: 'wrap' }}>
+            <button className={'chip chip-sm' + (type === 'all' ? ' active' : '')} onClick={() => setType('all')}>All<span className="count">{g.items.length}</span></button>
+            {g.types.map(t => (
+              <button key={t.key} className={'chip chip-sm' + (type === t.key ? ' active' : '')} onClick={() => setType(t.key)}>{t.label}<span className="count">{g.items.filter(i => i.type === t.key).length}</span></button>
+            ))}
+          </div>
+          <div className="vocab-attach-list">
+            {filtered.map(it => {
+              const typeMeta = g.types.find(t => t.key === it.type);
+              return (
+                <button key={it.id} className="vocab-attach-row" onClick={() => onAttach?.(it.id)}>
+                  <div className="vocab-attach-row-head">
+                    <span className="vocab-attach-row-term">{it.term}</span>
+                    <span className={'gloss-type-pill gloss-type-pill-' + (typeMeta?.tone || 'slate')}>{typeMeta?.label}</span>
+                  </div>
+                  <div className="vocab-attach-row-def">{(it.definition || '').split('. ')[0]}.</div>
+                </button>
+              );
+            })}
+            {filtered.length === 0 && <div className="empty" style={{ padding: 16 }}>No terms match · <a onClick={() => { setQ(''); setType('all'); }}>clear filters</a></div>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Export the AttachTermDrawer too so other surfaces (e.g. ModelMeasures
+   selected-measure pane) can reuse the same affordance. */
+export { AttachTermDrawer, GlossaryDrawer as GlossaryDetailDrawer };
 
 function GlossaryDrawer({ termId, adding, onClose, onNavigate }) {
   const g = DATA.glossary;

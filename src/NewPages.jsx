@@ -3,6 +3,7 @@ import Icon from './Icon';
 import DATA from './data';
 import { StatCard } from './components';
 import { resolveModelOwner, resolveModelSme, resolveModelStewards, resolveModelDomain } from './Ownership';
+import { getModelGlossaryAttachments } from './Glossary';
 
 export function Documents() {
   const d = DATA.documents;
@@ -556,7 +557,26 @@ export function DocumentPreviewModal({ model, ws, env = 'PROD', audience: initia
   const stewards  = modelId ? resolveModelStewards(modelId) : [];
   const domain    = modelId ? resolveModelDomain(modelId)   : null;
 
-  const ctx = { model, ws, env, includeLogo, generatedAt, sample, audience, owner, sme, stewards, domain };
+  // Pull glossary terms attached to this model (manual attachments via /glossary
+   // or the model-detail "Attach term" affordance). Transformed into the
+   // {term, def, type} shape the page builders expect. Falls back to the
+   // sample fixture only when no attachments are recorded for this model.
+  const attachedGlossary = React.useMemo(() => {
+    const raw = getModelGlossaryAttachments(model);
+    if (raw.length === 0) {
+      // Fallback — use canonical fixture so the doc never has an empty glossary
+      return sample.glossary.map(t => ({ term: t.term, def: t.def, type: 'business' }));
+    }
+    return raw.map(t => ({
+      term: t.term,
+      def: (t.definition || '').split('. ')[0] + '.',
+      type: t.type,
+      domain: t.domain,
+      sensitivity: t.sensitivity,
+    }));
+  }, [model]);
+
+  const ctx = { model, ws, env, includeLogo, generatedAt, sample, audience, owner, sme, stewards, domain, attachedGlossary };
   const pages = React.useMemo(() => buildDocPages(audience, ctx), [audience, model, ws, env, includeLogo, generatedAt]);
   const total = pages.length;
 
@@ -1000,18 +1020,58 @@ function ChangelogTable({ entries, limit }) {
   );
 }
 
-function GlossaryList({ terms }) {
+/* GlossaryList — pluggable title + subtitle. Now type-aware: if any term has
+   a `type` field, terms are grouped by type into separate dt/dd blocks with
+   subheadings (Metrics · KPIs · Acronyms · etc). */
+function GlossaryList({ terms, title = 'Business glossary', subtitle }) {
+  if (!terms || terms.length === 0) {
+    return (
+      <>
+        <h2 className="doc-h2">{title}</h2>
+        <p className="doc-p doc-p-sub">No glossary terms attached to this model yet — add them via LP /glossary.</p>
+      </>
+    );
+  }
+  // Group by type when present
+  const hasTypes = terms.some(t => t.type);
+  if (!hasTypes) {
+    return (
+      <>
+        <h2 className="doc-h2">{title}</h2>
+        {subtitle && <p className="doc-p doc-p-sub">{subtitle}</p>}
+        <dl className="doc-glossary">
+          {terms.map((t, i) => (
+            <React.Fragment key={i}>
+              <dt className="mono">{t.term}</dt>
+              <dd>{t.def}</dd>
+            </React.Fragment>
+          ))}
+        </dl>
+      </>
+    );
+  }
+  const order = ['metric', 'kpi', 'dimension', 'business', 'acronym', 'process'];
+  const labels = { metric: 'Metrics', kpi: 'KPIs', dimension: 'Dimensions', business: 'Business terms', acronym: 'Acronyms', process: 'Processes' };
+  const grouped = order
+    .map(k => ({ type: k, items: terms.filter(t => t.type === k) }))
+    .filter(g => g.items.length > 0);
   return (
     <>
-      <h2 className="doc-h2">Business glossary</h2>
-      <dl className="doc-glossary">
-        {terms.map((t, i) => (
-          <React.Fragment key={i}>
-            <dt className="mono">{t.term}</dt>
-            <dd>{t.def}</dd>
-          </React.Fragment>
-        ))}
-      </dl>
+      <h2 className="doc-h2">{title}</h2>
+      {subtitle && <p className="doc-p doc-p-sub">{subtitle}</p>}
+      {grouped.map(g => (
+        <React.Fragment key={g.type}>
+          <h3 className="doc-h3">{labels[g.type] || g.type}</h3>
+          <dl className="doc-glossary">
+            {g.items.map((t, i) => (
+              <React.Fragment key={i}>
+                <dt className="mono">{t.term}</dt>
+                <dd>{t.def}</dd>
+              </React.Fragment>
+            ))}
+          </dl>
+        </React.Fragment>
+      ))}
     </>
   );
 }
@@ -1129,6 +1189,14 @@ function auditorPages(ctx) {
     // 7 — Findings
     <FindingsList findings={s.findings} />,
 
+    // 7.5 — Compliance glossary appendix (Process + Acronym types)
+    <>
+      <GlossaryList
+        terms={ctx.attachedGlossary.filter(t => t.type === 'process' || t.type === 'acronym')}
+        title="Compliance terminology"
+        subtitle="Processes and acronyms relevant to this evidence pack — attached to the model in LayerPulse."/>
+    </>,
+
     // 8 — Owners + changelog + sign-off (pulls real roles from LP)
     <>
       <OwnersTable ctx={ctx} />
@@ -1206,7 +1274,7 @@ function analystPages(ctx) {
     <MeasuresList measures={s.measures} withDax={false} />,
 
     <>
-      <GlossaryList terms={s.glossary} />
+      <GlossaryList terms={ctx.attachedGlossary} title="Business glossary" subtitle={`${ctx.attachedGlossary.length} terms attached to this model in LayerPulse · grouped by type`}/>
       <OwnersTable ctx={ctx} />
     </>,
   ];
@@ -1274,7 +1342,7 @@ function executivePages(ctx) {
           ))}
         </tbody>
       </table>
-      <GlossaryList terms={s.glossary.slice(0, 4)} />
+      <GlossaryList terms={ctx.attachedGlossary.filter(t => t.type === 'kpi' || t.type === 'metric').slice(0, 6)} title="KPI &amp; metric definitions" subtitle="Business-canonical definitions of every KPI on the cover" />
     </>,
   ];
 }
@@ -1330,6 +1398,12 @@ function engineerPages(ctx) {
     <LineageBlocks lineage={s.lineage} />,
 
     <ChangelogTable entries={s.changelog} />,
+
+    // Technical glossary appendix (Acronym + Dimension types) for engineer audience
+    <GlossaryList
+      terms={ctx.attachedGlossary.filter(t => t.type === 'acronym' || t.type === 'dimension')}
+      title="Technical glossary"
+      subtitle="Acronyms and dimensions used in this model — for engineers maintaining or extending it."/>,
   ];
 }
 

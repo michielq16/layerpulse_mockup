@@ -4,6 +4,7 @@ import DATA from './data';
 import { EnvBadge, Provenance, IssueCard, Badge } from './components';
 import { ModelDiagram, ModelDocs, ModelAI, ModelHealth, ModelReports, ModelDataflows } from './ModelTabs';
 import { ModelOwnership, RolePanel } from './Ownership';
+import { VocabularyPanel, getMeasureGlossaryAttachments, GlossaryDetailDrawer, AttachTermDrawer } from './Glossary';
 
 export function ModelView({ wsId, modelId, onBack }) {
   const [tab, setTab] = React.useState('overview');
@@ -53,7 +54,7 @@ export function ModelView({ wsId, modelId, onBack }) {
 
       <div key={tab} className="fade-in">
         {tab === 'overview' && <ModelOverview m={m} onGoToOwnership={() => setTab('ownership')}/>}
-        {tab === 'measures' && <ModelMeasures/>}
+        {tab === 'measures' && <ModelMeasures modelName={m.name}/>}
         {tab === 'lineage' && <ModelLineage/>}
         {tab === 'diagram' && <ModelDiagram/>}
         {tab === 'docs' && <ModelDocs modelName={m.name} workspace={m.workspace} env={m.env}/>}
@@ -71,6 +72,7 @@ function ModelOverview({ m, onGoToOwnership }) {
   return (
     <>
       <RolePanel modelName={m.name} workspace={m.workspace} onEdit={onGoToOwnership}/>
+      <VocabularyPanel modelName={m.name}/>
       <div className="lp-grid-money">
         <div className="lp-card fade-in">
           <div className="lp-card-header">
@@ -160,11 +162,13 @@ function ModelOverview({ m, onGoToOwnership }) {
   );
 }
 
-function ModelMeasures() {
+function ModelMeasures({ modelName }) {
   const measures = DATA.modelExtras.measures;
   const [q, setQ] = React.useState('');
   const [filter, setFilter] = React.useState('all');
   const [daxPanel, setDaxPanel] = React.useState(null);
+  const [openTerm, setOpenTerm] = React.useState(null);
+  const [attaching, setAttaching] = React.useState(false);
 
   const filtered = measures.filter(m =>
     (filter === 'all' || (filter === 'used' ? m.used : !m.used)) &&
@@ -172,6 +176,8 @@ function ModelMeasures() {
   );
 
   const selected = daxPanel ? measures.find(m => m.id === daxPanel) : null;
+  const glossaryAttachments = selected ? getMeasureGlossaryAttachments(selected.name) : [];
+  const glossaryTypes = DATA.glossary.types;
 
   return (
     <>
@@ -244,6 +250,41 @@ function ModelMeasures() {
                   ))}
                 </div>
               </div>
+
+              {/* Business glossary attachments — Metric / KPI / Business term / Acronym */}
+              <div className="measure-glossary">
+                <div className="measure-glossary-head">
+                  <div className="lp-eyebrow">Business glossary</div>
+                  <button className="btn btn-ghost btn-sm" onClick={() => setAttaching(true)}><Icon name="plus" size={11}/>Attach term</button>
+                </div>
+                {glossaryAttachments.length === 0 ? (
+                  <div className="measure-glossary-empty">
+                    No business term attached yet. <a onClick={() => setAttaching(true)}>Attach one</a> to link this measure to a Metric, KPI, or Business term.
+                  </div>
+                ) : (
+                  <div className="measure-glossary-list">
+                    {glossaryAttachments.map(t => {
+                      const typeMeta = glossaryTypes.find(x => x.key === t.type);
+                      return (
+                        <button key={t.id} className="measure-glossary-card" onClick={() => setOpenTerm(t.id)}>
+                          <div className="measure-glossary-card-head">
+                            <span className="measure-glossary-card-term">{t.term}</span>
+                            <span className={'gloss-type-pill gloss-type-pill-' + (typeMeta?.tone || 'slate')}>{typeMeta?.label}</span>
+                          </div>
+                          <div className="measure-glossary-card-def">{(t.definition || '').split('. ')[0]}.</div>
+                          <div className="measure-glossary-card-foot">
+                            <Icon name="users" size={10}/>
+                            <span>Owner: {DATA.ownership.aadUsers.find(u => u.email === t.ownerEmail)?.name || t.ownerEmail}</span>
+                            <span className="sep">·</span>
+                            <span>Domain: {DATA.glossary.domains.find(d => d.key === t.domain)?.label || t.domain}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
                 <div style={{ textAlign: 'center' }}>
                   <div className="mono" style={{ fontSize: 20, fontWeight: 600 }}>{selected.reports}</div>
@@ -267,6 +308,16 @@ function ModelMeasures() {
           )}
         </div>
       </div>
+
+      {openTerm && <GlossaryDetailDrawer termId={openTerm} onClose={() => setOpenTerm(null)} onNavigate={(id) => setOpenTerm(id)}/>}
+      {attaching && selected && (
+        <AttachTermDrawer
+          modelName={modelName}
+          measureName={selected.name}
+          onClose={() => setAttaching(false)}
+          onAttach={(termId) => { setAttaching(false); setOpenTerm(termId); }}
+        />
+      )}
     </>
   );
 }
