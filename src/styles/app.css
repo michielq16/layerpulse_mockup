@@ -2827,6 +2827,7 @@ select.input::-ms-expand { display: none; }
 .role-cov-label-amber   { background: oklch(0.62 0.16 65); }
 
 .role-cov-bar {
+  display: block;
   height: 10px; border-radius: 4px;
   background: oklch(0.93 0.005 250);
   overflow: hidden;
@@ -2836,8 +2837,12 @@ select.input::-ms-expand { display: none; }
 .dark .role-cov-bar { background: oklch(0.18 0.01 250); border-color: oklch(0.26 0.01 250); }
 /* Inner fill is proportional to coverage; color is threshold-tone. Taller +
    bolder than the prior 6px version — at the small column width these bars
-   were too subtle to read at a glance. */
+   were too subtle to read at a glance.
+   display:block is REQUIRED — <span> defaults to display:inline and width/
+   height won't apply, leaving the fill 0×0 (was the bug shipped in PR #6 +
+   PR #10 first push). */
 .role-cov-bar-fill {
+  display: block;
   height: 100%;
   border-radius: 3px;
   transition: width .2s ease, background .2s ease;
