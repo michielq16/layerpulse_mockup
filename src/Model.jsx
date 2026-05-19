@@ -3,6 +3,7 @@ import Icon from './Icon';
 import DATA from './data';
 import { EnvBadge, Provenance, IssueCard, Badge } from './components';
 import { ModelDiagram, ModelDocs, ModelAI, ModelHealth, ModelReports, ModelDataflows } from './ModelTabs';
+import { ModelOwnership, RolePanel } from './Ownership';
 
 export function ModelView({ wsId, modelId, onBack }) {
   const [tab, setTab] = React.useState('overview');
@@ -34,6 +35,7 @@ export function ModelView({ wsId, modelId, onBack }) {
       <div className="model-tabs">
         {[
           { k: 'overview',   l: 'Overview' },
+          { k: 'ownership',  l: 'Ownership' },
           { k: 'measures',   l: 'Measures' },
           { k: 'lineage',    l: 'Lineage' },
           { k: 'diagram',    l: 'Diagram' },
@@ -50,11 +52,12 @@ export function ModelView({ wsId, modelId, onBack }) {
       </div>
 
       <div key={tab} className="fade-in">
-        {tab === 'overview' && <ModelOverview m={m}/>}
+        {tab === 'overview' && <ModelOverview m={m} onGoToOwnership={() => setTab('ownership')}/>}
         {tab === 'measures' && <ModelMeasures/>}
         {tab === 'lineage' && <ModelLineage/>}
         {tab === 'diagram' && <ModelDiagram/>}
         {tab === 'docs' && <ModelDocs/>}
+        {tab === 'ownership' && <ModelOwnership modelName={m.name} workspace={m.workspace}/>}
         {tab === 'ai' && <ModelAI/>}
         {tab === 'health' && <ModelHealth/>}
         {tab === 'reports' && <ModelReports/>}
@@ -64,9 +67,10 @@ export function ModelView({ wsId, modelId, onBack }) {
   );
 }
 
-function ModelOverview({ m }) {
+function ModelOverview({ m, onGoToOwnership }) {
   return (
     <>
+      <RolePanel modelName={m.name} workspace={m.workspace} onEdit={onGoToOwnership}/>
       <div className="lp-grid-money">
         <div className="lp-card fade-in">
           <div className="lp-card-header">

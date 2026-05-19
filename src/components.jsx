@@ -175,6 +175,8 @@ export function Sidebar({ route, setRoute }) {
     ]},
     { group: 'Governance', items: [
       { key: 'governance',      label: 'Governance',      icon: 'shield' },
+      { key: 'ownership',       label: 'Ownership',       icon: 'shield-check' },
+      { key: 'glossary',        label: 'Business glossary', icon: 'file-text' },
       { key: 'access',          label: 'Access',          icon: 'users' },
       { key: 'activity',        label: 'Activity (LP)',   icon: 'activity' },
       { key: 'tenant-activity', label: 'Tenant Activity', icon: 'bar-chart' },

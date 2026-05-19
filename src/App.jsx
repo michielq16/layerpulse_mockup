@@ -16,6 +16,8 @@ import { Adoption, Sleepers, Audit } from './UserIntel2';
 import { Licenses } from './Licenses';
 import { ReportsApps } from './ReportsApps';
 import { LineageExplorer, Access } from './SchemaMoat';
+import { Ownership } from './Ownership';
+import { Glossary } from './Glossary';
 
 const TWEAK_DEFAULTS = {
   theme: 'light',
@@ -99,6 +101,8 @@ export default function App() {
     if (top === 'billing')    return [{ label: 'Billing' }];
     if (top === 'documents')  return [{ label: 'Documents' }];
     if (top === 'governance') return [{ label: 'Governance' }];
+    if (top === 'ownership')  return [{ label: 'Ownership' }];
+    if (top === 'glossary')   return [{ label: 'Business glossary' }];
     if (top === 'activity')   return [{ label: 'Activity (LP audit)' }];
     if (top === 'tenant-activity') return [{ label: 'Tenant Activity (forensic)' }];
     if (top === 'portfolio')  return [{ label: 'Portfolio · partner' }];
@@ -142,6 +146,8 @@ export default function App() {
   else if (top === 'billing')   page = <Billing/>;
   else if (top === 'documents')  page = <Documents/>;
   else if (top === 'governance') page = <Governance/>;
+  else if (top === 'ownership')  page = <Ownership onOpenModel={(ws, m) => setRoute('workspaces/' + ws + '/' + m + '/ownership')}/>;
+  else if (top === 'glossary')   page = <Glossary/>;
   else if (top === 'activity')   page = <Activity/>;
   else if (top === 'adoption')   page = <Adoption/>;
   else if (top === 'sleepers')   page = <Sleepers/>;
