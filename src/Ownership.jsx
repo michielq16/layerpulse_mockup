@@ -110,18 +110,13 @@ function RoleCoverageCell({ cov }) {
   ];
   return (
     <span className="role-cov-cell">
-      {rows.map(r => {
-        const pct = Math.round((r.n / cov.total) * 100);
-        return (
-          <span key={r.label} className="role-cov-row" title={`${r.name}: ${r.n}/${cov.total} models`}>
-            <span className={'role-cov-label role-cov-label-' + r.tone}>{r.label}</span>
-            <span className="role-cov-bar">
-              <span className={'role-cov-bar-fill role-cov-bar-fill-' + tier(r.n)} style={{ width: pct + '%' }}/>
-            </span>
-            <span className="mono role-cov-num">{r.n}/{cov.total}</span>
-          </span>
-        );
-      })}
+      {rows.map(r => (
+        <span key={r.label} className="role-cov-row" title={`${r.name}: ${r.n}/${cov.total} models`}>
+          <span className={'role-cov-dot role-cov-dot-' + tier(r.n)}/>
+          <span className={'role-cov-label role-cov-label-' + r.tone}>{r.label}</span>
+          <span className="mono role-cov-num">{r.n}/{cov.total}</span>
+        </span>
+      ))}
     </span>
   );
 }
