@@ -19,6 +19,7 @@ export function Glossary() {
   const [sensitivity, setSensitivity] = React.useState('all');
   const [owner, setOwner] = React.useState('all');
   const [sort, setSort] = React.useState('alpha');
+  const [view, setView] = React.useState('cards');
   const [openTerm, setOpenTerm] = React.useState(null);
   const [adding, setAdding] = React.useState(false);
 
@@ -107,24 +108,42 @@ export function Glossary() {
         <section className="gloss-main">
           <div className="lp-section-head" style={{ marginTop: 0 }}>
             <h2>Terms <span className="count">{sorted.length} of {g.items.length}</span></h2>
-            <select className="input input-sm" value={sort} onChange={e => setSort(e.target.value)} style={{ marginLeft: 'auto' }}>
-              <option value="alpha">Alphabetical</option>
-              <option value="recent">Recently reviewed</option>
-              <option value="review-due">Review due first</option>
-              <option value="status">Status</option>
-            </select>
+            <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div className="seg-tabs" title="Switch view">
+                <button className={'seg-tab' + (view === 'cards' ? ' active' : '')} onClick={() => setView('cards')}>
+                  <Icon name="grid" size={12}/>Cards
+                </button>
+                <button className={'seg-tab' + (view === 'az' ? ' active' : '')} onClick={() => setView('az')}>
+                  <Icon name="list-rows" size={12}/>A–Z
+                </button>
+              </div>
+              {view === 'cards' && (
+                <select className="input input-sm" value={sort} onChange={e => setSort(e.target.value)}>
+                  <option value="alpha">Alphabetical</option>
+                  <option value="recent">Recently reviewed</option>
+                  <option value="review-due">Review due first</option>
+                  <option value="status">Status</option>
+                </select>
+              )}
+            </div>
           </div>
 
-          <div className="gloss-grid">
-            {sorted.map(it => (
-              <GlossaryCard key={it.id} item={it} onOpen={() => setOpenTerm(it.id)}/>
-            ))}
-            {sorted.length === 0 && (
-              <div className="empty" style={{ padding: 28 }}>
-                No terms match. <a onClick={() => { setSearch(''); setType('all'); setDomain('all'); setStatus('all'); setSensitivity('all'); setOwner('all'); }}>Clear filters</a> or <a onClick={() => setAdding(true)}>add the first term</a>.
-              </div>
-            )}
-          </div>
+          {view === 'cards' && (
+            <div className="gloss-grid">
+              {sorted.map(it => (
+                <GlossaryCard key={it.id} item={it} onOpen={() => setOpenTerm(it.id)}/>
+              ))}
+              {sorted.length === 0 && (
+                <div className="empty" style={{ padding: 28 }}>
+                  No terms match. <a onClick={() => { setSearch(''); setType('all'); setDomain('all'); setStatus('all'); setSensitivity('all'); setOwner('all'); }}>Clear filters</a> or <a onClick={() => setAdding(true)}>add the first term</a>.
+                </div>
+              )}
+            </div>
+          )}
+
+          {view === 'az' && (
+            <GlossaryAZView items={sorted} onOpenTerm={setOpenTerm}/>
+          )}
         </section>
       </div>
 
@@ -147,6 +166,89 @@ function FilterGroup({ label, value, onChange, options }) {
         ))}
       </div>
     </div>
+  );
+}
+
+/* ── A–Z dictionary view ─────────────────────────────────────────────
+   Toggleable alternative to the card grid. Renders terms grouped by
+   first letter w/ a sticky letter anchor on the left, like a print
+   dictionary. The one-liner is context-sensitive per type:
+   acronyms expand on first reference; metrics/KPIs lead with the
+   formula; processes describe the workflow.
+   ──────────────────────────────────────────────────────────────────── */
+
+/* Extract the canonical one-line summary from a term's definition.
+   Most definitions start with "Expansion. Description..." — first
+   sentence is the dictionary-style summary. */
+function oneLineFor(item) {
+  const def = (item.definition || '').trim();
+  if (!def) return '—';
+  const m = def.match(/^([^.!?]+[.!?])(\s|$)/);
+  if (m) return m[1];
+  return def.length > 160 ? def.slice(0, 160).trim() + '…' : def;
+}
+
+function GlossaryAZView({ items, onOpenTerm }) {
+  // Group by first letter (uppercased). Sort within group alphabetically.
+  const groups = React.useMemo(() => {
+    const map = new Map();
+    items.forEach(it => {
+      const letter = (it.term || '').trim().charAt(0).toUpperCase() || '#';
+      if (!map.has(letter)) map.set(letter, []);
+      map.get(letter).push(it);
+    });
+    return Array.from(map.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([letter, list]) => ({ letter, items: list.sort((a, b) => a.term.localeCompare(b.term)) }));
+  }, [items]);
+
+  if (groups.length === 0) {
+    return <div className="empty" style={{ padding: 28 }}>No terms match. Adjust filters above.</div>;
+  }
+
+  return (
+    <div className="gloss-az">
+      {/* Letter-index thumb strip at the top */}
+      <div className="gloss-az-index">
+        {groups.map(g => (
+          <a
+            key={g.letter}
+            className="gloss-az-index-letter"
+            onClick={() => document.getElementById('az-' + g.letter)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          >
+            {g.letter}
+          </a>
+        ))}
+      </div>
+
+      {/* Alphabetical groups */}
+      {groups.map(g => (
+        <div key={g.letter} id={'az-' + g.letter} className="gloss-az-group">
+          <div className="gloss-az-letter">{g.letter}</div>
+          <div className="gloss-az-items">
+            {g.items.map(it => <GlossaryAZRow key={it.id} item={it} onClick={() => onOpenTerm(it.id)}/>)}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function GlossaryAZRow({ item, onClick }) {
+  const g = DATA.glossary;
+  const typeMeta   = g.types.find(t => t.key === item.type)      || { label: item.type,   tone: 'slate' };
+  const statusMeta = g.statuses.find(s => s.key === item.status) || { label: item.status, tone: 'slate' };
+  const line = oneLineFor(item);
+  return (
+    <button className="gloss-az-row" onClick={onClick}>
+      <span className="gloss-az-term">{item.term}</span>
+      <span className={'gloss-type-pill gloss-type-pill-' + typeMeta.tone}>{typeMeta.label}</span>
+      {item.status !== 'approved' && (
+        <span className={'gloss-status gloss-status-' + statusMeta.tone}><span className="dot"/>{statusMeta.label}</span>
+      )}
+      <span className="gloss-az-em">—</span>
+      <span className="gloss-az-line">{line}</span>
+    </button>
   );
 }
 

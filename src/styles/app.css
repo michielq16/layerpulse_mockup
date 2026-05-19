@@ -217,6 +217,8 @@ a { color: inherit; text-decoration: none; }
 .lp-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .lp-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .lp-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.lp-grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+@media (max-width: 1200px) { .lp-grid-5 { grid-template-columns: repeat(3, 1fr); } }
 .lp-grid-money { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 14px; }
 
 /* ─── StatCard ──────────────────────────────────────────── */
@@ -310,12 +312,15 @@ a { color: inherit; text-decoration: none; }
 
 .seg-tabs { display: inline-flex; background: var(--muted); border-radius: 8px; padding: 3px; gap: 2px; }
 .seg-tab {
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
   height: 26px; padding: 0 12px;
   border: 0; background: transparent;
   font-family: inherit; font-size: 12px; font-weight: 500;
   color: var(--muted-foreground);
   border-radius: 6px; cursor: pointer;
+  white-space: nowrap;
 }
+.seg-tab svg { flex-shrink: 0; }
 .seg-tab.active { background: var(--card); color: var(--foreground); box-shadow: var(--shadow-xs); }
 
 /* Model tabs */
@@ -3073,6 +3078,9 @@ select.input::-ms-expand { display: none; }
   top: 18px;
 }
 .gloss-rail-search { margin-bottom: 4px; }
+/* .lp-search has hardcoded width: 320px — override inside the rail so the
+   search input fits the 240px column instead of bleeding into the main grid. */
+.gloss-rail .lp-search { width: 100%; box-sizing: border-box; }
 
 .gloss-rail-group { display: flex; flex-direction: column; gap: 6px; }
 .gloss-rail-group-label { font-size: 10px; }
@@ -3234,3 +3242,108 @@ select.input::-ms-expand { display: none; }
 .gloss-linked-group { display: flex; flex-direction: column; gap: 4px; }
 
 .gloss-form-hint { font-size: 11.5px; color: var(--muted-foreground); }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   /glossary — A–Z dictionary view (toggleable alternative to card grid)
+   ───────────────────────────────────────────────────────────────────────── */
+
+.gloss-az {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+/* Letter thumb-index at the top — clickable jumps to that group */
+.gloss-az-index {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--muted);
+}
+.gloss-az-index-letter {
+  width: 22px; height: 22px; border-radius: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  color: oklch(0.55 0.18 237);
+  background: var(--card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: background .12s ease, color .12s ease;
+}
+.gloss-az-index-letter:hover {
+  background: oklch(0.94 0.06 237);
+  color: oklch(0.40 0.16 237);
+  border-color: oklch(0.65 0.10 237);
+}
+.dark .gloss-az-index-letter { color: oklch(0.75 0.12 237); }
+.dark .gloss-az-index-letter:hover { background: oklch(0.22 0.06 237); }
+
+/* Alphabetical group: big letter on the left, rows on the right */
+.gloss-az-group {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.gloss-az-group:last-child { border-bottom: none; }
+
+.gloss-az-letter {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 700;
+  color: oklch(0.55 0.18 237);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  align-self: flex-start;
+  padding-top: 4px;
+  position: sticky;
+  top: 18px;
+}
+.dark .gloss-az-letter { color: oklch(0.75 0.12 237); }
+
+.gloss-az-items {
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+/* Each row: term + type pill + (status pill if not approved) + em-dash + one-liner */
+.gloss-az-row {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 12.5px;
+  color: var(--foreground);
+  cursor: pointer;
+  text-align: left;
+  transition: background .12s ease, border-color .12s ease;
+  width: 100%;
+}
+.gloss-az-row:hover {
+  background: var(--muted);
+  border-color: oklch(0.72 0.10 237 / 0.30);
+}
+
+.gloss-az-term {
+  font-weight: 700;
+  font-size: 13.5px;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+.gloss-az-em { color: var(--muted-foreground); opacity: 0.5; flex-shrink: 0; }
+.gloss-az-line {
+  color: var(--foreground);
+  line-height: 1.45;
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .gloss-az-group { grid-template-columns: 48px 1fr; }
+  .gloss-az-letter { font-size: 24px; }
+  .gloss-az-row { flex-wrap: wrap; }
+  .gloss-az-term { min-width: 0; }
+}
