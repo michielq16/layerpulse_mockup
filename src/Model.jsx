@@ -35,11 +35,11 @@ export function ModelView({ wsId, modelId, onBack }) {
       <div className="model-tabs">
         {[
           { k: 'overview',   l: 'Overview' },
+          { k: 'ownership',  l: 'Ownership' },
           { k: 'measures',   l: 'Measures' },
           { k: 'lineage',    l: 'Lineage' },
           { k: 'diagram',    l: 'Diagram' },
           { k: 'docs',       l: 'Documentation' },
-          { k: 'ownership',  l: 'Ownership' },
           { k: 'ai',         l: 'AI Analysis' },
           { k: 'health',     l: 'Health' },
           { k: 'reports',    l: 'Reports' },
