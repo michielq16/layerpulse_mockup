@@ -3,6 +3,7 @@ import Icon from './Icon';
 import DATA from './data';
 import { EnvBadge, Provenance, IssueCard, Badge } from './components';
 import { ModelDiagram, ModelDocs, ModelAI, ModelHealth, ModelReports, ModelDataflows } from './ModelTabs';
+import { ModelOwnership } from './Ownership';
 
 export function ModelView({ wsId, modelId, onBack }) {
   const [tab, setTab] = React.useState('overview');
@@ -38,6 +39,7 @@ export function ModelView({ wsId, modelId, onBack }) {
           { k: 'lineage',    l: 'Lineage' },
           { k: 'diagram',    l: 'Diagram' },
           { k: 'docs',       l: 'Documentation' },
+          { k: 'ownership',  l: 'Ownership' },
           { k: 'ai',         l: 'AI Analysis' },
           { k: 'health',     l: 'Health' },
           { k: 'reports',    l: 'Reports' },
@@ -55,6 +57,7 @@ export function ModelView({ wsId, modelId, onBack }) {
         {tab === 'lineage' && <ModelLineage/>}
         {tab === 'diagram' && <ModelDiagram/>}
         {tab === 'docs' && <ModelDocs/>}
+        {tab === 'ownership' && <ModelOwnership modelName={m.name} workspace={m.workspace}/>}
         {tab === 'ai' && <ModelAI/>}
         {tab === 'health' && <ModelHealth/>}
         {tab === 'reports' && <ModelReports/>}
