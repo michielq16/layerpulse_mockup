@@ -58,7 +58,7 @@ export function Glossary() {
   const [sensitivity, setSensitivity] = React.useState('all');
   const [owner, setOwner] = React.useState('all');
   const [sort, setSort] = React.useState('alpha');
-  const [view, setView] = React.useState('cards');
+  const [view, setView] = React.useState('az');
   const [openTerm, setOpenTerm] = React.useState(null);
   const [adding, setAdding] = React.useState(false);
 
@@ -149,11 +149,11 @@ export function Glossary() {
             <h2>Terms <span className="count">{sorted.length} of {g.items.length}</span></h2>
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
               <div className="seg-tabs" title="Switch view">
-                <button className={'seg-tab' + (view === 'cards' ? ' active' : '')} onClick={() => setView('cards')}>
-                  <Icon name="grid" size={12}/>Cards
-                </button>
                 <button className={'seg-tab' + (view === 'az' ? ' active' : '')} onClick={() => setView('az')}>
                   <Icon name="list-rows" size={12}/>A–Z
+                </button>
+                <button className={'seg-tab' + (view === 'cards' ? ' active' : '')} onClick={() => setView('cards')}>
+                  <Icon name="grid" size={12}/>Cards
                 </button>
               </div>
               {view === 'cards' && (
