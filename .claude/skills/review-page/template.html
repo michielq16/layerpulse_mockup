@@ -1,0 +1,117 @@
+<!doctype html>
+<!--
+  review-page template. Copy this file to public/review/<screen>.html.
+  Keep the <style> block verbatim (brand tokens are locked). Replace the
+  content between <!-- SLOT: ... --> markers. Delete slots you don't need.
+  Generated FROM docs/screens/<screen>.md + docs/prds/<screen>.md.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LayerPulse — {{SCREEN}} · Plain-language review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0D3159; --sky:#2491eb; --gold:#FFBF3C; --orange:#F56E23;
+    --ink:#1f2937; --muted:#64748b; --line:#e5e8ec; --bg:#f4f6f9; --card:#fff;
+    --auto:#16a34a; --manual:#7c3aed;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:880px;margin:0 auto;padding:0 22px 80px;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  header.hero{background:linear-gradient(135deg,#0D3159 0%,#13447a 100%);color:#fff;padding:54px 0 46px;margin-bottom:38px;}
+  .hero .wrap{padding-bottom:0;}
+  .hero-mark{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;margin-bottom:22px;opacity:.92;}
+  .hero-mark .dot{width:26px;height:26px;border-radius:7px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .hero h1{font-size:34px;line-height:1.15;margin:0 0 12px;font-weight:700;letter-spacing:-.02em;}
+  .hero p{font-size:18px;margin:0;color:#cfe2f5;max-width:620px;}
+  .hero .meta{margin-top:20px;font-size:13px;color:#9cc2e8;display:flex;gap:18px;flex-wrap:wrap;}
+  .hero .meta b{color:#fff;font-weight:600;}
+  section{margin-bottom:42px;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--sky);margin-bottom:8px;}
+  h2{font-size:25px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--navy);}
+  .lead{font-size:17px;color:var(--muted);margin:0 0 22px;max-width:680px;}
+  p{margin:0 0 14px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(13,49,89,.04);}
+  .bigidea{border-left:5px solid var(--gold);} .bigidea p{font-size:17px;margin:0;} .bigidea p+p{margin-top:12px;}
+  .buckets{display:grid;grid-template-columns:1fr 1fr;gap:18px;} @media(max-width:680px){.buckets{grid-template-columns:1fr;}}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;} @media(max-width:680px){.cards{grid-template-columns:1fr;}}
+  .group{margin-bottom:18px;}
+  .group-h{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);margin:0 0 8px;padding-bottom:6px;border-bottom:2px solid var(--line);}
+  .row{display:flex;align-items:center;gap:11px;padding:7px 4px;font-size:14.5px;} .row .name{flex:1;}
+  .tag{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:4px;flex:none;}
+  .tag.auto{background:#dcfce7;color:#15803d;} .tag.manual{background:#f3e8ff;color:#6d28d9;} .tag.soon{background:#f1f5f9;color:#64748b;}
+  .btn{display:inline-flex;align-items:center;gap:7px;background:var(--sky);color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:9px 16px;border-radius:9px;}
+  .btn.ghost{background:#fff;color:var(--sky);border:1.5px solid var(--sky);}
+  .decisions{list-style:none;margin:0;padding:0;}
+  .decisions li{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:15px 18px;margin-bottom:11px;display:flex;gap:13px;align-items:flex-start;}
+  .decisions .q-num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .decisions .q-body b{display:block;font-size:15px;color:var(--navy);margin-bottom:2px;} .decisions .q-body span{font-size:14px;color:var(--muted);}
+  footer{border-top:1px solid var(--line);padding-top:24px;margin-top:10px;font-size:14px;color:var(--muted);} footer a{color:var(--sky);text-decoration:none;font-weight:600;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-mark"><span class="dot">LP</span> LayerPulse</div>
+    <!-- SLOT: hero — title (plain) + one-line "what this is" -->
+    <h1>{{TITLE}}</h1>
+    <p>{{ONE_LINE_WHAT_THIS_IS}}</p>
+    <div class="meta"><span>📄 <b>For:</b> Product owner review</span><span>⏱ <b>Read:</b> ~{{N}} min</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- SLOT: the one-sentence version (gold callout) -->
+  <section>
+    <div class="eyebrow">The one-sentence version</div>
+    <h2>What we're building</h2>
+    <div class="card bigidea"><p>{{THE_SINGLE_IDEA}}</p></div>
+  </section>
+
+  <!-- SLOT: optional two buckets / A-B split — delete if N/A -->
+  <!-- <section> ... <div class="buckets"> 2× .card ... </section> -->
+
+  <!-- SLOT: optional cards row (variants / audiences / options) — delete if N/A -->
+  <!-- <section> ... <div class="cards"> N× .card ... </section> -->
+
+  <!-- SLOT: the full menu — grouped list with auto/manual/soon tags -->
+  <section>
+    <div class="eyebrow">The full menu</div>
+    <h2>What's in it</h2>
+    <p class="lead"><span class="tag auto">auto</span> = collected for you · <span class="tag manual">your team</span> = manual · <span class="tag soon">soon</span> = designed, not built.</p>
+    <div class="group">
+      <div class="group-h">{{GROUP NAME}}</div>
+      <div class="row"><span class="name">{{section}}</span><span class="tag auto">auto</span></div>
+    </div>
+  </section>
+
+  <!-- SLOT: see it live -->
+  <section>
+    <div class="eyebrow">See it for real</div>
+    <h2>The live screen</h2>
+    <a class="btn" href="https://layerpulze-mockup.vercel.app/{{ROUTE}}" target="_blank" rel="noreferrer">Open {{SCREEN}} →</a>
+  </section>
+
+  <!-- SLOT: decisions for you (always include) -->
+  <section>
+    <div class="eyebrow">Over to you</div>
+    <h2>A few decisions we need from you</h2>
+    <ul class="decisions">
+      <li><span class="q-num">1</span><span class="q-body"><b>{{decision}}</b><span>{{plain context}}</span></span></li>
+    </ul>
+  </section>
+
+  <footer>
+    <div>Detailed spec lives in the repo for the build team: <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/prds/{{SCREEN}}.md" target="_blank" rel="noreferrer">PRD</a> · <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/screens/{{SCREEN}}.md" target="_blank" rel="noreferrer">Screen narrative</a>.</div>
+  </footer>
+
+</div>
+</body>
+</html>

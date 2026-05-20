@@ -149,11 +149,20 @@ Use **Fabric-plausible fake data**: workspaces like "Finance — Production", mo
 ## Feedback loop (mockup → real product)
 
 ```
-mockup design → operator approves → LP-side PRD authored
+mockup design → operator approves → handover bundle → LP-side PRD authored
    → /build-feature ships → real product
 ```
 
 You don't run LP-side commands — operator does. Structure your output so they can move it through without rework.
+
+## Business review HTML + handover bridge (MUST FOLLOW)
+
+The product owner reviews in **HTML, not markdown** — dense markdown is high cognitive load for them. Per Anthropic's "unreasonable effectiveness of HTML", a self-contained HTML page is the right PO-facing surface: visual, scannable, shareable by link, keeps the human in the loop.
+
+- **Generate a review page** for any screen the PO needs to review, via the **`review-page` skill** (`.claude/skills/review-page/`). Output to `public/review/<screen>.html` (served at `/review/<screen>.html` — Vercel serves `public/` static files before the SPA rewrite, so no `vercel.json` change needed). Plain language, brand tokens, end with "decisions for you". The detailed `.md` stays in the repo for the build team — two readers, two formats, one source (the screen + PRD).
+- **The hub** is `public/review/index.html` → `/review/`. One link to hand the PO/LP. Add a card whenever you ship a new review page.
+- **Handover bundle** (per screen) = `docs/screens/<x>.md` + `docs/prds/<x>.md` + `public/review/<x>.html` + `docs/handover/screenshots/<x>/` + the live route. See `docs/handover/README.md` for the full bridge spec + the "offer" step.
+- **At sign-off, proactively offer the bundle** (don't wait to be asked): post the handover block, confirm all four artifacts exist (generate missing ones), refresh the hub card, and grep `<lp-product>/docs/BACKLOG.md` to name the correct pillar so the PO doesn't mis-slot it. The mockup *offers*; the PO *accepts* into the backlog (never write the LP backlog directly).
 
 ## Delivery protocol — always open a PR and link the preview
 

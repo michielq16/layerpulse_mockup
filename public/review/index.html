@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LayerPulse — Mockup review hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0D3159; --sky:#2491eb; --gold:#FFBF3C; --orange:#F56E23;
+    --ink:#1f2937; --muted:#64748b; --line:#e5e8ec; --bg:#f4f6f9; --card:#fff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px 80px;}
+  header.hero{background:linear-gradient(135deg,#0D3159 0%,#13447a 100%);color:#fff;padding:54px 0 46px;margin-bottom:38px;}
+  .hero .wrap{padding-bottom:0;}
+  .hero-mark{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;margin-bottom:22px;opacity:.92;}
+  .hero-mark .dot{width:26px;height:26px;border-radius:7px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .hero h1{font-size:32px;line-height:1.15;margin:0 0 12px;font-weight:700;letter-spacing:-.02em;}
+  .hero p{font-size:18px;margin:0;color:#cfe2f5;max-width:640px;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--sky);margin-bottom:8px;}
+  h2{font-size:23px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--navy);}
+  .lead{font-size:16px;color:var(--muted);margin:0 0 22px;max-width:680px;}
+  section{margin-bottom:40px;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:680px){.grid{grid-template-columns:1fr;}}
+  .rcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(13,49,89,.04);display:flex;flex-direction:column;}
+  .rcard.ready{border-top:4px solid var(--sky);}
+  .rcard.draft{border-top:4px solid var(--gold);opacity:.92;}
+  .rcard h3{margin:0 0 4px;font-size:19px;color:var(--navy);}
+  .rcard .status{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:5px;align-self:flex-start;margin-bottom:10px;}
+  .status.s-ready{background:#dbeafe;color:#1e40af;}
+  .status.s-draft{background:#fef3c7;color:#92400e;}
+  .rcard p{font-size:14.5px;margin:0 0 16px;color:var(--ink);}
+  .rcard .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;}
+  .btn{display:inline-flex;align-items:center;gap:6px;background:var(--sky);color:#fff;text-decoration:none;font-weight:600;font-size:13px;padding:8px 14px;border-radius:8px;transition:background .15s;}
+  .btn:hover{background:#1577c9;}
+  .btn.ghost{background:#fff;color:var(--sky);border:1.5px solid var(--sky);}
+  .btn.ghost:hover{background:#dbeafe;}
+  .btn.mut{background:#fff;color:var(--muted);border:1.5px solid var(--line);}
+  .btn.mut:hover{background:#f8fafc;}
+  .how{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:14px;padding:22px 24px;}
+  .how ol{margin:8px 0 0;padding-left:20px;}
+  .how li{margin-bottom:8px;font-size:15px;}
+  footer{border-top:1px solid var(--line);padding-top:24px;margin-top:10px;font-size:14px;color:var(--muted);}
+  footer a{color:var(--sky);text-decoration:none;font-weight:600;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-mark"><span class="dot">LP</span> LayerPulse · Mockup</div>
+    <h1>Review hub</h1>
+    <p>Every designed screen, in plain-language review pages you can read in a browser — plus the live mockup and the spec docs behind each. One link to share with the LayerPulse build team.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <div class="eyebrow">Ready to review</div>
+    <h2>Screens with a review page</h2>
+    <p class="lead">Click "Review" for the plain-language walkthrough. "Live" opens the working mockup. "Spec" is the detailed doc for the build team.</p>
+    <div class="grid">
+
+      <div class="rcard ready">
+        <span class="status s-ready">Reviewed-ready</span>
+        <h3>📄 Documents</h3>
+        <p>Auto-generated semantic-model documentation — one Word doc, four readers (auditor / analyst / executive / engineer), combining automatic Fabric data + your team's business knowledge.</p>
+        <div class="links">
+          <a class="btn" href="./documents.html">Review →</a>
+          <a class="btn ghost" href="https://layerpulze-mockup.vercel.app/documents" target="_blank" rel="noreferrer">Live</a>
+          <a class="btn mut" href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/prds/documents.md" target="_blank" rel="noreferrer">Spec</a>
+        </div>
+      </div>
+
+      <div class="rcard draft">
+        <span class="status s-draft">Review page pending</span>
+        <h3>📖 Business Glossary</h3>
+        <p>Tenant-wide dictionary of metrics, KPIs and terms — owned by stewards, attached to model objects, flowing into every document. <i>Review page coming next.</i></p>
+        <div class="links">
+          <a class="btn ghost" href="https://layerpulze-mockup.vercel.app/glossary" target="_blank" rel="noreferrer">Live</a>
+          <a class="btn mut" href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/prds/glossary.md" target="_blank" rel="noreferrer">Spec</a>
+        </div>
+      </div>
+
+      <div class="rcard draft">
+        <span class="status s-draft">Review page pending</span>
+        <h3>👤 Ownership</h3>
+        <p>Who's accountable for each model — Owner, SME, Stewards, Domain — with workspace defaults that inherit and per-model overrides. <i>Review page coming next.</i></p>
+        <div class="links">
+          <a class="btn ghost" href="https://layerpulze-mockup.vercel.app/ownership" target="_blank" rel="noreferrer">Live</a>
+          <a class="btn mut" href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/screens/ownership.md" target="_blank" rel="noreferrer">Spec</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">The bridge</div>
+    <h2>How a mockup becomes a LayerPulse backlog item</h2>
+    <div class="how">
+      <p style="margin:0;">The mockup is fast and flexible; the LayerPulse SaaS build is deliberate and rigid. This hub is the bridge — each screen is handed over as a bundle the product owner can drop straight into the backlog.</p>
+      <ol>
+        <li><b>Design fast in the mockup</b> — iterate on the live screen until it's right.</li>
+        <li><b>Write the spec</b> — screen narrative + PRD (the detailed `.md`, for the build team).</li>
+        <li><b>Generate this review page</b> — plain-language, for the product owner.</li>
+        <li><b>Capture functional screenshots</b> — so LayerPulse sees the screen, not just reads about it.</li>
+        <li><b>Hand over</b> — this hub link bundles all of the above. The PO slots it into the backlog in the LayerPulse format.</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer>
+    <div>Generated by the mockup designer. Detailed specs live in <a href="https://github.com/michielq16/layerpulse_mockup/tree/main/docs" target="_blank" rel="noreferrer">/docs</a>. Live mockup: <a href="https://layerpulze-mockup.vercel.app" target="_blank" rel="noreferrer">layerpulze-mockup.vercel.app</a>.</div>
+  </footer>
+
+</div>
+</body>
+</html>
