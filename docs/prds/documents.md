@@ -261,5 +261,57 @@ The real-product team can pick this up when:
 
 ---
 
-**Mockup reference:** `https://layerpulze-mockup.vercel.app/documents` (after merge to main) · branch preview `https://layerpulze-mockup-...-michielq-7337s-projects.vercel.app/documents`
+## 13. Addendum (v1.1) — rendered preview modal + automated/manual section model
+
+*Added 2026-05-20 after the mockup grew the rendered preview + the complete-document section set. §1–12 above describe the library/generate flow and remain valid; this addendum captures everything the mockup has demonstrated since.*
+
+### 13.1 The DocumentPreviewModal (the headline interaction)
+
+The "Generate .{format}" CTA and every library/Documentation-tab row now open a **rendered Word-shaped preview** instead of just dropping a file. This is the wow-moment surface.
+
+- **FR-MODAL-1** Fullscreen drawer (≈92vw/92vh), **must portal to `document.body`** — it cannot render inside the page content tree because the model-detail tab wrapper carries a persisted CSS transform that becomes a containing block and traps `position: fixed`. (Mockup learning — server-rendered product won't have this exact bug but the modal must still be a top-level overlay.)
+- **FR-MODAL-2** Sticky header with a **4-way audience seg-switch** that re-renders the body in place. One generation → all 4 audience variants viewable without re-fetch.
+- **FR-MODAL-3** Body is a paginated 816×1056 (US-Letter @ 96dpi) page strip. The preview styling is a **fidelity hint**; the server-side `.docx` renderer is source of truth and must match font/spacing/numbering.
+- **FR-MODAL-4** Footer page-nav tracks scroll position. Format selector + Regenerate + Download + Close (Esc).
+
+### 13.2 Automated vs. manual — the section architecture
+
+Every section belongs to one of two buckets. This split is the spine of the feature.
+
+| Bucket | Source | Sections |
+|---|---|---|
+| **Automated** | Fabric API + LP collectors | Cover metadata · Exec-summary KPIs · **Model maturity / quality score** · Scope & method · Schema (tables/cols) · Relationships · ER diagram · **Power Query (M)** · Measures + DAX · Calc columns · RLS + Sensitivity · **Access** (perms × RLS scope) · **Refresh history** · **Adoption** · Lineage · Change log |
+| **Manual** | LP-side foundation | Owner / SME / Stewards (→ cover credit + Auditor sign-off + Analyst contact card) · Domain · Business-glossary attachments (→ glossary sections + measure/column/table descriptions) |
+
+**Degradation rule:** automated sections render even with zero manual data. Manual sections render explicit empty-states ("No stewards assigned in LP. Add via /ownership") — **never fabricated content**. This is what makes the doc trustworthy.
+
+### 13.3 New automated sections (added v1.1)
+
+- **FR-QUALITY-1** Model-maturity section: overall score + per-dimension bars (Naming/Sources/Performance/Structure/Hygiene/Discoverability) + weakest-dimension note. Audiences: Auditor · Analyst · Engineer.
+- **FR-REFRESH-1** Refresh-history section: 24h/7d/30d/90d run rollup (runs/ok/failed/success-rate) + recent failures with reasons. Audiences: Auditor · Analyst · Engineer. Audience-specific framing (Analyst: "stale = untrustworthy"; Engineer: "first place to look"; Auditor: "reliability evidence").
+- **FR-ACCESS-1** Access section: principal × role × member-count × **RLS scope**. Audiences: Auditor (who-can-read control) · Engineer ("does my RLS work?" — each Read group maps to an RLS rule). Source: Admin API permissions + AAD Graph group expansion.
+- **FR-ADOPTION-1** Adoption section: DAU/WAU/MAU + total opens + dormant count + top downstream surfaces. Audiences: Analyst · Executive · Engineer. Source: activity_events on downstream reports.
+- **FR-MCODE-1** Power Query (M) section: the M expression per table (ingestion/transform layer), extracted from partition definitions via Scanner getDefinition / TMDL. Audience: Engineer. Rendered distinct from DAX (green-on-dark vs gold-on-dark).
+
+### 13.4 Manual-data bindings
+
+- **FR-OWNERBIND-1** Cover Owner = `resolveModelOwner(model, ws)` w/ inheritance indicator. Auditor sign-off = Owner + up to 2 Stewards (+N overflow) + external-auditor row. Analyst contact = SME with fallback-to-Owner indicator. All empty-states explicit. Source: `model_owners` (see PRD `ownership.md`).
+- **FR-GLOSSBIND-1** Measure / column / table descriptions come **only** from an attached business-glossary term (`linkedTo.measures` / `.columns` / `.tables`). No attachment → no description. Each rendered description carries a tone-coded type tag (`METRIC · AOV`). Source: `business_terms` + attachment junctions (see PRD `glossary.md`).
+- **FR-GLOSSBIND-2** Per-audience glossary section pulls terms attached to *this* model: Analyst (full, grouped by type) · Executive (Metric+KPI) · Auditor (Process+Acronym appendix) · Engineer (Acronym+Dimension appendix).
+
+### 13.5 Per-model entry point
+
+- **FR-MODELDOC-1** `/models/[id]` → Documentation tab shows 4 audience preset cards + a versions list filtered to that model (from `generated_documents WHERE model_id=$`). Cards + version rows open the same modal. Empty-state when the model has no versions.
+
+### 13.6 Additional open questions (v1.1)
+
+- **OQ-7** Access section: do we expand AAD nested groups to effective-member counts, or show direct membership only? (Graph transitive expansion is expensive at scale.)
+- **OQ-8** Refresh-history window: 90d in the doc, or configurable? Does the auditor need the full retention window (≥1y)?
+- **OQ-9** Power Query M for the Auditor preset as data-provenance evidence (condensed, source-only)? Operator considering.
+- **OQ-10** When a measure has multiple attached glossary terms, which wins for the description? (Current mock: first match. Likely needs a "primary term" flag on the attachment.)
+
+---
+
+**Mockup reference:** `https://layerpulze-mockup.vercel.app/documents` · model entry `https://layerpulze-mockup.vercel.app/workspaces/finance-prod/sales-analytics` → Documentation tab
 **Screen narrative:** `docs/screens/documents.md`
+**Related PRDs:** `docs/prds/glossary.md` · `docs/screens/ownership.md`

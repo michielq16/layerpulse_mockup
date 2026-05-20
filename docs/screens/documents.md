@@ -1,163 +1,129 @@
-# Screen: Documents — auto-Word generation flow
+# Screen: Documents — auto-generated semantic-model documentation
 
-**Pillar:** Semantic Model Quality (FinOps cross-sell at QBR)
-**Persona:** Both — partner (primary, generates for customer audits + QBRs) + direct customer (secondary, self-serve handoff docs)
-**Value-loop quadrant:** Render — joins `models × tables × measures × DAX_dependencies × lineage × tenant_settings × glossary_terms` from the existing graph and renders to .docx in one click
-**Decision the user makes:** "Ship this auto-generated doc to my auditor / new analyst / executive — right now."
+**Pillar:** Semantic Model Quality (FinOps cross-sell at QBR · Governance evidence for Auditor preset)
+**Persona:** Both — partner (primary; generates for customer audits + QBRs + analyst handoffs) + direct customer (secondary; self-serve)
+**Value-loop quadrant:** Render — joins `models × tables × columns × measures × DAX × power_query_M × relationships × lineage × rls × sensitivity_labels × refresh_history × access × adoption × quality_score` (automated) **with** `owners × business_glossary` (manual) and renders to a Word-shaped document in one click.
+**Decision the user makes:** "Ship this auto-generated doc to my auditor / new analyst / executive / engineer — right now."
+**Surfaces:** `/documents` (library + generator) · the **DocumentPreviewModal** (rendered preview) · `/models/[id]` → Documentation tab (per-model entry point).
+
 **Data joins required:**
-- `semantic_models × tables × columns × measures × relationships` (Quality pillar core)
-- `model_lineage` (upstream sources + downstream reports + impact list)
-- `tenant_settings × sensitivity_labels × rls_rules` (Governance pillar overlay for the Auditor preset)
-- `business_glossary × owners` (Context overlay)
-- `model_changelog` (drives the "outdated" status)
+- **Automated (Fabric API + LP collectors):** `semantic_models × tables × columns × measures × relationships` · `partition_M_expressions` (Power Query) · `model_lineage` (upstream + downstream) · `rls_rules × sensitivity_labels` · `model_changelog` (from activity_events) · `quality_score` (LP rules engine) · `refresh_history` (Refreshables endpoint) · `dataset_permissions × aad_groups` (Access) · `report_consumption` (Adoption)
+- **Manual (LP-side foundation):** `model_owners` (Owner/SME/Stewards/Domain — see [[ownership]]) · `business_glossary` attachments (see [[glossary]])
 
 ## Why this exists
 
-Generating documentation for a semantic model today means: open Tabular Editor → export schema → manually format → write the narrative → email the .docx. 1–3 hours per model. The data needed is already in LP's joined graph; LP can produce the same artifact in ~24 seconds with a click. **This is the single biggest differentiator screen** per `productvision.md` §12.
+Generating documentation for a semantic model today means: open Tabular Editor → export schema → manually format → write the narrative → email the .docx. 1–3 hours per model, rots on the next model change. Microsoft's surfaces (Fabric admin portal, DAX Studio, Tabular Editor, Power BI Desktop) **render** metadata but never produce an audience-shaped artifact. There is no "give me the doc" button in the Microsoft stack.
+
+LayerPulse already joins `model_metadata × workspace × tenant_settings × activity_events × lineage` for every monitored tenant. The document **is** the deliverable — the single biggest differentiator screen per `productvision.md` §12.
+
+**The complete-document thesis:** a great model doc combines two knowledge layers that live in different places —
+- **Automated technical knowledge** LP extracts from Fabric (schema, DAX, M, lineage, refresh, access, maturity, adoption)
+- **Manual business knowledge** humans capture in LP (ownership accountability + business-glossary definitions)
+
+Neither layer alone is a usable doc. LP is the only tool that holds both and joins them.
 
 ## Happy path
 
-The page is **library-first** (vault is the daily door; generator is a tab away).
+The page is **library-first** (the vault is the daily door; the generator is one tab away).
 
-1. User lands on `/documents`. Header: title + `[+ Generate new]` primary CTA. 4 KPI strip (coverage, gen/30d, outdated, median gen time). Tab bar: `[Library (default)] [Generate]`.
-2. **Library tab (default):**
-   1. If any documents are outdated, an **amber banner** at the top surfaces *"N documents are outdated — model changed since last gen"* with `[Set up auto-regen]` + `[Regenerate all]` actions. Banner hides itself when no outdated docs remain.
-   2. Filter row: search (model + workspace) · status chips (All / Current / Outdated / Scheduled with counts) · workspace dropdown · audience dropdown · sort dropdown (Recently generated default / Name A–Z / Outdated first).
-   3. Doc rows show: tone-colored icon, model name, **audience pill** (Auditor / Analyst / Executive / Engineer), **status pill** (Current / Outdated), workspace · format · last-gen relative time (tooltip with absolute UTC) · size, **schedule chip** (Off / Daily / Weekly / Monthly / On change with next-fire time), row actions (View / Regenerate / Download).
-   4. Outdated rows get a left-edge amber accent.
-   5. Schedule chip click → small popover with the 5 frequency options + checkmark on current; pick one to set/cancel schedule.
-3. **Generate tab:** the 3-step flow (Pick model → Choose sections → Preview & download).
-   - Step 1 — Pick a model: search, filter chips (All / Outdated / Never), scrollable list with status pills.
-   - Step 2 — Choose sections: audience preset (auto-toggles section bundles), section catalogue grouped by Cover & summary / Schema / Logic / Lineage / Governance / Context, format toggle, cover-logo switch.
-   - Step 3 — Preview & download: section-schematic preview (sets expectation before commit), estimate strip (pages / size / gen time), Share link / Schedule weekly / Generate .{format} actions, status-aware hint card.
-   - Clicking the gradient `Generate` CTA opens the **DocumentPreviewModal** (see below) with the just-built doc. Closing the modal returns to where the user was; Download commits and returns to Library w/ the new doc at the top.
-4. The `[+ Generate new]` header CTA jumps to the Generate tab from anywhere on the page.
-5. **Library row click anywhere → DocumentPreviewModal** opens with that row's audience-bound render. The row's `View` icon, `Download` button, and the row body itself all open the same modal — the `Regenerate` icon is the only row affordance that doesn't.
+1. **`/documents` · Library tab (default):**
+   1. Header: title + 4-KPI strip (coverage / generated-30d / outdated / median-gen-time) + `[+ Generate new]` CTA.
+   2. Outdated banner (amber) when any doc's source model changed since last gen — `[Set up auto-regen]` + `[Regenerate all]`.
+   3. Filter row: search · status chips (All / Current / Outdated / Scheduled) · workspace · audience · sort.
+   4. Each row: tone icon · model name · **audience pill** (Auditor / Analyst / Executive / Engineer) · status pill · workspace · format · last-gen (relative; absolute-UTC tooltip) · size · **schedule chip** (Off / Daily / Weekly / Monthly / On-change). **The whole row is clickable → opens the DocumentPreviewModal.**
+2. **Generate tab:** 3-step flow (Pick model → Choose sections → Preview). Step-3 "Generate .{format}" CTA → opens the modal with the just-built doc.
+3. **`/models/[id]` → Documentation tab:** per-model entry — 4 audience preset cards + a versions list filtered to that model. Clicking a preset or a version opens the modal.
 
-## DocumentPreviewModal — rendered Word-shaped preview
+## DocumentPreviewModal — the rendered preview
 
-The modal is where the screen earns its "biggest single bet" framing — it shows the *actual* generated document, not a schematic, with Fabric-plausible content joined from the source model.
+Fullscreen drawer (≈92vw / 92vh), **portaled to `document.body`** so it overlays the full viewport regardless of any transformed ancestor (the `.fade-in` tab wrapper was trapping it before). 4-region grid: header · optional outdated-banner · scrollable Word-shaped page strip · footer.
 
-**Shape:** fullscreen drawer (≈92vw / 92vh), 4-region grid (header · optional outdated banner · scrollable page strip · footer).
+- **Header (sticky):** file-text icon · model name · audience pill · format badge · sub-line (workspace · env · "Generated {time}" · section count). Toolbar: **4-way audience seg-switch** (Auditor / Analyst / Executive / Engineer — re-renders the body in place so all 4 variants are reachable without reopening) · format select (`.docx` / `.pdf` / `.md`) · Regenerate · Download · Close (Esc).
+- **Body:** scrollable strip of 816×1056 (US-Letter @ 96dpi) pages. Serif body (Cambria/Georgia), DM Sans headings (navy `#0D3159`), JetBrains Mono for numbers/DAX/M/identifiers. Running head + foot + page-number gutter.
+- **Footer (sticky):** scroll-tracked page nav (Page X of Y) + meta strip.
 
-**Header** — sticky:
-- Title block: file-text icon · model name · audience pill · format badge · sub-line (workspace · env · "Generated {time}" · section count if from Generate tab).
-- Toolbar: 4-way audience seg-switch (Auditor / Analyst / Executive / Engineer — clicking re-renders the body w/o closing the modal so all 4 variants are reachable in one session), format select (`.docx` / `.pdf` / `.md`), Regenerate, Download .{format}, Close (Esc).
+### Audience renders — the section matrix
 
-**Body** — scrollable strip of Word-shaped pages:
-- 816px × 1056px each (US Letter @ 96dpi).
-- Serif body font (Cambria / Georgia stack), 11pt, line-height 1.45.
-- DM Sans for headings (H1 24pt navy / H2 15pt navy w/ underline / H3 12pt slate).
-- JetBrains Mono for numbers, DAX, identifiers, paths.
-- Running head: `LayerPulse · Contoso Fabric` left, `{model} · {audience} · {time}` right.
-- Running foot: italic brand label + `n / N` page number.
-- Page gutter on the left shows "Page n of N" outside the white surface.
+Each preset assembles automated + manual sections differently. ✓ = present.
 
-**Footer** — sticky: prev / next page nav (mono `Page X of Y`), live-updates from scroll position; meta strip explaining "mockup preview · real .docx renderer ships server-side."
+| Section (source) | Auditor | Analyst | Executive | Engineer |
+|---|:-:|:-:|:-:|:-:|
+| Cover (auto + Owner/Domain from LP) | ✓ | ✓ | ✓ | ✓ |
+| Executive summary KPIs (auto) | ✓ | ✓ | ✓ big | ✓ |
+| TOC (auto) | — | ✓ | — | ✓ |
+| **Model maturity / quality score** (auto) | ✓ | ✓ | — | ✓ |
+| Scope & method (auto) | ✓ | — | — | — |
+| Tables + columns (auto schema · **glossary-driven descriptions**) | ✓ | ✓ | — | ✓ full |
+| Relationships (auto) | ✓ | ✓ | — | ✓ |
+| ER diagram (derived) | — | — | — | ✓ |
+| **Power Query (M)** (auto · ingestion layer) | — | — | — | ✓ |
+| Measures (auto DAX · **glossary-driven descriptions**) | ✓ named | ✓ no-DAX | ✓ top-4 | ✓ + DAX |
+| Calculated columns (auto) | — | — | — | ✓ |
+| RLS + sensitivity (auto) | ✓ | — | — | — |
+| **Access** (auto · RLS-scope mapping) | ✓ | — | — | ✓ |
+| **Refresh history** (auto) | ✓ | ✓ | — | ✓ |
+| **Adoption** (auto · downstream reach) | — | ✓ | ✓ | ✓ |
+| Lineage up/down (auto) | ✓ | ✓ | — | ✓ |
+| Change log (auto) | ✓ last-8 | — | — | ✓ full |
+| **Business glossary** (manual, see [[glossary]]) | compliance terms (Process+Acronym) | full · grouped by type | KPIs+Metrics only | technical (Acronym+Dimension) |
+| **Owners + sign-off** (manual, see [[ownership]]) | ✓ Owner + Stewards sign-off | contact card (SME) | cover credit | — |
 
-**Audience renders** — each preset produces a distinct page sequence:
+### The Owner/SME/Stewards binding (manual → doc)
 
-| Audience | Pages | Sequence |
-|---|---:|---|
-| **Auditor** (rose) | 8 | Cover · Exec summary + scope/method · Tables + Fact columns · Dim columns · Relationships · RLS + Sensitivity · Findings · Owners + Changelog + sign-off block |
-| **Analyst** (sky) | 6 | Cover · Exec summary + TOC · Tables + Fact columns · Dim columns + Relationships · Measures (no DAX) · Glossary + Owners |
-| **Executive** (amber) | 3 | Cover · Exec summary (big KPIs) + Top measures · Where this model shows up (top-5 downstream) + Glossary |
-| **Engineer** (violet) | 10 | Cover · TOC · Tables + Fact columns · Dim columns · ER diagram · Measures + DAX (1-4) · Measures + DAX (5-8) · Relationships + Calc columns · Lineage (up + down) · Change log |
+- **Cover Owner field** = `resolveModelOwner(model, ws)` with an `(inherited from workspace)` indicator when not overridden. Red "— Not yet assigned —" when absent.
+- **Auditor sign-off page** = real Owner cell + up to 2 Steward cells (+N overflow) + external-auditor row. Empty-state when no stewards: "No stewards assigned in LP. Add via /ownership."
+- **Analyst contact card** = SME if assigned, else fallback to Owner with explicit `(SME not assigned — uses Owner)` hint.
+- **Domain** appears on the cover when tagged.
 
-**Sample-data contract:** the canonical content block is `DATA.documents.sample` (Sales Analytics, Finance-Prod). Currently the body content is fixed (mockup), only the heading + brand line swap with the operator's model selection. The real backend will join live joins per the model_id.
+### The glossary binding (manual → doc) — the "no random descriptions" rule
 
-### Edge states (modal)
-
-- **Outdated status** (from library row OR picker): yellow banner directly under the header — "Source model has changed since this document was last generated" + `Regenerate now` button.
-- **Audience swap mid-modal:** body re-renders, scroll resets to page 1, format selection persists, audience pill in the title updates.
-- **ESC key:** closes the modal, returns to library/generate tab where user was.
-- **Click backdrop:** same as ESC.
-- **Body scroll lock** on `body` while modal open (no background scroll bleed).
-- **Mobile <900px:** modal fills viewport (no radius), page width adapts, toolbar wraps.
+Operator rule: a measure/column/table description **only** comes from an attached business-glossary term — never invented prose.
+- **Measure description** = first sentence of the attached Metric/KPI term + a tone-coded tag badge (`METRIC · AOV`). **No attachment → no description.**
+- **Column / table description** = same, via `linkedTo.columns` / `linkedTo.tables`. Blank ("—") when nothing attached.
+- The glossary section per audience reads the terms attached to *this* model (`getModelGlossaryAttachments`), falling back to the canonical fixture only so a doc never ships an empty glossary.
 
 ## Edge states
 
-- **Library, no outdated docs:** outdated banner hidden entirely.
-- **Library, no docs match filters:** empty state with copy *"No documents match. Adjust the filters above, or generate a new document"* — second clause is a link to the Generate tab.
-- **Library, brand new tenant (zero docs ever generated):** instead of an empty list, show a CTA card *"No documents yet. Generate your first one"* that opens the Generate tab. (Implementation note: trigger when `d.items.length === 0`.)
-- **Schedule popover, click outside:** popover closes; selection persists.
-- **Generate tab, no sections selected:** preview shows italic copy *"No sections selected. Pick at least one section in step 2 to see the document take shape."* CTA disabled.
-- **Generate tab, first-time model:** info-tone hint card: *"No prior document for this model. First generation will become the baseline."*
-- **Generate tab, outdated model:** amber-tone hint card: *"Last generated {N}d ago. Model has changed since — regenerate to refresh."*
-- **Permission-denied** (partner-of-record on customer with read-only seat): all mutating CTAs disabled (`[+ Generate new]`, `Regenerate`, `Regenerate all`, `Set up auto-regen`, schedule chip popover) with tooltip *"Read-only access — ask {customer admin} to generate this doc."*
-- **Generation failure:** banner above the preview with the failure reason + retry button. (Out of scope for the mockup; real backend behavior.)
+- **Library, no outdated docs:** outdated banner hidden.
+- **Library, no docs match filters:** "No documents match. Adjust the filters above, or generate a new document" (link to Generate tab).
+- **Brand-new tenant (zero docs):** CTA card "No documents yet. Generate your first one."
+- **Model with no doc versions** (Documentation tab): empty state under "Versions" + the 4 preset cards still clickable to render.
+- **Outdated doc opened in modal:** amber banner under the header + "Regenerate now."
+- **Audience swap mid-modal:** body re-renders, scroll resets to page 1, format persists.
+- **No Owner / no SME / no Stewards:** rendered as explicit red/grey empty-states (deliberate signal to populate `/ownership`), never fabricated.
+- **Measure with no glossary term:** renders without a description (deliberate signal to attach).
+- **Permission-denied** (partner-of-record, read-only seat): all mutating CTAs disabled with tooltip.
+- **ESC / backdrop click:** closes modal.
 
 ## Components used
 
-**Shell:**
-- `StatCard` × 4 — emerald / sky / amber / violet KPI strip
-- `seg-tabs` + `doc-tabs` (new) — top-level Library / Generate tab bar
-- `doc-gen-cta` — gradient `+ Generate new` primary CTA in header (also used by the Generate action in step 3)
+**`/documents` shell:** `StatCard` ×4 · `model-tabs` (Library / Generate) · `doc-gen-cta`.
+**Library:** `doc-banner` · `doc-lib-filters` · `doc-row` (+ `doc-row-click`, `doc-row-outdated`) · `doc-aud-pill` · `doc-status` · `doc-sched-chip` + `doc-sched-pop` · `doc-empty`.
+**Generate:** `doc-gen-grid` · `doc-pick-row` · `doc-aud-tab` · `doc-section-grp` / `doc-section-row` · `doc-toggle` · `doc-preview-card` (schematic) · `doc-est-strip` · `doc-gen-hint`.
+**DocumentPreviewModal:** `doc-modal-backdrop` (portaled) + `doc-modal` · `doc-modal-header` + audience seg-switch · `doc-modal-banner` · `doc-modal-page` (816×1056) · `doc-page-running-head/foot` · paper typography (`doc-h1/h2/h3`, `doc-p`, `doc-table`, `doc-measure` + `doc-dax`, `doc-mquery` + `doc-mcode`, `doc-finding`, `doc-glossary`, `doc-quality`, `doc-access-role`, `doc-kpi-grid`, `doc-cover`, `doc-signoff`) · `doc-modal-footer` page nav.
+**Per-model Documentation tab:** `model-docs-presets` (4 audience cards) + versions list reusing `doc-row` + the modal.
+**Section components:** `DocCover` · `ExecKpiGrid` · `TocList` · `QualityScoreSection` · `TablesOverview` · `ColumnsForTable` · `RelationshipsTable` · `ErDiagram` · `PowerQuerySection` · `MeasuresList` · `RlsTable` · `SensLabelsTable` · `AccessSection` · `RefreshHistorySection` · `AdoptionSection` · `LineageBlocks` · `ChangelogTable` · `GlossaryList` · `OwnersTable` · `ContactCard`.
 
-**Library tab:**
-- `doc-banner` (new) — amber-tinted outdated-doc surface with title + sub + action cluster
-- `lp-card-flush` + `doc-lib-filters` — filter row with search, status chips, workspace + audience + sort dropdowns
-- `chip` — status filter (All / Current / Outdated / Scheduled with counts)
-- `doc-row` + `doc-row-outdated` (existing + new modifier) — row with left-edge amber accent for outdated
-- `doc-aud-pill` (new) — colored audience badge per row (rose=auditor / sky=analyst / amber=executive / violet=engineer / slate=other)
-- `doc-status` (existing) — Current / Outdated pill
-- `doc-sched-chip` + `doc-sched-pop` (new) — schedule frequency chip with popover (Off / Daily / Weekly / Monthly / On change)
-- `doc-empty` (new) — empty-state with link back to Generate tab
+## Metrics surfaced
 
-**Generate tab:**
-- `doc-gen-grid` — 3-column layout
-- `doc-gen-step` + `doc-gen-step-n` — numbered step headers
-- `doc-pick-row` — model picker rows with selection highlight
-- `doc-aud-tab` — 2×2 audience preset grid with active state
-- `doc-section-grp` + `doc-section-row` — checkbox rows grouped by section family
-- `doc-toggle` — iOS-style switch for partner logo
-- `doc-preview-card` + `doc-preview-page` — schematic preview (pre-commit hint shape)
-- `doc-est-strip` — pages / size / gen-time estimate
-- `doc-gen-hint` — inline status hint (amber for outdated, info-blue for never)
-
-**DocumentPreviewModal (new):**
-- `doc-modal-backdrop` + `doc-modal` — backdrop + fullscreen drawer shell
-- `doc-modal-header` + `doc-modal-title-block` + `doc-modal-toolbar` — sticky header w/ audience switcher + actions
-- `doc-modal-banner` — outdated banner under header
-- `doc-modal-body` + `doc-modal-page-wrap` + `doc-modal-page` — scrollable Word-shaped page strip
-- `doc-page-running-head` + `doc-page-running-foot` — per-page brand strip
-- `doc-h1` / `doc-h2` / `doc-h3` / `doc-p` / `doc-p-sub` — paper typography
-- `doc-cover` family — first-page brand-heavy layout w/ audience-toned eyebrow
-- `doc-kpi-grid` (+ `.big`) + `doc-kpi-tile` — exec summary KPI tiles
-- `doc-toc` — table-of-contents w/ dotted leaders
-- `doc-table` (+ `.doc-table-cols`) — paper-table styling (navy header, striped rows)
-- `doc-measure` + `doc-dax` — measure cards with monospace DAX block
-- `doc-finding` (+ `.doc-finding-critical/warning/info`) — governance finding callouts
-- `doc-glossary` — dt/dd grid
-- `doc-erd` — star-schema SVG
-- `doc-signoff` — auditor sign-off block
-- `doc-modal-footer` + `doc-modal-page-nav` — sticky page navigation
-
-## Metrics surfaced on the screen
-
-- **Models documented / 34** + coverage % (header KPI)
-- **Generated / 30d** (header KPI)
-- **Outdated** count (header KPI; links to picker filter)
-- **Median generation time** (header KPI; sets expectation in seconds)
-- **Per-model `last generated` time** (picker rows)
-- **Section item counts** (in real time as user toggles — tables: 12, measures: 42, etc.)
-- **Live page count / size estimate / generation-time estimate** (right-rail strip, updates with selection)
+Coverage % · generated/30d · outdated count · median gen time · per-model last-gen · live page/size/gen estimate (Generate tab) · per-doc page count.
 
 ## Benefit hypothesis
 
-Within 90 days of shipping, partners cite Documents as the "wow moment" in 60% of QBRs. Auto-generated docs replace ≥80% of manual model documentation (currently 1–3 hr per model). Doc Coverage % on Overview climbs from 78% to 92% across active tenants because regeneration is a single click; Auditor preset becomes the default download for SOC 2 evidence pulls. Tertiary effect: "Generate report" on Overview converts to a Documents shortcut, increasing engagement with the pillar 3×.
+Within 90 days, partners cite Documents as the "wow moment" in 60% of QBRs. Auto-docs replace ≥80% of manual model documentation (1–3 hr → ~24 s). Doc Coverage % on Overview climbs 78% → 92%. Auditor preset becomes the default SOC 2 evidence pull. The Owner sign-off + glossary binding make the doc operationally trustworthy (real signatures, canonical definitions) rather than cosmetic.
 
 ## Open questions / future iterations
 
-- **Diff view** ("what changed since last gen") — defer to v2; today we just flag `outdated`.
-- **Section reordering** (drag-handles within a group) — defer; audience presets cover 90% of layouts.
-- **Multi-model batch generation** ("generate docs for every outdated model in Finance-Prod") — strong Tier 1 follow-up, slots after this ships.
-- **Embedded charts in preview** (sparklines next to KPI sections) — depends on backend doc renderer; design later.
-- **Brand customization** beyond the logo toggle (color, font choice) — out of scope; LayerPulse brand on cover, not customer's.
+- **Diff view** ("what changed since last gen") — defer to v2; today we flag `outdated`.
+- **Power Query M for non-Engineer audiences** — condensed provenance summary for Auditor? (operator considering)
+- **Embedded sparkline charts** in KPI sections — backend renderer dependency.
+- **Multi-model batch generation** — strong Tier-1 follow-up.
+- **LLM-suggested glossary attachment** — Q3+, off by default (humans-in-the-loop).
 
 ## Notes for LP-side PRD authoring
 
-- The audience-preset list is **the contract**. Adding a preset = adding a column to `documents.audiences` + mapping each section's `audiences` array. No bespoke logic per audience.
-- The section catalogue (`documents.sections`) is **append-only** from a backend perspective. Renaming a section breaks doc-template diffing.
-- The preview-pane Word styling is a hint only — the real `.docx` renderer (likely server-side via OOXML library) is the source of truth. The mockup preview should match its output font / spacing / numbering once that lands.
-- `Schedule weekly` button parks the recurrence as a `documents.subscriptions` row keyed on (`model_id`, `audience`, `format`, `recipients`). Wire up after one-shot generation ships.
+- Audience-preset list is **the contract**. Adding a preset = a column on `documents.audiences` + each section's `audiences[]` mapping.
+- Section catalogue is **append-only** from a backend perspective (renaming breaks doc-template diffing).
+- The preview Word styling is a **hint** — the real `.docx` renderer (server-side OOXML) is source of truth and must match font/spacing/numbering.
+- The automated/manual split is the architectural spine: automated sections render even with zero manual data (degrading to explicit empty-states); manual sections (Owner sign-off, glossary descriptions) are what make the doc trustworthy.
+- See companion PRD: `docs/prds/documents.md`.
