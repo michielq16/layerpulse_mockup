@@ -296,6 +296,40 @@
     </div>
   </section>
 
+  <!-- SOURCES -->
+  <section>
+    <div class="eyebrow">Where it comes from</div>
+    <h2>Each section's source</h2>
+    <p class="lead">For the technical reader: the Fabric API call for automatic sections, or the LayerPulse screen where your team captures the manual ones.</p>
+    <div class="card" style="padding:6px 0;">
+      <table style="width:100%;border-collapse:collapse;font-size:13.5px;">
+        <thead><tr>
+          <th style="text-align:left;padding:9px 18px;border-bottom:2px solid var(--line);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);">Section</th>
+          <th style="text-align:left;padding:9px 18px;border-bottom:2px solid var(--line);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);">API call / LP screen</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Cover</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">Scanner getInfo + LP /ownership</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Executive summary</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">Scanner getInfo + Metrics App DAX</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Owner's note</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">LP /models/[id]</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Model maturity / quality</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">LP rules engine (Scanner + BPA)</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Tables + columns</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">Scanner getInfo + LP /glossary</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Relationships · hierarchies · calc groups</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">Scanner getInfo / getDefinition (TMDL)</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Power Query (M)</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">Scanner getDefinition (datasetExpressions)</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Measures + DAX</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">Scanner getInfo measures[] + LP /glossary</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Calculated columns · storage</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">Scanner getInfo + DMV (VertiPaq)</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Measure usage / dormancy</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">/admin/activityevents × DAX parse</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">RLS · OLS · sensitivity</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">Scanner getInfo (roles[] / labels)</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Access</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">/admin/datasets/{id}/users + Graph /groups</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Refresh history</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">/admin/capacities/refreshables + activityevents</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Capacity / cost</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">Metrics App DAX + cost_observations</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Lineage · adoption</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">Scanner lineage + /admin/activityevents</td></tr>
+          <tr><td style="padding:7px 18px;border-bottom:1px solid var(--line);">Business glossary · processes</td><td class="mono" style="padding:7px 18px;border-bottom:1px solid var(--line);font-size:12px;">LP /glossary</td></tr>
+          <tr><td style="padding:7px 18px;">Owners · stewards · sign-off</td><td class="mono" style="padding:7px 18px;font-size:12px;">LP /ownership</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <!-- SCREENS -->
   <section>
     <div class="eyebrow">See it for real</div>

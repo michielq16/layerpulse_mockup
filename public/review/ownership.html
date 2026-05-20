@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LayerPulse — Ownership & Stewardship · Plain-language review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0D3159;--sky:#2491eb;--gold:#FFBF3C;--ink:#1f2937;--muted:#64748b;--line:#e5e8ec;--bg:#f4f6f9;--card:#fff;}
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:880px;margin:0 auto;padding:0 22px 80px;} .mono{font-family:'JetBrains Mono',monospace;}
+  header.hero{background:linear-gradient(135deg,#0D3159 0%,#13447a 100%);color:#fff;padding:54px 0 46px;margin-bottom:38px;}
+  .hero .wrap{padding-bottom:0;}
+  .hero-mark{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;margin-bottom:22px;opacity:.92;}
+  .hero-mark .dot{width:26px;height:26px;border-radius:7px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .hero h1{font-size:34px;line-height:1.15;margin:0 0 12px;font-weight:700;letter-spacing:-.02em;}
+  .hero p{font-size:18px;margin:0;color:#cfe2f5;max-width:640px;}
+  .hero .meta{margin-top:20px;font-size:13px;color:#9cc2e8;display:flex;gap:18px;flex-wrap:wrap;} .hero .meta b{color:#fff;font-weight:600;}
+  section{margin-bottom:42px;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--sky);margin-bottom:8px;}
+  h2{font-size:25px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--navy);}
+  .lead{font-size:17px;color:var(--muted);margin:0 0 22px;max-width:680px;} p{margin:0 0 14px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(13,49,89,.04);}
+  .bigidea{border-left:5px solid var(--gold);} .bigidea p{font-size:17px;margin:0;} .bigidea p+p{margin-top:12px;}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;} @media(max-width:680px){.cards{grid-template-columns:1fr;}}
+  .roles{display:grid;grid-template-columns:1fr 1fr;gap:14px;} @media(max-width:680px){.roles{grid-template-columns:1fr;}}
+  .role{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+  .role .tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:5px;margin-bottom:8px;}
+  .role.owner .tag{background:#dbeafe;color:#1e40af;} .role.sme .tag{background:#ede9fe;color:#5b21b6;}
+  .role.stew .tag{background:#d1fae5;color:#065f46;} .role.dom .tag{background:#fef3c7;color:#92400e;}
+  .role h3{margin:0 0 4px;font-size:16px;color:var(--navy);} .role p{font-size:14px;margin:0;color:var(--ink);}
+  .flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14.5px;}
+  .flow .step{background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 14px;}
+  .flow .arr{color:var(--muted);font-weight:700;}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-size:13.5px;align-items:center;}
+  .legend .it{display:inline-flex;align-items:center;gap:7px;}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
+  .dot.full{background:#16a34a;} .dot.partial{background:#f59e0b;} .dot.low{background:#ef4444;} .dot.empty{background:#cbd5e1;}
+  .btn{display:inline-flex;align-items:center;gap:7px;background:var(--sky);color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:9px 16px;border-radius:9px;}
+  .decisions{list-style:none;margin:0;padding:0;}
+  .decisions li{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:15px 18px;margin-bottom:11px;display:flex;gap:13px;align-items:flex-start;}
+  .decisions .q-num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .decisions .q-body b{display:block;font-size:15px;color:var(--navy);margin-bottom:2px;} .decisions .q-body span{font-size:14px;color:var(--muted);}
+  footer{border-top:1px solid var(--line);padding-top:24px;margin-top:10px;font-size:14px;color:var(--muted);} footer a{color:var(--sky);text-decoration:none;font-weight:600;}
+  .back{display:inline-block;margin-bottom:14px;color:#cfe2f5;text-decoration:none;font-size:14px;}
+  .callout{background:#eef6fd;border:1px solid #cfe6fb;border-radius:11px;padding:14px 18px;font-size:14.5px;color:#0d3159;}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="./">← Review hub</a>
+    <div class="hero-mark"><span class="dot" style="background:var(--gold)"></span> LayerPulse</div>
+    <h1>Ownership &amp; Stewardship — in plain language</h1>
+    <p>Who is <i>accountable</i> for each model — the human names a document needs and an auditor asks for. Fabric tracks access; it doesn't track accountability. This is where we capture it.</p>
+    <div class="meta"><span>📄 <b>For:</b> Product owner review</span><span>⏱ <b>Read:</b> ~4 min</span></div>
+  </div>
+</header>
+<div class="wrap">
+
+  <section>
+    <div class="eyebrow">The one-sentence version</div>
+    <h2>What we're building</h2>
+    <div class="card bigidea">
+      <p>Fabric can tell you who has <i>permission</i> to a model. It cannot tell you who is <i>responsible</i> for it — who signs off, who answers the auditor, who knows the business meaning.</p>
+      <p>Ownership is the LP screen where a human captures that accountability once. It then flows onto the model page and into the sign-off block of every generated document.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Four roles</div>
+    <h2>Who's on the hook</h2>
+    <div class="roles">
+      <div class="role owner"><span class="tag">Owner</span><h3>Accountable</h3><p>The single name responsible for the model. Signs off on documents.</p></div>
+      <div class="role sme"><span class="tag">SME</span><h3>Knows the meaning</h3><p>The subject-matter expert who can explain what the numbers mean.</p></div>
+      <div class="role stew"><span class="tag">Stewards</span><h3>Maintain it</h3><p>One or more people who keep the model healthy day to day.</p></div>
+      <div class="role dom"><span class="tag">Domain</span><h3>Classifies it</h3><p>The business area (Finance, Sales…) the model belongs to.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">How it stays low-effort</div>
+    <h2>Workspace default, model override</h2>
+    <div class="card">
+      <div class="flow">
+        <span class="step">Set an owner on the <b>workspace</b> once</span><span class="arr">→</span>
+        <span class="step">Every model inherits it</span><span class="arr">→</span>
+        <span class="step">Override <b>one model</b> only when it differs</span>
+      </div>
+      <p style="margin:16px 0 0;font-size:14.5px;color:var(--muted);">This mirrors how teams actually work: a workspace has an owner, but individual reports often have their own owner. You only do extra work where reality is different from the default.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">See the gaps at a glance</div>
+    <h2>Role coverage</h2>
+    <p class="lead">A single colored dot per model shows how complete its accountability is — so you can spot what's missing before an auditor does.</p>
+    <div class="card">
+      <div class="legend">
+        <span class="it"><span class="dot full"></span> All 4 roles filled</span>
+        <span class="it"><span class="dot partial"></span> Owner set, gaps remain</span>
+        <span class="it"><span class="dot low"></span> Mostly empty</span>
+        <span class="it"><span class="dot empty"></span> Nothing assigned</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Why it matters for documents</div>
+    <h2>It powers the sign-off block</h2>
+    <div class="callout">When you generate a document, the cover credits the <b>Owner</b> and <b>Domain</b>, and the back page renders a real <b>sign-off block</b> with the Owner + Stewards. No ownership captured → the document shows an explicit "No owner assigned — add via /ownership," never a fabricated name.</div>
+  </section>
+
+  <section>
+    <div class="eyebrow">See it for real</div>
+    <h2>The live screen</h2>
+    <a class="btn" href="https://layerpulze-mockup.vercel.app/ownership" target="_blank" rel="noreferrer">Open Ownership →</a>
+    <p style="margin-top:12px;font-size:14px;color:var(--muted);">Tip: pick a model to see its per-model panel — owner, SME, stewards, domain, and the workspace it inherits from.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Over to you</div>
+    <h2>A few decisions we need from you</h2>
+    <ul class="decisions">
+      <li><span class="q-num">1</span><span class="q-body"><b>Stewards — one or many?</b><span>We've modelled stewards as a list. Confirm a model can have several, while Owner stays singular.</span></span></li>
+      <li><span class="q-num">2</span><span class="q-body"><b>Suggest people from access data?</b><span>We can pre-suggest likely owners from who actually uses/admins the workspace. Helpful, or noise?</span></span></li>
+      <li><span class="q-num">3</span><span class="q-body"><b>Does Ownership block Documents v1?</b><span>The sign-off block degrades gracefully without it — so Documents can ship first. Confirm sequencing.</span></span></li>
+    </ul>
+  </section>
+
+  <footer>
+    <div>Detailed spec for the build team: <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/screens/ownership.md" target="_blank" rel="noreferrer">Screen narrative</a>. <span style="color:var(--muted)">(PRD authored LP-side at handover.)</span></div>
+  </footer>
+</div>
+</body>
+</html>

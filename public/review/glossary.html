@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LayerPulse — Business Glossary · Plain-language review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0D3159;--sky:#2491eb;--gold:#FFBF3C;--ink:#1f2937;--muted:#64748b;--line:#e5e8ec;--bg:#f4f6f9;--card:#fff;}
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:880px;margin:0 auto;padding:0 22px 80px;} .mono{font-family:'JetBrains Mono',monospace;}
+  header.hero{background:linear-gradient(135deg,#0D3159 0%,#13447a 100%);color:#fff;padding:54px 0 46px;margin-bottom:38px;}
+  .hero .wrap{padding-bottom:0;}
+  .hero-mark{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;margin-bottom:22px;opacity:.92;}
+  .hero-mark .dot{width:26px;height:26px;border-radius:7px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .hero h1{font-size:34px;line-height:1.15;margin:0 0 12px;font-weight:700;letter-spacing:-.02em;}
+  .hero p{font-size:18px;margin:0;color:#cfe2f5;max-width:620px;}
+  .hero .meta{margin-top:20px;font-size:13px;color:#9cc2e8;display:flex;gap:18px;flex-wrap:wrap;} .hero .meta b{color:#fff;font-weight:600;}
+  section{margin-bottom:42px;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--sky);margin-bottom:8px;}
+  h2{font-size:25px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--navy);}
+  .lead{font-size:17px;color:var(--muted);margin:0 0 22px;max-width:680px;} p{margin:0 0 14px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(13,49,89,.04);}
+  .bigidea{border-left:5px solid var(--gold);} .bigidea p{font-size:17px;margin:0;} .bigidea p+p{margin-top:12px;}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;} @media(max-width:680px){.cards{grid-template-columns:1fr;}}
+  .mini h3{margin:0 0 4px;font-size:17px;color:var(--navy);} .mini p{font-size:14.5px;margin:0;color:var(--ink);}
+  .types{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  .ty{font-size:12.5px;font-weight:600;padding:4px 11px;border-radius:6px;}
+  .ty.metric{background:#ede9fe;color:#5b21b6;} .ty.kpi{background:#fef3c7;color:#92400e;} .ty.dim{background:#d1fae5;color:#065f46;}
+  .ty.biz{background:#dbeafe;color:#1e40af;} .ty.acr{background:#f1f5f9;color:#475569;} .ty.proc{background:#fee2e2;color:#991b1b;}
+  .flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14.5px;}
+  .flow .step{background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 14px;}
+  .flow .arr{color:var(--muted);font-weight:700;}
+  .btn{display:inline-flex;align-items:center;gap:7px;background:var(--sky);color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:9px 16px;border-radius:9px;}
+  .decisions{list-style:none;margin:0;padding:0;}
+  .decisions li{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:15px 18px;margin-bottom:11px;display:flex;gap:13px;align-items:flex-start;}
+  .decisions .q-num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .decisions .q-body b{display:block;font-size:15px;color:var(--navy);margin-bottom:2px;} .decisions .q-body span{font-size:14px;color:var(--muted);}
+  footer{border-top:1px solid var(--line);padding-top:24px;margin-top:10px;font-size:14px;color:var(--muted);} footer a{color:var(--sky);text-decoration:none;font-weight:600;}
+  .back{display:inline-block;margin-bottom:14px;color:#cfe2f5;text-decoration:none;font-size:14px;}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="./">← Review hub</a>
+    <div class="hero-mark"><span class="dot">LP</span> LayerPulse</div>
+    <h1>The Business Glossary — in plain language</h1>
+    <p>Your team's single dictionary of what every metric, KPI, and term <i>means</i> — and how that meaning flows into every document.</p>
+    <div class="meta"><span>📄 <b>For:</b> Product owner review</span><span>⏱ <b>Read:</b> ~4 min</span></div>
+  </div>
+</header>
+<div class="wrap">
+
+  <section>
+    <div class="eyebrow">The one-sentence version</div>
+    <h2>What we're building</h2>
+    <div class="card bigidea">
+      <p>Fabric knows your column types and DAX. It doesn't know what "NRR" means in <i>your</i> business, who decides that, or where the policy lives.</p>
+      <p>The Business Glossary is one tenant-wide dictionary your team owns. Define a term once, attach it to the models that use it, and that definition shows up everywhere — including auto-generated documents.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">What's in a term</div>
+    <h2>Six kinds of term</h2>
+    <p class="lead">Every entry has a definition, an owner, an expert (SME), a status, and a sensitivity level. Each is one of six types:</p>
+    <div class="types">
+      <span class="ty metric">Metric</span>
+      <span class="ty kpi">KPI</span>
+      <span class="ty dim">Dimension</span>
+      <span class="ty biz">Business term</span>
+      <span class="ty acr">Acronym</span>
+      <span class="ty proc">Process</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">The payoff</div>
+    <h2>Attach a term → it flows everywhere</h2>
+    <div class="card">
+      <div class="flow">
+        <span class="step">Define <b>AOV</b> once</span><span class="arr">→</span>
+        <span class="step">Attach to the <b>[AOV]</b> measure</span><span class="arr">→</span>
+        <span class="step">Shows on the model</span><span class="arr">→</span>
+        <span class="step">Becomes the measure's description in every <b>document</b></span>
+      </div>
+      <p style="margin:16px 0 0;font-size:14.5px;color:var(--muted);">If a measure has no attached term, its description stays blank on purpose — that empty space is the nudge to add one. No invented descriptions.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Two ways to read it</div>
+    <h2>A–Z or cards</h2>
+    <div class="cards">
+      <div class="card mini"><h3>A–Z (default)</h3><p>Reads like a real dictionary — jump to a letter, scan term + type + one-line definition. Best for browsing and onboarding.</p></div>
+      <div class="card mini"><h3>Cards</h3><p>A visual grid you can sort and filter by type, domain, status, owner. Best for governance + cleanup.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">See it for real</div>
+    <h2>The live screen</h2>
+    <a class="btn" href="https://layerpulze-mockup.vercel.app/glossary" target="_blank" rel="noreferrer">Open Glossary →</a>
+    <p style="margin-top:12px;font-size:14px;color:var(--muted);">Tip: on a model (Sales Analytics) → Overview tab, the <b>Business vocabulary</b> panel shows every term attached to that model.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Over to you</div>
+    <h2>A few decisions we need from you</h2>
+    <ul class="decisions">
+      <li><span class="q-num">1</span><span class="q-body"><b>Its own thing, or part of Documents?</b><span>The glossary powers document definitions, so it's a dependency either way — but it could be a standalone governance screen.</span></span></li>
+      <li><span class="q-num">2</span><span class="q-body"><b>One measure, several terms — which wins?</b><span>If a measure has more than one attached term, which definition shows in the doc? (We'd add a "primary" flag.)</span></span></li>
+      <li><span class="q-num">3</span><span class="q-body"><b>Auto-suggest later?</b><span>v1 is manual attachment. Later we could suggest terms by name match. Worth it, or keep it human-only?</span></span></li>
+    </ul>
+  </section>
+
+  <footer>
+    <div>Detailed spec for the build team: <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/prds/glossary.md" target="_blank" rel="noreferrer">PRD</a> · <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/screens/glossary.md" target="_blank" rel="noreferrer">Screen narrative</a>.</div>
+  </footer>
+</div>
+</body>
+</html>

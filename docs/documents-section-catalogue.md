@@ -150,3 +150,44 @@ BACK MATTER
 - **Change-log narrative overlay** (the manual *why* on auto-detected changes) — T3, deferred.
 
 All other catalogue entries are built in the mockup as of this cycle.
+
+---
+
+## Section sources — API call (auto) or LP screen (manual)
+
+Where every section's data comes from. Automated = a Fabric API call / LP collector; manual = the LayerPulse screen where a human captures it.
+
+| Section | Source — API call **or** LP screen |
+|---|---|
+| Cover | `Scanner getInfo` + LP `/ownership` (owner/domain) |
+| Executive summary (KPIs) | `Scanner getInfo` (counts) + Metrics App DAX (rows) |
+| Owner's note | LP `/models/[id]` — owner free-text |
+| Table of contents | generated (no call) |
+| Model maturity / quality | LP rules engine (over `Scanner getInfo` + BPA) |
+| Scope & method | template (lists the APIs used) |
+| Tables + columns | `Scanner getInfo` + LP `/glossary` (descriptions) |
+| Relationships | `Scanner getInfo` → `relationships[]` |
+| ER diagram | derived (auto-layout from relationships) |
+| Hierarchies | `Scanner getInfo` → `hierarchies[]` |
+| Calc groups / perspectives / translations | `Scanner getDefinition` (TMDL) |
+| Power Query (M) | `Scanner getDefinition?datasetExpressions=true` (partition source) |
+| Measures + DAX | `Scanner getInfo` → `measures[].expression` + LP `/glossary` (descriptions) |
+| Calculated columns | `Scanner getInfo` + DMV (storage) |
+| Measure usage / dormancy | `/admin/activityevents` × DAX dependency parse |
+| RLS rules | `Scanner getInfo` → `roles[].tablePermissions[].filterExpression` |
+| Object-level security (OLS) | `Scanner getInfo` → `roles[]` object permissions |
+| Sensitivity labels | `Scanner getInfo` → column `sensitivityLabel` |
+| Access | `/admin/datasets/{id}/users` + Graph `/groups/{id}/members` |
+| Refresh history | `/admin/capacities/refreshables` + `/admin/activityevents` |
+| Storage / size (VertiPaq) | DMV `$SYSTEM.DISCOVER_STORAGE_TABLE_COLUMN_SEGMENTS` |
+| Capacity / cost (CU + €) | Metrics App DAX + `cost_observations` (H1/H2) |
+| Lineage (up/down) | `Scanner` lineage + `/admin/groups/{ws}/reports` |
+| Adoption (DAU/WAU/MAU) | `/admin/activityevents` (`ViewReport`-class) |
+| Business glossary | LP `/glossary` |
+| Processes governing model | LP `/glossary` (process-type, model-attached) |
+| Owners & stewards | LP `/ownership` |
+| Change log | `/admin/activityevents` + Scanner snapshot diff |
+| Sign-off block | LP `/ownership` (roles → signature lines) |
+| Change-log "why" notes ◻️ | LP — change-log annotation (not built) |
+
+**The split:** Fabric **Scanner** (`getInfo`/`getDefinition`) carries schema + logic + security · **Admin API** (`/admin/activityevents`, `/admin/capacities/refreshables`, `/admin/datasets/{id}/users`) carries usage/refresh/access · **Graph** adds group-member expansion · **Metrics App DAX + DMV** carry cost + storage · **LP screens** (`/glossary`, `/ownership`) carry the two manual layers.
