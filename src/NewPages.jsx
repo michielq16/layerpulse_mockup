@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import Icon from './Icon';
 import DATA from './data';
 import { StatCard } from './components';
@@ -617,7 +618,10 @@ export function DocumentPreviewModal({ model, ws, env = 'PROD', audience: initia
 
   const audMeta = AUDIENCE_LABELS[audience] || { label: audience, tone: 'slate' };
 
-  return (
+  // Portal to <body> so the modal escapes any transformed ancestor (e.g. the
+  // `.fade-in` tab wrapper) that would otherwise become its containing block
+  // and trap position:fixed inside the page content instead of the viewport.
+  return createPortal(
     <div className="doc-modal-backdrop" onClick={onClose}>
       <div className="doc-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={`Generated document — ${model}`}>
 
@@ -717,7 +721,8 @@ export function DocumentPreviewModal({ model, ws, env = 'PROD', audience: initia
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
