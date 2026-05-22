@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LayerPulse Mockup — the E2E process</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0D3159;--sky:#2491eb;--gold:#FFBF3C;--orange:#F56E23;--ink:#1f2937;--muted:#64748b;--line:#e5e8ec;--bg:#f4f6f9;--card:#fff;}
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 22px 80px;} .mono{font-family:'JetBrains Mono',monospace;}
+  header.hero{background:linear-gradient(135deg,#0D3159 0%,#13447a 100%);color:#fff;padding:54px 0 46px;margin-bottom:38px;}
+  .hero .wrap{padding-bottom:0;}
+  .hero-mark{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;margin-bottom:22px;opacity:.92;}
+  .hero-mark .dot{width:26px;height:26px;border-radius:7px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .hero h1{font-size:33px;line-height:1.15;margin:0 0 12px;font-weight:700;letter-spacing:-.02em;}
+  .hero p{font-size:18px;margin:0;color:#cfe2f5;max-width:660px;}
+  .back{display:inline-block;margin-bottom:14px;color:#cfe2f5;text-decoration:none;font-size:14px;}
+  section{margin-bottom:42px;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--sky);margin-bottom:8px;}
+  h2{font-size:25px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--navy);}
+  .lead{font-size:17px;color:var(--muted);margin:0 0 22px;max-width:700px;} p{margin:0 0 14px;}
+  /* phase flow */
+  .flow{position:relative;margin-top:8px;}
+  .phase{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px 20px 70px;margin-bottom:16px;box-shadow:0 1px 3px rgba(13,49,89,.04);}
+  .phase .num{position:absolute;left:18px;top:20px;width:36px;height:36px;border-radius:10px;background:var(--navy);color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;}
+  .phase.gate .num{background:var(--orange);}
+  .phase.ship .num{background:var(--sky);}
+  .phase.backlog .num{background:var(--gold);color:var(--navy);}
+  .phase h3{margin:0 0 2px;font-size:19px;color:var(--navy);}
+  .phase .who{font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px;}
+  .phase p{font-size:14.5px;margin:0 0 10px;}
+  .phase ul{margin:0 0 10px;padding-left:18px;} .phase li{font-size:14.5px;margin-bottom:3px;}
+  .dod{font-size:13.5px;background:#f0f7ec;border:1px solid #d6ebcb;color:#2f5d22;border-radius:8px;padding:8px 12px;}
+  .dod b{color:#1f4015;}
+  .trig{font-size:13.5px;background:#fff6e6;border:1px solid #f5e3bd;color:#7a5a12;border-radius:8px;padding:8px 12px;margin-bottom:10px;}
+  .gates-tbl{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  .gates-tbl th{background:var(--navy);color:#fff;text-align:left;padding:10px 12px;font-weight:600;font-size:12.5px;}
+  .gates-tbl td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top;}
+  .gates-tbl tr td:first-child{font-weight:700;color:var(--navy);white-space:nowrap;}
+  .gates-tbl .rej{color:#9a2533;} .gates-tbl .pro{color:#2f5d22;}
+  .start{display:grid;grid-template-columns:1fr 1fr;gap:14px;} @media(max-width:680px){.start{grid-template-columns:1fr;}}
+  .scard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;border-left:4px solid var(--sky);}
+  .scard h4{margin:0 0 6px;font-size:15px;color:var(--navy);}
+  .scard code{display:block;font-family:'JetBrains Mono',monospace;font-size:13px;background:#0d3159;color:#cfe2f5;padding:8px 11px;border-radius:7px;margin-top:6px;white-space:pre-wrap;}
+  .twocol{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:14px;padding:20px 22px;}
+  .twocol table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px;}
+  .twocol td{padding:6px 8px;border-top:1px solid var(--line);} .twocol tr:first-child td{border-top:none;}
+  .twocol td:first-child{font-weight:600;color:var(--navy);width:34%;}
+  footer{border-top:1px solid var(--line);padding-top:24px;margin-top:10px;font-size:14px;color:var(--muted);} footer a{color:var(--sky);text-decoration:none;font-weight:600;}
+  .pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:5px;background:#e8eef5;color:var(--navy);margin-left:8px;vertical-align:middle;}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="./">← Review hub</a>
+    <div class="hero-mark"><span class="dot">LP</span> LayerPulse · Mockup</div>
+    <h1>How we design a screen — start to backlog</h1>
+    <p>One strict, repeatable path. Same six phases every time, so the outcome is predictable: a clean bundle that drops into the LayerPulse backlog attached to a Tier, with zero rework.</p>
+  </div>
+</header>
+<div class="wrap">
+
+  <section>
+    <div class="eyebrow">The shape</div>
+    <h2>Six phases, two actors</h2>
+    <p class="lead">You (the PO) own the bookends — framing the intent and accepting into the backlog. I own the middle — design, bundle, ship. The handoffs between us are explicit so nothing slips.</p>
+    <div class="mono" style="font-size:13px;background:#0d3159;color:#cfe2f5;padding:16px 18px;border-radius:12px;overflow-x:auto;white-space:pre">
+0 FRAME   ──▶ 1 DESIGN ──▶ 2 ITERATE ──▶ 3 BUNDLE ──▶ 4 SHIP ──▶ 5 BACKLOG
+(you+me)      (me)          (you+me)       (me)          (you say     (you accept,
+ gates first   build+narrate  feedback loop  4 artifacts    "merge")     I draft tier)
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">The path</div>
+    <h2>Phase by phase</h2>
+    <div class="flow">
+
+      <div class="phase gate">
+        <div class="num">0</div>
+        <h3>Frame <span class="pill">the gate</span></h3>
+        <div class="who">You + me · before anything is drawn</div>
+        <div class="trig">▸ <b>You start it:</b> "<span class="mono">/brainstorming</span> — I want a screen for &lt;area&gt;", or just name the screen.</div>
+        <p>I run the <b>5 fight-for-value gates</b> on the idea <i>before</i> sketching a single pixel. A weak answer on any gate → I push back and counter-propose. This is the senior-PM safety valve against building generic dashboards.</p>
+        <div class="dod"><b>Done when:</b> we have a one-liner — pillar + persona + the decision it supports + value-loop quadrant + the DB join no other tool delivers.</div>
+      </div>
+
+      <div class="phase">
+        <div class="num">1</div>
+        <h3>Design</h3>
+        <div class="who">Me</div>
+        <p>I build the working screen (React/JSX) with Fabric-plausible fake data, locked brand tokens and components, and write the <b>screen narrative</b> (<span class="mono">docs/screens/&lt;x&gt;.md</span>). I push to a feature branch, open a PR, and link the live Vercel preview.</p>
+        <div class="dod"><b>Done when:</b> a live preview URL + the screen narrative exist, posted to you.</div>
+      </div>
+
+      <div class="phase">
+        <div class="num">2</div>
+        <h3>Iterate</h3>
+        <div class="who">You + me · the loop</div>
+        <p>You react to the <i>live</i> screen; I push changes; the preview updates at the same URL. This is where the mockup's speed pays off — we go back and forth until it's right. No artifact is "final" until you sign off.</p>
+        <div class="dod"><b>Done when:</b> you say "approved / sign off."</div>
+      </div>
+
+      <div class="phase">
+        <div class="num">3</div>
+        <h3>Bundle</h3>
+        <div class="who">Me · proactively, at sign-off</div>
+        <p>The moment you approve, I assemble the full handover bundle without being asked:</p>
+        <ul>
+          <li><b>Review page</b> — this plain-language HTML (<span class="mono">public/review/&lt;x&gt;.html</span>)</li>
+          <li><b>PRD</b> — the build spec (<span class="mono">docs/prds/&lt;x&gt;.md</span>)</li>
+          <li><b>Screenshots</b> — functional captures (<span class="mono">docs/handover/screenshots/&lt;x&gt;/</span>)</li>
+          <li><b>Hub card</b> — refreshed on <span class="mono">/review/</span></li>
+        </ul>
+        <p>I also grep the LayerPulse backlog to name the correct pillar and check no duplicate row already covers it.</p>
+        <div class="dod"><b>Done when:</b> all five artifacts exist — screen.md · prd.md · review.html · screenshots · live route — and the hub shows the card.</div>
+      </div>
+
+      <div class="phase ship">
+        <div class="num">4</div>
+        <h3>Ship to mockup prod</h3>
+        <div class="who">You trigger · I execute</div>
+        <div class="trig">▸ <b>You say:</b> "merge".</div>
+        <p>I squash-merge the PR to <span class="mono">main</span>; Vercel redeploys production; the bundle goes live on the review hub. Then I run <span class="mono">/sync-memory</span> to persist the session (vault + memory + dashboard).</p>
+        <div class="dod"><b>Done when:</b> the bundle is live on the production hub and the session is logged.</div>
+      </div>
+
+      <div class="phase backlog">
+        <div class="num">5</div>
+        <h3>Feed the backlog <span class="pill">attach to a tier</span></h3>
+        <div class="who">I offer · you accept</div>
+        <p>I draft the <b>Tier-row text</b> for the LayerPulse backlog (status · rationale · dependencies · estimate · pillar). <b>You</b> paste it into <span class="mono">&lt;lp-product&gt;/docs/BACKLOG.md</span> attached to a Tier (T0–T3) — the mockup never writes the LP backlog directly. From there it's the product track: <span class="mono">/prd</span> formalizes → <span class="mono">/build-feature</span> ships → real product.</p>
+        <div class="dod"><b>Done when:</b> a Tier row exists in BACKLOG.md referencing the bundle. The screen has crossed the bridge.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">The Phase-0 filter</div>
+    <h2>The 5 gates every screen must pass</h2>
+    <p class="lead">No screen reaches Phase 1 until all five have a strong answer. This is the single most important step — it's what keeps the backlog full of high-value screens instead of generic dashboards.</p>
+    <table class="gates-tbl">
+      <tr><th>Gate</th><th>Question</th><th>Reject</th><th>Proceed</th></tr>
+      <tr><td>G1 Pillar</td><td>Which pillar does it advance?</td><td class="rej">"generic dashboard"</td><td class="pro">"FinOps — new wasted-spend dimension"</td></tr>
+      <tr><td>G2 Join</td><td>What DB join does it need that no tool delivers?</td><td class="rej">"shows the data"</td><td class="pro">"joins activity × licenses × tenant settings"</td></tr>
+      <tr><td>G3 Persona</td><td>Whose KPI does it move?</td><td class="rej">"helpful for whoever"</td><td class="pro">"Partner QBR — cost-saving evidence"</td></tr>
+      <tr><td>G4 Differentiator</td><td>What's unique vs. Microsoft?</td><td class="rej">"nicer charts"</td><td class="pro">"portfolio-wide / auditor-ready"</td></tr>
+      <tr><td>G5 Decision</td><td>What decision results?</td><td class="rej">"be informed"</td><td class="pro">"which capacity to scale down"</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <div class="eyebrow">Your side</div>
+    <h2>How to start engaging — four openers</h2>
+    <p class="lead">Pick the opener that matches your intent. Each routes into the process at the right phase.</p>
+    <div class="start">
+      <div class="scard">
+        <h4>New screen (most common)</h4>
+        <p style="font-size:14px;margin:0;">Starts at Phase 0. We frame with the gates first.</p>
+        <code>/brainstorming — I want a screen for &lt;area&gt;</code>
+      </div>
+      <div class="scard">
+        <h4>Iterate an existing mockup screen</h4>
+        <p style="font-size:14px;margin:0;">Jumps to Phase 2 (existing screens aren't re-gated).</p>
+        <code>iterate /&lt;route&gt;: &lt;your feedback&gt;</code>
+      </div>
+      <div class="scard">
+        <h4>Bundle a screen that's already built</h4>
+        <p style="font-size:14px;margin:0;">Jumps to Phase 3 — generate the handover artifacts.</p>
+        <code>bundle &lt;screen&gt; for handover</code>
+      </div>
+      <div class="scard">
+        <h4>Fix a bug on a live mockup screen</h4>
+        <p style="font-size:14px;margin:0;">Minimal path — fix, push, you confirm. No re-gate.</p>
+        <code>fix &lt;bug&gt; on /&lt;route&gt;</code>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Why two formats</div>
+    <h2>One source, two readers</h2>
+    <div class="twocol">
+      <p style="margin:0 0 6px;">Every screen produces both a markdown spec and an HTML review page from the same design. They serve different readers — neither is a summary of the other.</p>
+      <table>
+        <tr><td>You (PO)</td><td>the <b>review.html</b> — plain language, scannable, ends with decisions. Low cognitive load.</td></tr>
+        <tr><td>Build team</td><td>the <b>screen.md + prd.md</b> — full detail, data contracts, edge states, telemetry.</td></tr>
+        <tr><td>LayerPulse</td><td>the <b>screenshots</b> — sees the screen, not just reads about it.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <div>Canonical markdown version (for the build team): <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/MOCKUP-PROCESS.md" target="_blank" rel="noreferrer">docs/MOCKUP-PROCESS.md</a> · Handover bridge spec: <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/handover/README.md" target="_blank" rel="noreferrer">docs/handover/README.md</a>. Back to the <a href="./">review hub</a>.</div>
+  </footer>
+</div>
+</body>
+</html>
