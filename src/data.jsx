@@ -1427,6 +1427,21 @@ const DATA = {
       { id: 'adv-works',name: 'Adventure Works',env: 'F16-prod-us', healthDelta: -1,  costDeltaPct: +6,  wastedSpendDelta: +180, topAction: 'Refresh failure rate climbed 11% → 18% over 7d; root cause traces to one Power BI dataset', cta: 'Open issue' },
       { id: 'proseware',name: 'Proseware',      env: 'F32-prod-se', healthDelta: -2,  costDeltaPct: +3,  wastedSpendDelta: +320, topAction: '14 Power BI reports unopened in 90d still consuming refresh CU — recommend deprecation review', cta: 'Open report' },
     ],
+    // Fix-first queue — discrete, typed, €-quantified actions aggregated ACROSS all customer tenants.
+    // €-ranked first; non-€ governance/quality actions interleave by a severity-blended priority.
+    // Each row: what to do · which customer · € impact · source pillar · one-click CTA. Snooze/resolve are humans-in-the-loop.
+    fixFirst: [
+      { id: 'ff1',  type: 'throttling', typeLabel: 'Throttling',   icon: 'zap',          sev: 'critical', pillar: 'FinOps',     customerId: 'fabrikam',  customer: 'Fabrikam',             env: 'F32-prod-ne', euro: 840,  euroLabel: '+€840/mo',   what: 'Throttling 12h/wk on F32 — upgrade to F64 or rebalance workload off peak windows.', cta: 'Act as' },
+      { id: 'ff2',  type: 'access',     typeLabel: 'Access lost',   icon: 'shield',       sev: 'critical', pillar: 'Governance', customerId: 'margie',    customer: "Margie's Travel",      env: 'F8-prod-uks', euro: null, euroLabel: 'visibility lost', what: 'Partner-read access revoked 3d ago — telemetry blocked until the customer accepts a re-invite.', cta: 'Re-invite' },
+      { id: 'ff3',  type: 'dormant',    typeLabel: 'Wasted spend',  icon: 'folders',      sev: 'warning',  pillar: 'FinOps',     customerId: 'proseware', customer: 'Proseware',            env: 'F32-prod-se', euro: 320,  euroLabel: '+€320/mo',   what: '14 Power BI reports unopened in 90d still consuming refresh CU — deprecation review.', cta: 'Act as' },
+      { id: 'ff4',  type: 'refresh',    typeLabel: 'Refresh fail',  icon: 'refresh',      sev: 'critical', pillar: 'Quality',    customerId: 'trey',      customer: 'Trey Research',        env: 'F16-prod-br', euro: 220,  euroLabel: '+€220/mo',   what: 'Capacity migration destabilized 4 nightly dataset refreshes — investigate schedule + retries.', cta: 'Open issue' },
+      { id: 'ff5',  type: 'refresh',    typeLabel: 'Refresh fail',  icon: 'refresh',      sev: 'warning',  pillar: 'Quality',    customerId: 'adv-works', customer: 'Adventure Works',      env: 'F16-prod-us', euro: 180,  euroLabel: '+€180/mo',   what: 'Refresh failure rate climbed 11% → 18% over 7d — one Power BI dataset is the root cause.', cta: 'Open issue' },
+      { id: 'ff6',  type: 'model',      typeLabel: 'Model bloat',   icon: 'database',     sev: 'critical', pillar: 'Quality',    customerId: 'contoso',   customer: 'Contoso Fabric',       env: 'F64-prod-we', euro: 140,  euroLabel: '+€140/mo',   what: '3 Import models > 50M rows bloating refresh + CU — evaluate Direct Lake conversion.', cta: 'Act as' },
+      { id: 'ff7',  type: 'throttling', typeLabel: 'Capacity risk', icon: 'gauge',        sev: 'warning',  pillar: 'FinOps',     customerId: 'trey',      customer: 'Trey Research',        env: 'F16-prod-br', euro: 110,  euroLabel: '+€110/mo',   what: 'F16 sustained > 85% CU — right-size or rebalance before the next migration window.', cta: 'Act as' },
+      { id: 'ff8',  type: 'ownership',  typeLabel: 'Ownership gap', icon: 'users',        sev: 'warning',  pillar: 'Governance', customerId: 'wwi',       customer: 'Wide World Importers', env: 'F64-prod-we', euro: null, euroLabel: 'audit risk',  what: '3 high-traffic models have no assigned owner — accountability gap before the next audit.', cta: 'Assign owner' },
+      { id: 'ff9',  type: 'doc',        typeLabel: 'Doc coverage',  icon: 'file-text',    sev: 'info',     pillar: 'Quality',    customerId: 'wwi',       customer: 'Wide World Importers', env: 'F64-prod-we', euro: null, euroLabel: 'below target', what: 'Doc coverage 41% — under the 60% target for partner-managed models.', cta: 'Generate docs' },
+      { id: 'ff10', type: 'cert',       typeLabel: 'Cert expiring', icon: 'shield-check', sev: 'info',     pillar: 'Governance', customerId: 'lucerne',   customer: 'Lucerne Publishing',   env: 'F2-prod-ne',  euro: null, euroLabel: 'expires 21d', what: 'Service-principal credential expires in 21 days — rotate to avoid a sync outage.', cta: 'Open settings' },
+    ],
     // F-2 activity feed — invitations, access grants/revocations, capacity changes across the portfolio.
     f2Activity: [
       { id: 'fa1',  at: '2h ago',  atAbs: '2026-05-17 13:08 UTC', tone: 'emerald', type: 'access_granted',     customer: 'Northwind Traders',     detail: 'granted partner-read access',                            icon: 'shield-check' },
@@ -1439,6 +1454,70 @@ const DATA = {
       { id: 'fa8',  at: '3d ago',  atAbs: '2026-05-14 11:48 UTC', tone: 'rose',    type: 'access_revoked',     customer: "Margie's Travel",       detail: 'customer admin revoked partner-read · visibility lost', icon: 'shield' },
       { id: 'fa9',  at: '3d ago',  atAbs: '2026-05-14 09:08 UTC', tone: 'sky',     type: 'invoice_settled',    customer: 'Litware',               detail: 'monthly invoice settled',                                icon: 'check' },
       { id: 'fa10', at: '4d ago',  atAbs: '2026-05-13 18:32 UTC', tone: 'amber',   type: 'refresh_alert',      customer: 'Adventure Works',       detail: 'alert fired — refresh failure rate exceeded 15% / 7d',  icon: 'bell' },
+    ],
+
+    // ── Connections — F-2 invitation lifecycle (partner ↔ customer access) ──
+    connections: {
+      funnel: { sent: 16, accepted: 12, pending: 2, expired: 1, revoked: 1 },
+      invitations: [
+        { id: 'in1', customer: 'Northwind Traders',    email: 'admin@northwind.onmicrosoft.com',  status: 'accepted', sentAt: '2026-05-02', by: 'Michiel Q.',  attempts: 1, lastEvent: 'accepted 2026-05-03' },
+        { id: 'in2', customer: 'Trey Research',         email: 'it@treyresearch.onmicrosoft.com',  status: 'accepted', sentAt: '2026-05-09', by: 'Sara L.',     attempts: 2, lastEvent: 'accepted 2026-05-11' },
+        { id: 'in3', customer: 'Coho Vineyard',         email: 'admin@cohovineyard.com',           status: 'pending',  sentAt: '2026-05-15', by: 'Michiel Q.',  attempts: 1, lastEvent: 'opened, not accepted' },
+        { id: 'in4', customer: 'Fabrikam',              email: 'fabric-admin@fabrikam.com',        status: 'pending',  sentAt: '2026-05-16', by: 'Sara L.',     attempts: 1, lastEvent: 'delivered' },
+        { id: 'in5', customer: "Margie's Travel",       email: 'admin@margiestravel.co.uk',        status: 'revoked',  sentAt: '2026-04-20', by: 'Michiel Q.',  attempts: 3, lastEvent: 'access revoked 2026-05-14' },
+        { id: 'in6', customer: 'Lucerne Publishing',    email: 'jen.k@lucernepublishing.com',      status: 'expired',  sentAt: '2026-04-28', by: 'Sara L.',     attempts: 2, lastEvent: 'expired 2026-05-12 · ready to resend' },
+        { id: 'in7', customer: 'Adventure Works',       email: 'admin@adventure-works.com',        status: 'accepted', sentAt: '2026-04-15', by: 'Michiel Q.',  attempts: 1, lastEvent: 'accepted 2026-04-16' },
+        { id: 'in8', customer: 'Wide World Importers',  email: 'admin@wideworldimporters.com',     status: 'accepted', sentAt: '2026-04-11', by: 'Michiel Q.',  attempts: 1, lastEvent: 'accepted 2026-04-12' },
+      ],
+    },
+
+    // ── Team & seats — who watches which customers (partner-side accountability) ──
+    team: {
+      members: [
+        { id: 'tm1', name: 'Michiel Quakernaat', email: 'michiel@acmedata.partners', role: 'Owner',   initials: 'MQ', lastActive: 'now',     owns: ['contoso','wwi','fabrikam','trey'] },
+        { id: 'tm2', name: 'Sara Lindqvist',      email: 'sara@acmedata.partners',    role: 'Admin',   initials: 'SL', lastActive: '2h ago',  owns: ['nw-trade','adv-works','proseware'] },
+        { id: 'tm3', name: 'Daniel Okoro',        email: 'daniel@acmedata.partners',  role: 'Analyst', initials: 'DO', lastActive: '1d ago',  owns: ['litware','lucerne','coho'] },
+        { id: 'tm4', name: 'Priya Nair',          email: 'priya@acmedata.partners',   role: 'Analyst', initials: 'PN', lastActive: '4h ago',  owns: ['tw-trade'] },
+      ],
+      // 'margie' is intentionally unassigned → coverage-gap demo
+    },
+
+    // ── Benchmarks — cross-customer comparison dimensions (joins to customers[]) ──
+    benchmarks: [
+      { id: 'contoso',   health: 74, wastedPct: 12, docCov: 58, costPerCu: 1.92, refreshFail: 4 },
+      { id: 'nw-trade',  health: 88, wastedPct: 4,  docCov: 81, costPerCu: 1.41, refreshFail: 1 },
+      { id: 'adv-works', health: 62, wastedPct: 19, docCov: 47, costPerCu: 2.18, refreshFail: 18 },
+      { id: 'wwi',       health: 81, wastedPct: 9,  docCov: 41, costPerCu: 1.74, refreshFail: 2 },
+      { id: 'fabrikam',  health: 54, wastedPct: 27, docCov: 52, costPerCu: 2.61, refreshFail: 6 },
+      { id: 'tw-trade',  health: 79, wastedPct: 7,  docCov: 66, costPerCu: 1.55, refreshFail: 2 },
+      { id: 'litware',   health: 91, wastedPct: 3,  docCov: 74, costPerCu: 1.33, refreshFail: 0 },
+      { id: 'proseware', health: 67, wastedPct: 15, docCov: 49, costPerCu: 1.98, refreshFail: 3 },
+      { id: 'lucerne',   health: 84, wastedPct: 5,  docCov: 70, costPerCu: 1.28, refreshFail: 1 },
+      { id: 'trey',      health: 43, wastedPct: 31, docCov: 38, costPerCu: 2.94, refreshFail: 12 },
+      { id: 'coho',      health: 76, wastedPct: 8,  docCov: 62, costPerCu: 1.61, refreshFail: 0 },
+    ],
+
+    // ── Partner's LayerPulse subscription (NOT customer Fabric spend) ──
+    billing: {
+      plan: 'Partner Pro', mrr: 1490, currency: '€', renewal: '2026-09-01', status: 'active',
+      envQuota: { used: 12, total: 15 }, seatQuota: { used: 4, total: 8 }, modelQuota: { used: 387, total: 1000 },
+      invoices: [
+        { id: 'inv-0526', date: '2026-05-01', amount: 1490, status: 'paid' },
+        { id: 'inv-0426', date: '2026-04-01', amount: 1490, status: 'paid' },
+        { id: 'inv-0326', date: '2026-03-01', amount: 1190, status: 'paid' },
+        { id: 'inv-0226', date: '2026-02-01', amount: 1190, status: 'paid' },
+      ],
+    },
+
+    // ── QBR builder — selectable evidence sections for a per-customer pack ──
+    qbrSections: [
+      { id: 'cost',    label: 'Cost & share-of-bill',     desc: 'Monthly spend, CU trend, share of capacity bill', on: true },
+      { id: 'saved',   label: 'Savings delivered',        desc: 'Wasted spend reclaimed + SKU right-sizing this quarter', on: true },
+      { id: 'risks',   label: 'Risks closed',             desc: 'Throttling, refresh failures, access issues resolved', on: true },
+      { id: 'actions', label: 'Open recommendations',     desc: 'The fix-first queue scoped to this customer', on: true },
+      { id: 'adoption',label: 'Adoption & engagement',    desc: 'DAU/WAU/MAU, dormant reports, top content', on: false },
+      { id: 'quality', label: 'Model quality & docs',     desc: 'Health score, doc coverage, model hygiene', on: false },
+      { id: 'next',    label: 'Plan for next quarter',    desc: 'Recommended next actions + capacity outlook', on: true },
     ],
   },
 

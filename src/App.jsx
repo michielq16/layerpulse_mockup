@@ -1,6 +1,7 @@
 import React from 'react';
 import DATA from './data';
-import { Sidebar, Topbar } from './components';
+import { Sidebar, PartnerSidebar, Topbar } from './components';
+import { PartnerCustomers, PartnerConnections, PartnerActivity, Benchmarks, TeamSeats, QbrBuilder, PartnerBilling, PartnerSettings } from './Partner';
 import { Overview } from './Overview';
 import { Workspaces, WorkspaceDetail } from './Workspaces';
 import { ModelView } from './Model';
@@ -26,19 +27,29 @@ const TWEAK_DEFAULTS = {
 };
 
 function getInitialRoute() {
-  if (typeof window === 'undefined') return 'overview';
+  if (typeof window === 'undefined') return 'portfolio';
   const p = window.location.pathname;
-  if (!p || p === '/') return 'overview';
-  return p.replace(/^\/+/, '').replace(/\/+$/, '') || 'overview';
+  if (!p || p === '/') return 'portfolio';
+  return p.replace(/^\/+/, '').replace(/\/+$/, '') || 'portfolio';
 }
+
+const PARTNER_ROUTES = ['portfolio', 'customers', 'connections', 'partner-activity', 'qbr', 'benchmarks', 'team', 'partner-billing', 'partner-settings'];
 
 export default function App() {
   const [route, setRouteState] = React.useState(getInitialRoute);
   const setRoute = React.useCallback((r) => setRouteState(r), []);
+  const [actingAs, setActingAs] = React.useState(null);
+
+  const actAs = React.useCallback((idOrObj) => {
+    const c = typeof idOrObj === 'object' ? idOrObj : DATA.partnerPortfolio.customers.find(x => x.id === idOrObj);
+    setActingAs(c ? c.name : 'customer');
+    setRouteState('overview');
+  }, []);
+  const exitCustomer = React.useCallback(() => { setActingAs(null); setRouteState('portfolio'); }, []);
 
   // Keep URL in sync with route state so deep links work + back/forward navigates.
   React.useEffect(() => {
-    const desired = route === 'overview' ? '/' : '/' + route;
+    const desired = route === 'portfolio' ? '/' : '/' + route;
     if (typeof window !== 'undefined' && window.location.pathname !== desired) {
       window.history.pushState({}, '', desired);
     }
@@ -105,7 +116,15 @@ export default function App() {
     if (top === 'glossary')   return [{ label: 'Business glossary' }];
     if (top === 'activity')   return [{ label: 'Activity (LP audit)' }];
     if (top === 'tenant-activity') return [{ label: 'Tenant Activity (forensic)' }];
-    if (top === 'portfolio')  return [{ label: 'Portfolio · partner' }];
+    if (top === 'portfolio')  return [{ label: 'Overview' }];
+    if (top === 'customers')  return [{ label: 'Customers' }];
+    if (top === 'connections') return [{ label: 'Connections' }];
+    if (top === 'partner-activity') return [{ label: 'Activity' }];
+    if (top === 'qbr')        return [{ label: 'QBR Builder' }];
+    if (top === 'benchmarks') return [{ label: 'Benchmarks' }];
+    if (top === 'team')       return [{ label: 'Team & Seats' }];
+    if (top === 'partner-billing')  return [{ label: 'Billing' }];
+    if (top === 'partner-settings') return [{ label: 'Settings' }];
     if (top === 'adoption')   return [{ label: 'Adoption' }];
     if (top === 'sleepers')   return [{ label: 'Sleepers' }];
     if (top === 'audit')      return [{ label: 'Audit & Compliance' }];
@@ -162,22 +181,36 @@ export default function App() {
   }
   else if (top === 'users-new') page = <UsersNew onOpenLegacyUser={() => setRoute('users')}/>;
   else if (top === 'tenant-activity') page = <TenantActivity onOpenUser={(id) => setRoute('users-new')}/>;
-  else if (top === 'portfolio')   page = <Portfolio onActAsCustomer={() => setRoute('overview')}/>;
+  else if (top === 'portfolio')   page = <Portfolio onActAsCustomer={actAs}/>;
+  else if (top === 'customers')   page = <PartnerCustomers onActAs={actAs}/>;
+  else if (top === 'connections') page = <PartnerConnections/>;
+  else if (top === 'partner-activity') page = <PartnerActivity/>;
+  else if (top === 'qbr')         page = <QbrBuilder/>;
+  else if (top === 'benchmarks')  page = <Benchmarks/>;
+  else if (top === 'team')        page = <TeamSeats onActAs={actAs}/>;
+  else if (top === 'partner-billing')  page = <PartnerBilling/>;
+  else if (top === 'partner-settings') page = <PartnerSettings/>;
   else if (top === 'workspaces') {
     if (modelId)   page = <ModelView wsId={wsId} modelId={modelId} onBack={() => setRoute('workspaces/' + wsId)}/>;
     else if (wsId) page = <WorkspaceDetail wsId={wsId} onBack={() => setRoute('workspaces')} onOpenModel={(ws, m) => setRoute('workspaces/' + ws + '/' + m)}/>;
     else           page = <Workspaces onOpen={(id) => setRoute('workspaces/' + id)}/>;
   }
 
-  const screenLabel = 'customer · ' + route.replace(/\//g, ' › ');
+  const isPartner = PARTNER_ROUTES.includes(top);
+  const screenLabel = (isPartner ? 'partner · ' : 'customer · ') + route.replace(/\//g, ' › ');
 
   return (
     <div className="lp-app" data-screen-label={screenLabel}>
-      <Sidebar route={route} setRoute={setRoute}/>
+      {isPartner
+        ? <PartnerSidebar route={route} setRoute={setRoute}/>
+        : <Sidebar route={route} setRoute={setRoute} onExit={actingAs ? exitCustomer : undefined} actingAs={actingAs}/>}
       <main className="lp-main">
         <Topbar
           crumbs={crumbs}
           tenant={DATA.tenant.env}
+          partnerMode={isPartner}
+          actingAs={!isPartner ? actingAs : null}
+          onExitCustomer={exitCustomer}
           theme={tweaks.theme}
           onTheme={() => setTweak({ theme: tweaks.theme === 'dark' ? 'light' : 'dark' })}
           onTweaks={() => setTweaksOpen(o => !o)}

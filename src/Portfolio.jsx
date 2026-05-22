@@ -12,6 +12,10 @@ const SEV_BADGE = {
   info:     'tone-sky-soft',
 };
 
+const SEV_WEIGHT = { critical: 900, warning: 300, info: 80 };
+const SEV_TONE   = { critical: 'rose', warning: 'amber', info: 'sky' };
+const PILLAR_TONE = { FinOps: 'emerald', Quality: 'violet', Governance: 'amber' };
+
 export function Portfolio({ onActAsCustomer }) {
   const p = DATA.partnerPortfolio;
   const [search, setSearch] = React.useState('');
@@ -59,6 +63,9 @@ export function Portfolio({ onActAsCustomer }) {
         <StatCard label="Aggregate Health" value={p.summary.aggregateHealth} unit="/100" delta={p.summary.healthDelta} sub={p.summary.criticalIssues + ' critical issues open'} icon="activity" tone={p.summary.healthDelta < 0 ? 'amber' : 'emerald'}/>
       </div>
 
+      {/* Fix-first action queue — the command-center hero */}
+      <FixFirstQueue items={p.fixFirst} onActAsCustomer={onActAsCustomer}/>
+
       {/* Customer grid filter row */}
       <div className="lp-section-head" style={{ marginTop: 18 }}>
         <h2>Customers <span className="count">{filtered.length} of {p.customers.length}</span></h2>
@@ -87,41 +94,6 @@ export function Portfolio({ onActAsCustomer }) {
         )}
       </div>
 
-      {/* Worst-N movement — QBR / outbound-call ammo */}
-      <div className="lp-section-head" style={{ marginTop: 24 }}>
-        <h2>Worst movers · week-over-week <span className="count">5</span></h2>
-        <span className="lp-eyebrow">The list to work through first</span>
-      </div>
-      <div className="lp-card lp-card-flush fade-in d3">
-        <div className="pf-mov-head">
-          <div>Customer</div>
-          <div>Health Δ</div>
-          <div>Cost Δ</div>
-          <div>Wasted Δ</div>
-          <div>Top action</div>
-          <div></div>
-        </div>
-        {p.worstMovement.map(m => (
-          <div key={m.id} className="pf-mov-row">
-            <div className="pf-mov-name">
-              <div className="pf-mov-name-line">{m.name}</div>
-              <div className="mono pf-mov-env">{m.env}</div>
-            </div>
-            <div className={'mono pf-mov-delta tone-' + DELTA_TONE(m.healthDelta) + '-fg'}>
-              {DELTA_ARROW(m.healthDelta)} {m.healthDelta > 0 ? '+' : ''}{m.healthDelta} pts
-            </div>
-            <div className={'mono pf-mov-delta tone-' + DELTA_TONE(-m.costDeltaPct) + '-fg'} title="Cost up = bad for the partner narrative">
-              {DELTA_ARROW(m.costDeltaPct)} {m.costDeltaPct > 0 ? '+' : ''}{m.costDeltaPct}%
-            </div>
-            <div className={'mono pf-mov-delta tone-' + DELTA_TONE(-m.wastedSpendDelta) + '-fg'}>
-              {m.wastedSpendDelta > 0 ? '+€' + m.wastedSpendDelta : m.wastedSpendDelta < 0 ? '–€' + Math.abs(m.wastedSpendDelta) : '€0'}
-            </div>
-            <div className="pf-mov-action">{m.topAction}</div>
-            <button className="btn btn-outline btn-sm" onClick={() => onActAsCustomer && onActAsCustomer(m.id)}>{m.cta} →</button>
-          </div>
-        ))}
-      </div>
-
       {/* F-2 activity feed */}
       <div className="lp-section-head" style={{ marginTop: 24 }}>
         <h2>F-2 activity <span className="count">last 5 days</span></h2>
@@ -142,6 +114,116 @@ export function Portfolio({ onActAsCustomer }) {
 
       {openCustomer && <CustomerSheet c={openCustomer} onClose={() => setOpenCustomer(null)} onActAs={() => { onActAsCustomer && onActAsCustomer(openCustomer.id); setOpenCustomer(null); }}/>}
     </>
+  );
+}
+
+function FixFirstQueue({ items, onActAsCustomer }) {
+  const [sortBy, setSortBy]       = React.useState('priority'); // 'priority' | 'euro'
+  const [pillar, setPillar]       = React.useState('all');
+  const [snoozed, setSnoozed]     = React.useState(() => new Set());
+  const [resolved, setResolved]   = React.useState(() => new Set());
+  const [showSnoozed, setShowSnoozed] = React.useState(false);
+
+  const score = (a) => (a.euro != null ? a.euro : SEV_WEIGHT[a.sev]);
+  const act = items.filter(a => !resolved.has(a.id) && !snoozed.has(a.id));
+
+  const counts = {
+    all:        act.length,
+    FinOps:     act.filter(a => a.pillar === 'FinOps').length,
+    Quality:    act.filter(a => a.pillar === 'Quality').length,
+    Governance: act.filter(a => a.pillar === 'Governance').length,
+  };
+
+  const visible = act
+    .filter(a => pillar === 'all' || a.pillar === pillar)
+    .sort((x, y) => sortBy === 'euro' ? ((y.euro || 0) - (x.euro || 0)) : (score(y) - score(x)));
+
+  const recoverable = act.reduce((s, a) => s + (a.euro || 0), 0);
+  const snoozedItems = items.filter(a => snoozed.has(a.id));
+
+  const snooze  = (id) => setSnoozed(s => new Set(s).add(id));
+  const unsnooze = (id) => setSnoozed(s => { const n = new Set(s); n.delete(id); return n; });
+  const resolve = (id) => setResolved(s => new Set(s).add(id));
+
+  return (
+    <div className="fade-in d2" style={{ marginTop: 18 }}>
+      <div className="lp-section-head">
+        <h2>
+          Fix first
+          <span className="ff-recoverable mono">€{recoverable.toLocaleString()}/mo recoverable</span>
+        </h2>
+        <span className="lp-eyebrow">Highest-impact actions across all {DATA.partnerPortfolio.summary.customers} customers — work top-down</span>
+      </div>
+
+      <div className="ff-controls">
+        <div className="chip-row">
+          {[['all', 'All'], ['FinOps', 'FinOps'], ['Quality', 'Quality'], ['Governance', 'Governance']].map(([k, l]) => (
+            <button key={k} className={'chip' + (pillar === k ? ' active' : '')} onClick={() => setPillar(k)}>
+              {l}<span className="count">{counts[k]}</span>
+            </button>
+          ))}
+        </div>
+        <div className="ff-sort">
+          <span className="ff-sort-lbl">Sort</span>
+          <button className={'chip' + (sortBy === 'priority' ? ' active' : '')} onClick={() => setSortBy('priority')}>Priority</button>
+          <button className={'chip' + (sortBy === 'euro' ? ' active' : '')} onClick={() => setSortBy('euro')}>€ impact</button>
+        </div>
+      </div>
+
+      <div className="lp-card lp-card-flush ff-list">
+        {visible.map((a, i) => (
+          <div key={a.id} className="ff-row">
+            <div className="ff-rank mono">{i + 1}</div>
+            <span className={'ff-icon tone-' + SEV_TONE[a.sev] + '-soft'}><Icon name={a.icon} size={14}/></span>
+            <div className="ff-body">
+              <div className="ff-what">{a.what}</div>
+              <div className="ff-meta">
+                <span className="ff-customer">{a.customer}</span>
+                <span className="mono ff-env">{a.env}</span>
+                <span className={'ff-pill tone-' + PILLAR_TONE[a.pillar] + '-soft'}>{a.pillar}</span>
+                <span className="ff-type">{a.typeLabel}</span>
+              </div>
+            </div>
+            <div className={'ff-euro mono' + (a.euro != null ? ' ff-euro-num' : ' ff-euro-soft')}>{a.euroLabel}</div>
+            <div className="ff-actions">
+              <button className="btn btn-sm" onClick={() => onActAsCustomer && onActAsCustomer(a.customerId)}>{a.cta} →</button>
+              <button className="btn btn-ghost btn-sm ff-icon-btn" title="Snooze 7 days" onClick={() => snooze(a.id)} aria-label="Snooze"><Icon name="archive" size={14}/></button>
+              <button className="btn btn-ghost btn-sm ff-icon-btn" title="Mark resolved" onClick={() => resolve(a.id)} aria-label="Mark resolved"><Icon name="check" size={14}/></button>
+            </div>
+          </div>
+        ))}
+        {visible.length === 0 && (
+          <div className="empty" style={{ padding: 22, textAlign: 'center' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Queue clear for this filter.</div>
+            <div style={{ fontSize: 12, color: 'var(--muted-foreground)' }}>Nothing to action — switch the pillar filter or unsnooze items below.</div>
+          </div>
+        )}
+      </div>
+
+      {(snoozed.size > 0 || resolved.size > 0) && (
+        <div className="ff-footer">
+          <span className="ff-footer-stat">{snoozed.size} snoozed · {resolved.size} resolved</span>
+          {snoozed.size > 0 && (
+            <button className="ff-link" onClick={() => setShowSnoozed(s => !s)}>{showSnoozed ? 'Hide snoozed' : 'Show snoozed'}</button>
+          )}
+        </div>
+      )}
+
+      {showSnoozed && snoozedItems.map(a => (
+        <div key={a.id} className="ff-row ff-row-snoozed">
+          <div className="ff-rank mono">·</div>
+          <span className={'ff-icon tone-' + SEV_TONE[a.sev] + '-soft'}><Icon name={a.icon} size={14}/></span>
+          <div className="ff-body">
+            <div className="ff-what">{a.what}</div>
+            <div className="ff-meta"><span className="ff-customer">{a.customer}</span><span className="mono ff-env">{a.env}</span></div>
+          </div>
+          <div className="ff-euro mono ff-euro-soft">snoozed</div>
+          <div className="ff-actions">
+            <button className="btn btn-outline btn-sm" onClick={() => unsnooze(a.id)}>Restore</button>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
