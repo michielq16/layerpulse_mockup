@@ -45,22 +45,18 @@ horizon = value ÷ build-readiness
 | **Documents** | Quality | "Hand the auditor / analyst / exec a trustworthy model doc without writing it." Biggest "nobody does that" moment. |
 | **Business Glossary** | Quality | "Is this the official definition? What uses it?" — flows into every document. |
 | **Ownership** | Governance | "Who's accountable? Whose signature ships on the auditor doc?" |
+| **Partner Portal + command center** | Partner | "Across all my customers, what do I fix first — and which do I drop into?" The #1-ranked screen, shipped with the two-shell split + 3 net-new pages (QBR Builder · Benchmarks · Team & Seats). Signed off 2026-05-22. |
 
-### 🔥 Now — build next (highest value, data ready)
+### 🔥 Now — build next (highest remaining value, data ready)
 
-**1. Portfolio "fix-first" command center** · *revisit `/dashboard`* · FinOps
-- **Decision:** "Across all 10–50 of my customers, what do I fix first — and for which customer — before Tuesday's QBR?" Highest decision-density screen in the product.
-- **Why #1:** the vision's literal moat (`getPartnerPortfolio` — the only place a partner sees the whole portfolio at once). Microsoft's portals are tenant-scoped; impossible there. The second "wow" after Documents.
-- **Value:** differentiator ●●●● · decision ●●●● · JOIN ●●●● · persona ●●●●
-
-### ⏭ Next (very high value, leverages what we just shipped)
-
-**2. Users page (UPN-first)** · *new* · Governance
+**1. Users page (UPN-first)** · *new* · Governance
 - **Decision:** "Which licenses am I wasting? Whose access is risky?" Hard-€ per user.
-- **Why:** the natural pair to Ownership — *Ownership = who's accountable; Users = who actually uses it + what it costs.* JOIN: activity × license cost × access risk × ownership. PRD approved.
+- **Why #1:** the natural pair to Ownership — *Ownership = who's accountable; Users = who actually uses it + what it costs.* JOIN: activity × license cost × access risk × ownership. PRD approved.
 - **Value:** differentiator ●●●○ · decision ●●●● · JOIN ●●●● · persona ●●●○
 
-**3. Audit & Compliance** · *new* · Governance
+### ⏭ Next (high value; sequence after the Now item)
+
+**2. Audit & Compliance** · *new* · Governance
 - **Decision:** "What evidence do I bring the auditor Tuesday?" Revenue-linked (Pro→Enterprise).
 - **Why:** "auditor-ready export" is a named differentiator. Consumes Ownership's sign-off block + Governance Section B (both now in place). Export log + off-hours + RLS evaluation + SOC 2 ZIP.
 - **Value:** differentiator ●●●● · decision ●●●○ · JOIN ●●●○ · persona ●●●○
