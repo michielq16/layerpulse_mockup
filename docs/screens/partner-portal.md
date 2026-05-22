@@ -52,6 +52,13 @@ Partner logs in → PARTNER PORTAL  (PartnerSidebar — the default landing "/")
 - New: `PartnerSidebar` (components.jsx) · partner pages (`Partner.jsx`) · `ptr-*` styles (`partner.css`).
 - Reused: `StatCard`, `lp-card`, `lp-section-head`, `chip`, `badge`, tone helpers, the customer `Sidebar` (now with `onExit`/`actingAs`) + `Topbar` (now with `partnerMode`/`actingAs`/`onExitCustomer`).
 
+## Decisions locked (2026-05-22, operator sign-off)
+
+1. **Command center is the home** — logging in lands directly on the fix-first queue. No separate "calmer" partner home.
+2. **QBR Builder stays a tight single live one-pager** for v1 (not multi-page) — revisit depth later if needed.
+3. **Billing framing confirmed** — partner Billing = the partner's LayerPulse subscription, distinct from each customer's Fabric spend.
+4. **All three net-new pages survive** — QBR Builder, Benchmarks, and Team & Seats all carry into the real product.
+
 ## Notes for LP-side PRD authoring
 
 - The shell split already exists in LayerPulse (`(partner)` vs `(customer)` route groups) — the value here is the **content**: command-center Overview, triage Customers, and the three net-new surfaces (QBR Builder, Benchmarks, Team & Seats).

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LayerPulse — Partner Portal · Plain-language review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0D3159;--sky:#2491eb;--gold:#FFBF3C;--orange:#F56E23;--ink:#1f2937;--muted:#64748b;--line:#e5e8ec;--bg:#f4f6f9;--card:#fff;}
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 22px 80px;} .mono{font-family:'JetBrains Mono',monospace;}
+  header.hero{background:linear-gradient(135deg,#0D3159 0%,#13447a 100%);color:#fff;padding:54px 0 46px;margin-bottom:38px;}
+  .hero .wrap{padding-bottom:0;}
+  .hero-mark{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;margin-bottom:22px;opacity:.92;}
+  .hero-mark .dot{width:26px;height:26px;border-radius:7px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .hero h1{font-size:34px;line-height:1.15;margin:0 0 12px;font-weight:700;letter-spacing:-.02em;}
+  .hero p{font-size:18px;margin:0;color:#cfe2f5;max-width:660px;}
+  .hero .meta{margin-top:20px;font-size:13px;color:#9cc2e8;display:flex;gap:18px;flex-wrap:wrap;} .hero .meta b{color:#fff;font-weight:600;}
+  .back{display:inline-block;margin-bottom:14px;color:#cfe2f5;text-decoration:none;font-size:14px;}
+  section{margin-bottom:42px;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--sky);margin-bottom:8px;}
+  h2{font-size:25px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--navy);}
+  .lead{font-size:17px;color:var(--muted);margin:0 0 22px;max-width:700px;} p{margin:0 0 14px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(13,49,89,.04);}
+  .bigidea{border-left:5px solid var(--gold);} .bigidea p{font-size:17px;margin:0;} .bigidea p+p{margin-top:12px;}
+  .flow{font-family:'JetBrains Mono',monospace;font-size:13px;background:#0d3159;color:#cfe2f5;padding:16px 18px;border-radius:12px;overflow-x:auto;white-space:pre;line-height:1.5;}
+  .pages{display:grid;grid-template-columns:1fr 1fr;gap:14px;} @media(max-width:680px){.pages{grid-template-columns:1fr;}}
+  .pg{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+  .pg.star{border-left:4px solid var(--gold);}
+  .pg h3{margin:0 0 4px;font-size:16px;color:var(--navy);display:flex;align-items:center;gap:7px;}
+  .pg .new{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:5px;}
+  .pg p{font-size:13.5px;margin:0;color:var(--ink);}
+  .twoshell{display:grid;grid-template-columns:1fr 1fr;gap:16px;} @media(max-width:680px){.twoshell{grid-template-columns:1fr;}}
+  .shell{border:1px solid var(--line);border-radius:12px;padding:18px 20px;background:var(--card);}
+  .shell.partner{border-top:4px solid var(--sky);} .shell.cust{border-top:4px solid #7c3aed;}
+  .shell h3{margin:0 0 6px;font-size:16px;color:var(--navy);} .shell ul{margin:8px 0 0;padding-left:18px;} .shell li{font-size:13.5px;margin-bottom:3px;}
+  .btn{display:inline-flex;align-items:center;gap:7px;background:var(--sky);color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:9px 16px;border-radius:9px;}
+  .decisions{list-style:none;margin:0;padding:0;}
+  .decisions li{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:15px 18px;margin-bottom:11px;display:flex;gap:13px;align-items:flex-start;}
+  .decisions .q-num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .decisions .q-body b{display:block;font-size:15px;color:var(--navy);margin-bottom:2px;} .decisions .q-body span{font-size:14px;color:var(--muted);}
+  footer{border-top:1px solid var(--line);padding-top:24px;margin-top:10px;font-size:14px;color:var(--muted);} footer a{color:var(--sky);text-decoration:none;font-weight:600;}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="./">← Review hub</a>
+    <div class="hero-mark"><span class="dot">LP</span> LayerPulse</div>
+    <h1>The Partner Portal — in plain language</h1>
+    <p>The home a Microsoft partner logs into: their whole book of customers in one pane, the highest-value fixes ranked, and a one-click drop into any single customer.</p>
+    <div class="meta"><span>📄 <b>For:</b> Product owner review</span><span>⏱ <b>Read:</b> ~5 min</span></div>
+  </div>
+</header>
+<div class="wrap">
+
+  <section>
+    <div class="eyebrow">The one-sentence version</div>
+    <h2>Two homes, not one</h2>
+    <div class="card bigidea">
+      <p>A partner manages 10–50 customer tenants. Until now the mockup only had the <i>customer</i> view — one tenant at a time. The partner needs a level above that: a portal showing the <i>whole portfolio</i>, with a clear way to dive into any one customer.</p>
+      <p>So there are now two environments. The <b>partner portal</b> (the book-wide view) and the <b>customer environment</b> (the single-tenant view we already built). You move between them with one click.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">How it's shaped</div>
+    <h2>Log in → portal → drop into a customer</h2>
+    <div class="flow">Partner logs in
+   │
+   ▼
+PARTNER PORTAL  ── their customers + the ranked "fix first" command center
+   │   click a customer  /  "Act as"
+   ▼
+CUSTOMER ENVIRONMENT  ── that one tenant (all the existing pages)
+        "Acting as Trey Research"  ·  ← Portfolio  (one click back)</div>
+  </section>
+
+  <section>
+    <div class="eyebrow">The two environments</div>
+    <h2>What lives where</h2>
+    <div class="twoshell">
+      <div class="shell partner">
+        <h3>🏢 Partner portal</h3>
+        <ul>
+          <li><b>Overview</b> — the fix-first command center</li>
+          <li><b>Customers</b> — health triage table</li>
+          <li><b>Connections</b> — invitation lifecycle</li>
+          <li><b>Activity</b> — portfolio events</li>
+          <li><b>QBR Builder · Benchmarks · Team & Seats</b></li>
+          <li><b>Billing · Settings</b></li>
+        </ul>
+      </div>
+      <div class="shell cust">
+        <h3>📦 Customer environment</h3>
+        <ul>
+          <li>Overview · Workspaces · Models</li>
+          <li>Documents · Glossary · Ownership</li>
+          <li>Capacity · Cost & Usage · Licenses</li>
+          <li>Users · Adoption · Audit</li>
+          <li>…everything already designed</li>
+          <li><i>entered by "Act as" a customer</i></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">The partner pages</div>
+    <h2>Nine surfaces — three are brand new</h2>
+    <p class="lead">Six are the standard partner toolkit. The three marked <b>New</b> don't exist anywhere in the current product — they're the partner's reasons to log in daily.</p>
+    <div class="pages">
+      <div class="pg"><h3>Overview</h3><p>The €-ranked "fix first" queue across every customer — what to action today, and for whom.</p></div>
+      <div class="pg"><h3>Customers</h3><p>A triage table, worst-health first: health, spend, wasted €, top issue, one-click "Act as".</p></div>
+      <div class="pg"><h3>Connections</h3><p>The invitation lifecycle — who's connected, what's pending, what to re-invite.</p></div>
+      <div class="pg"><h3>Activity</h3><p>One feed of invitations, access changes, capacity events and billing across the book.</p></div>
+      <div class="pg star"><h3>QBR Builder <span class="new">New</span></h3><p>Pick a customer, toggle the evidence, and get a ready-to-send quarterly-review one-pager. The partner's value story, in seconds.</p></div>
+      <div class="pg star"><h3>Benchmarks <span class="new">New</span></h3><p>Rank every customer on one measure (health, waste, doc coverage…). Instantly see the outliers worth a call.</p></div>
+      <div class="pg star"><h3>Team & Seats <span class="new">New</span></h3><p>Who on the partner team watches which customer — and which customers have <i>no</i> owner (a coverage gap).</p></div>
+      <div class="pg"><h3>Billing</h3><p>The partner's own LayerPulse subscription — plan, seats, quota, invoices.</p></div>
+      <div class="pg"><h3>Settings</h3><p>Partner profile, defaults, and notification preferences.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">See it for real</div>
+    <h2>The live portal</h2>
+    <a class="btn" href="https://layerpulze-mockup.vercel.app/" target="_blank" rel="noreferrer">Open the partner portal →</a>
+    <p style="margin-top:12px;font-size:14px;color:var(--muted);">Tip: the home page is the command center. Try <b>Customers</b> → click a row to "Act as" a customer, then the <b>← Portfolio</b> button to come back. The standout new pages are <b>QBR Builder</b>, <b>Benchmarks</b>, and <b>Team & Seats</b>.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Over to you</div>
+    <h2>A few decisions we need from you</h2>
+    <ul class="decisions">
+      <li><span class="q-num">1</span><span class="q-body"><b>Is the command center the right home?</b><span>Logging in lands straight on the fix-first queue. Right call, or do you want a calmer partner home first?</span></span></li>
+      <li><span class="q-num">2</span><span class="q-body"><b>QBR Builder depth</b><span>It's a single live one-pager today. Keep it tight, or grow it into a multi-page, fully-branded export?</span></span></li>
+      <li><span class="q-num">3</span><span class="q-body"><b>Billing framing</b><span>Partner Billing = the partner's LayerPulse subscription (separate from each customer's Fabric spend). Confirm that's the right split.</span></span></li>
+      <li><span class="q-num">4</span><span class="q-body"><b>Which three net-new pages survive?</b><span>QBR Builder, Benchmarks, Team & Seats are all new bets. Are all three worth carrying into the real product, or do we pick the strongest?</span></span></li>
+    </ul>
+  </section>
+
+  <footer>
+    <div>Detailed spec for the build team: <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/screens/partner-portal.md" target="_blank" rel="noreferrer">Screen narrative</a> · <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/screens/portfolio-command-center.md" target="_blank" rel="noreferrer">Command center narrative</a>. Back to the <a href="./">review hub</a>.</div>
+  </footer>
+</div>
+</body>
+</html>
