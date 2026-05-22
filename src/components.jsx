@@ -149,11 +149,8 @@ export function HealthRibbon({ composition, score }) {
   );
 }
 
-export function Sidebar({ route, setRoute }) {
+export function Sidebar({ route, setRoute, onExit, actingAs }) {
   const nav = [
-    { group: 'Partner', items: [
-      { key: 'portfolio', label: 'Portfolio', icon: 'layers', count: 12 },
-    ]},
     { items: [{ key: 'overview', label: 'Overview', icon: 'dashboard' }] },
     { group: 'Explore', items: [
       { key: 'workspaces', label: 'Workspaces', icon: 'folders', count: 12 },
@@ -222,6 +219,16 @@ export function Sidebar({ route, setRoute }) {
         </button>
       </div>
 
+      {onExit && (
+        <button className="lp-actingas" onClick={onExit} title="Back to partner portal">
+          <Icon name="chevron-left" size={13} strokeWidth={2.5}/>
+          <span className="lp-actingas-body">
+            <span className="lp-actingas-lbl">Acting as</span>
+            <span className="lp-actingas-name">{actingAs || 'customer'}</span>
+          </span>
+        </button>
+      )}
+
       <nav className="lp-nav">
         {nav.map((sec, i) => (
           <div key={i}>
@@ -254,11 +261,101 @@ export function Sidebar({ route, setRoute }) {
   );
 }
 
-export function Topbar({ crumbs, tenant, onTheme, theme, onTweaks }) {
+export function PartnerSidebar({ route, setRoute }) {
+  const nav = [
+    { items: [{ key: 'portfolio', label: 'Overview', icon: 'dashboard' }] },
+    { group: 'Portfolio', items: [
+      { key: 'customers',   label: 'Customers',   icon: 'boxes', count: 12 },
+      { key: 'connections', label: 'Connections', icon: 'git-branch' },
+      { key: 'partner-activity', label: 'Activity', icon: 'activity' },
+    ]},
+    { group: 'Partner intelligence', items: [
+      { key: 'qbr',        label: 'QBR Builder', icon: 'file-text' },
+      { key: 'benchmarks', label: 'Benchmarks',  icon: 'bar-chart' },
+      { key: 'team',       label: 'Team & Seats', icon: 'users' },
+    ]},
+  ];
+  const top = route.split('/')[0];
+  const [collapsed, setCollapsed] = React.useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem('lp-sidebar-collapsed') === '1';
+  });
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('lp-sidebar-collapsed', collapsed ? '1' : '0');
+    document.documentElement.dataset.sidebar = collapsed ? 'collapsed' : 'expanded';
+  }, [collapsed]);
+
+  return (
+    <aside className={'lp-sidebar lp-sidebar-partner' + (collapsed ? ' collapsed' : '')}>
+      <div className="lp-sidebar-line"/>
+      <div className="lp-sidebar-dots"/>
+
+      <div className="lp-sidebar-logo-row">
+        {collapsed
+          ? <div className="lp-mark-collapsed" title="LayerPulse">
+              <svg viewBox="0 0 48 32" fill="none" aria-hidden>
+                <path d="M4 22 Q 11 6, 18 22 Q 25 6, 32 22 Q 38 16, 44 22" stroke="oklch(0.75 0.16 220)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              </svg>
+            </div>
+          : <img className="lp-sidebar-logo-img" src={logoLayerPulse} alt="LayerPulse.ai"/>}
+        <button className="lp-sidebar-toggle" onClick={() => setCollapsed(c => !c)} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={collapsed ? 'Expand' : 'Collapse'}>
+          <Icon name={collapsed ? 'chevron-right' : 'chevron-left'} size={14} strokeWidth={2.5}/>
+        </button>
+      </div>
+
+      {!collapsed && (
+        <div className="lp-partner-badge">
+          <span className="lp-partner-badge-dot">AD</span>
+          <span className="lp-partner-badge-body">
+            <span className="lp-partner-badge-name">Acme Data Partners</span>
+            <span className="lp-partner-badge-sub">Partner portal</span>
+          </span>
+        </div>
+      )}
+
+      <nav className="lp-nav">
+        {nav.map((sec, i) => (
+          <div key={i}>
+            {sec.group && <div className="lp-nav-group">{sec.group}</div>}
+            {sec.items.map(item => (
+              <button key={item.key}
+                className={'lp-nav-item' + (top === item.key ? ' active' : '')}
+                onClick={() => setRoute(item.key)}
+                title={collapsed ? item.label : undefined}>
+                <Icon name={item.icon} size={16}/>
+                <span className="lp-nav-label">{item.label}</span>
+                {item.count != null && <span className="mini-count">{item.count}</span>}
+              </button>
+            ))}
+          </div>
+        ))}
+      </nav>
+      <div className="lp-nav-footer">
+        <button className={'lp-nav-item' + (top === 'partner-billing' ? ' active' : '')} onClick={() => setRoute('partner-billing')} title={collapsed ? 'Billing' : undefined}>
+          <Icon name="credit-card" size={16}/><span className="lp-nav-label">Billing</span>
+        </button>
+        <button className={'lp-nav-item' + (top === 'partner-settings' ? ' active' : '')} onClick={() => setRoute('partner-settings')} title={collapsed ? 'Settings' : undefined}>
+          <Icon name="settings" size={16}/><span className="lp-nav-label">Settings</span>
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+export function Topbar({ crumbs, tenant, onTheme, theme, onTweaks, partnerMode, actingAs, onExitCustomer }) {
   return (
     <div className="lp-topbar">
       <div className="lp-breadcrumb">
-        <span className="mono" style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'oklch(0.55 0.02 250)' }}>{tenant}</span>
+        {actingAs && (
+          <button className="lp-crumb-back" onClick={onExitCustomer} title="Back to partner portal">
+            <Icon name="chevron-left" size={14} strokeWidth={2.5}/>Portfolio
+          </button>
+        )}
+        <span className="mono" style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'oklch(0.55 0.02 250)' }}>
+          {partnerMode ? 'Acme Data Partners' : (actingAs ? actingAs : tenant)}
+        </span>
+        {actingAs && <span className="lp-actingas-pill">acting as</span>}
         {crumbs.map((c, i) => (
           <React.Fragment key={i}>
             <span className="sep">/</span>

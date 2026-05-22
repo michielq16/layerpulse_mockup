@@ -2,6 +2,7 @@ import './styles/app.css';
 import './styles/user-intel.css';
 import './styles/cost-attribution.css';
 import './styles/schema-moat.css';
+import './styles/partner.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';

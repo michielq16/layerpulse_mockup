@@ -1455,6 +1455,70 @@ const DATA = {
       { id: 'fa9',  at: '3d ago',  atAbs: '2026-05-14 09:08 UTC', tone: 'sky',     type: 'invoice_settled',    customer: 'Litware',               detail: 'monthly invoice settled',                                icon: 'check' },
       { id: 'fa10', at: '4d ago',  atAbs: '2026-05-13 18:32 UTC', tone: 'amber',   type: 'refresh_alert',      customer: 'Adventure Works',       detail: 'alert fired — refresh failure rate exceeded 15% / 7d',  icon: 'bell' },
     ],
+
+    // ── Connections — F-2 invitation lifecycle (partner ↔ customer access) ──
+    connections: {
+      funnel: { sent: 16, accepted: 12, pending: 2, expired: 1, revoked: 1 },
+      invitations: [
+        { id: 'in1', customer: 'Northwind Traders',    email: 'admin@northwind.onmicrosoft.com',  status: 'accepted', sentAt: '2026-05-02', by: 'Michiel Q.',  attempts: 1, lastEvent: 'accepted 2026-05-03' },
+        { id: 'in2', customer: 'Trey Research',         email: 'it@treyresearch.onmicrosoft.com',  status: 'accepted', sentAt: '2026-05-09', by: 'Sara L.',     attempts: 2, lastEvent: 'accepted 2026-05-11' },
+        { id: 'in3', customer: 'Coho Vineyard',         email: 'admin@cohovineyard.com',           status: 'pending',  sentAt: '2026-05-15', by: 'Michiel Q.',  attempts: 1, lastEvent: 'opened, not accepted' },
+        { id: 'in4', customer: 'Fabrikam',              email: 'fabric-admin@fabrikam.com',        status: 'pending',  sentAt: '2026-05-16', by: 'Sara L.',     attempts: 1, lastEvent: 'delivered' },
+        { id: 'in5', customer: "Margie's Travel",       email: 'admin@margiestravel.co.uk',        status: 'revoked',  sentAt: '2026-04-20', by: 'Michiel Q.',  attempts: 3, lastEvent: 'access revoked 2026-05-14' },
+        { id: 'in6', customer: 'Lucerne Publishing',    email: 'jen.k@lucernepublishing.com',      status: 'expired',  sentAt: '2026-04-28', by: 'Sara L.',     attempts: 2, lastEvent: 'expired 2026-05-12 · ready to resend' },
+        { id: 'in7', customer: 'Adventure Works',       email: 'admin@adventure-works.com',        status: 'accepted', sentAt: '2026-04-15', by: 'Michiel Q.',  attempts: 1, lastEvent: 'accepted 2026-04-16' },
+        { id: 'in8', customer: 'Wide World Importers',  email: 'admin@wideworldimporters.com',     status: 'accepted', sentAt: '2026-04-11', by: 'Michiel Q.',  attempts: 1, lastEvent: 'accepted 2026-04-12' },
+      ],
+    },
+
+    // ── Team & seats — who watches which customers (partner-side accountability) ──
+    team: {
+      members: [
+        { id: 'tm1', name: 'Michiel Quakernaat', email: 'michiel@acmedata.partners', role: 'Owner',   initials: 'MQ', lastActive: 'now',     owns: ['contoso','wwi','fabrikam','trey'] },
+        { id: 'tm2', name: 'Sara Lindqvist',      email: 'sara@acmedata.partners',    role: 'Admin',   initials: 'SL', lastActive: '2h ago',  owns: ['nw-trade','adv-works','proseware'] },
+        { id: 'tm3', name: 'Daniel Okoro',        email: 'daniel@acmedata.partners',  role: 'Analyst', initials: 'DO', lastActive: '1d ago',  owns: ['litware','lucerne','coho'] },
+        { id: 'tm4', name: 'Priya Nair',          email: 'priya@acmedata.partners',   role: 'Analyst', initials: 'PN', lastActive: '4h ago',  owns: ['tw-trade'] },
+      ],
+      // 'margie' is intentionally unassigned → coverage-gap demo
+    },
+
+    // ── Benchmarks — cross-customer comparison dimensions (joins to customers[]) ──
+    benchmarks: [
+      { id: 'contoso',   health: 74, wastedPct: 12, docCov: 58, costPerCu: 1.92, refreshFail: 4 },
+      { id: 'nw-trade',  health: 88, wastedPct: 4,  docCov: 81, costPerCu: 1.41, refreshFail: 1 },
+      { id: 'adv-works', health: 62, wastedPct: 19, docCov: 47, costPerCu: 2.18, refreshFail: 18 },
+      { id: 'wwi',       health: 81, wastedPct: 9,  docCov: 41, costPerCu: 1.74, refreshFail: 2 },
+      { id: 'fabrikam',  health: 54, wastedPct: 27, docCov: 52, costPerCu: 2.61, refreshFail: 6 },
+      { id: 'tw-trade',  health: 79, wastedPct: 7,  docCov: 66, costPerCu: 1.55, refreshFail: 2 },
+      { id: 'litware',   health: 91, wastedPct: 3,  docCov: 74, costPerCu: 1.33, refreshFail: 0 },
+      { id: 'proseware', health: 67, wastedPct: 15, docCov: 49, costPerCu: 1.98, refreshFail: 3 },
+      { id: 'lucerne',   health: 84, wastedPct: 5,  docCov: 70, costPerCu: 1.28, refreshFail: 1 },
+      { id: 'trey',      health: 43, wastedPct: 31, docCov: 38, costPerCu: 2.94, refreshFail: 12 },
+      { id: 'coho',      health: 76, wastedPct: 8,  docCov: 62, costPerCu: 1.61, refreshFail: 0 },
+    ],
+
+    // ── Partner's LayerPulse subscription (NOT customer Fabric spend) ──
+    billing: {
+      plan: 'Partner Pro', mrr: 1490, currency: '€', renewal: '2026-09-01', status: 'active',
+      envQuota: { used: 12, total: 15 }, seatQuota: { used: 4, total: 8 }, modelQuota: { used: 387, total: 1000 },
+      invoices: [
+        { id: 'inv-0526', date: '2026-05-01', amount: 1490, status: 'paid' },
+        { id: 'inv-0426', date: '2026-04-01', amount: 1490, status: 'paid' },
+        { id: 'inv-0326', date: '2026-03-01', amount: 1190, status: 'paid' },
+        { id: 'inv-0226', date: '2026-02-01', amount: 1190, status: 'paid' },
+      ],
+    },
+
+    // ── QBR builder — selectable evidence sections for a per-customer pack ──
+    qbrSections: [
+      { id: 'cost',    label: 'Cost & share-of-bill',     desc: 'Monthly spend, CU trend, share of capacity bill', on: true },
+      { id: 'saved',   label: 'Savings delivered',        desc: 'Wasted spend reclaimed + SKU right-sizing this quarter', on: true },
+      { id: 'risks',   label: 'Risks closed',             desc: 'Throttling, refresh failures, access issues resolved', on: true },
+      { id: 'actions', label: 'Open recommendations',     desc: 'The fix-first queue scoped to this customer', on: true },
+      { id: 'adoption',label: 'Adoption & engagement',    desc: 'DAU/WAU/MAU, dormant reports, top content', on: false },
+      { id: 'quality', label: 'Model quality & docs',     desc: 'Health score, doc coverage, model hygiene', on: false },
+      { id: 'next',    label: 'Plan for next quarter',    desc: 'Recommended next actions + capacity outlook', on: true },
+    ],
   },
 
   /* ───────────────────────────────────────────────────────────────────────
