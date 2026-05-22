@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LayerPulse — value-ranked roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0D3159;--sky:#2491eb;--gold:#FFBF3C;--orange:#F56E23;--ink:#1f2937;--muted:#64748b;--line:#e5e8ec;--bg:#f4f6f9;--card:#fff;
+    --emerald:#16a34a;--amber:#f59e0b;--rose:#e11d48;--violet:#7c3aed;}
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:940px;margin:0 auto;padding:0 22px 80px;} .mono{font-family:'JetBrains Mono',monospace;}
+  header.hero{background:linear-gradient(135deg,#0D3159 0%,#13447a 100%);color:#fff;padding:54px 0 46px;margin-bottom:38px;}
+  .hero .wrap{padding-bottom:0;}
+  .hero-mark{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;margin-bottom:22px;opacity:.92;}
+  .hero-mark .dot{width:26px;height:26px;border-radius:7px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .hero h1{font-size:33px;line-height:1.15;margin:0 0 12px;font-weight:700;letter-spacing:-.02em;}
+  .hero p{font-size:18px;margin:0;color:#cfe2f5;max-width:680px;}
+  .back{display:inline-block;margin-bottom:14px;color:#cfe2f5;text-decoration:none;font-size:14px;}
+  section{margin-bottom:44px;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--sky);margin-bottom:8px;}
+  h2{font-size:25px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--navy);}
+  .lead{font-size:17px;color:var(--muted);margin:0 0 22px;max-width:720px;} p{margin:0 0 14px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:0 1px 3px rgba(13,49,89,.04);}
+  /* two-roadmaps */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;} @media(max-width:680px){.two{grid-template-columns:1fr;}}
+  .two .card h3{margin:0 0 4px;font-size:17px;color:var(--navy);} .two .card .tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--sky);}
+  .two .card.impl{border-top:4px solid var(--muted);} .two .card.impl .tag{color:var(--muted);}
+  .two .card.val{border-top:4px solid var(--gold);} .two .card.val .tag{color:#b8860b;}
+  .two .card p{font-size:14.5px;margin:8px 0 0;}
+  /* rubric */
+  .rubric{width:100%;border-collapse:collapse;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  .rubric th{background:var(--navy);color:#fff;text-align:left;padding:10px 13px;font-size:12.5px;font-weight:600;}
+  .rubric td{padding:9px 13px;border-top:1px solid var(--line);vertical-align:top;}
+  .rubric td:first-child{font-weight:700;color:var(--navy);white-space:nowrap;}
+  .formula{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:13.5px;background:#0d3159;color:#cfe2f5;padding:13px 16px;border-radius:10px;}
+  /* horizon bands */
+  .band{margin-bottom:26px;}
+  .band-h{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .band-h .lbl{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 12px;border-radius:7px;}
+  .band-h .sub{font-size:14px;color:var(--muted);}
+  .lbl.shipped{background:#d1fae5;color:#065f46;} .lbl.now{background:#fee2e2;color:#9a2533;}
+  .lbl.next{background:#dbeafe;color:#1e40af;} .lbl.held{background:#fef3c7;color:#92400e;} .lbl.later{background:#eef2f7;color:#475569;}
+  .item{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px 18px 16px 64px;position:relative;margin-bottom:12px;box-shadow:0 1px 3px rgba(13,49,89,.04);}
+  .item .rank{position:absolute;left:16px;top:16px;width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;background:var(--navy);}
+  .item.now .rank{background:var(--rose);} .item.next .rank{background:var(--sky);}
+  .item .rank.sym{background:#e2e8f0;color:#64748b;font-size:18px;}
+  .item .top{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:5px;}
+  .item h3{margin:0;font-size:18px;color:var(--navy);}
+  .item .chip{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:5px;}
+  .chip.new{background:#ede9fe;color:#5b21b6;} .chip.revisit{background:#fff1e6;color:#9a4a12;} .chip.done{background:#d1fae5;color:#065f46;}
+  .chip.finops{background:#e0f2fe;color:#075985;} .chip.quality{background:#ede9fe;color:#5b21b6;} .chip.gov{background:#fef3c7;color:#92400e;} .chip.agentic{background:#f1f5f9;color:#475569;}
+  .item .decide{font-size:15px;margin:0 0 8px;color:var(--ink);} .item .decide b{color:var(--navy);}
+  .item .why{font-size:13.5px;color:var(--muted);margin:0;}
+  .item .why b{color:#334155;}
+  .vbars{display:flex;gap:14px;flex-wrap:wrap;margin-top:9px;font-size:12px;color:var(--muted);}
+  .vbars span{display:inline-flex;align-items:center;gap:5px;}
+  .pip{display:inline-flex;gap:2px;} .pip i{width:7px;height:7px;border-radius:50%;background:#cbd5e1;display:inline-block;} .pip i.on{background:var(--emerald);} .pip i.mid{background:var(--amber);}
+  .cut{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--rose);border-radius:14px;padding:18px 22px;}
+  .cut ul{margin:8px 0 0;padding-left:20px;} .cut li{font-size:14.5px;margin-bottom:7px;} .cut li b{color:var(--navy);}
+  .bridge{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:14px;padding:18px 22px;}
+  .bridge .flow{font-family:'JetBrains Mono',monospace;font-size:13px;background:#0d3159;color:#cfe2f5;padding:12px 15px;border-radius:9px;margin-top:6px;overflow-x:auto;white-space:pre;}
+  footer{border-top:1px solid var(--line);padding-top:24px;margin-top:10px;font-size:14px;color:var(--muted);} footer a{color:var(--sky);text-decoration:none;font-weight:600;}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <a class="back" href="./">← Review hub</a>
+    <div class="hero-mark"><span class="dot">LP</span> LayerPulse · Mockup</div>
+    <h1>The value-ranked roadmap</h1>
+    <p>What's worth building next — ordered by customer value, not engineering sequence. The product-owner's view of "what moves the needle," before anything lands on the LayerPulse implementation backlog.</p>
+  </div>
+</header>
+<div class="wrap">
+
+  <section>
+    <div class="eyebrow">Why this page exists</div>
+    <h2>Two roadmaps, one product</h2>
+    <p class="lead">LayerPulse has an implementation backlog — tiers, dependencies, effort estimates. What it didn't have is a <b>value</b> roadmap: the same work ranked by what it's worth to the customer. This is that view. They meet at the bridge (bottom of page).</p>
+    <div class="two">
+      <div class="card impl">
+        <span class="tag">Implementation roadmap</span>
+        <h3>LayerPulse <span class="mono">BACKLOG.md</span></h3>
+        <p>Tier 0–3 · dependencies · effort · validation strategy · PRD inventory. Answers <i>"what's buildable next and in what order."</i> Engineering-owned.</p>
+      </div>
+      <div class="card val">
+        <span class="tag">Value roadmap · this page</span>
+        <h3>What's worth the most</h3>
+        <p>Ranked by differentiator strength × decision density × the JOIN only we have. Answers <i>"what should we fight for first."</i> Product-owner-owned.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">The method · repeatable</div>
+    <h2>How we rank value</h2>
+    <p class="lead">Every candidate scores on four value dimensions (from the 5 fight-for-value gates + the product vision). Build-readiness is a separate axis — it sets the <i>horizon</i>, not the value. A high-value screen with no data yet is "held," not "low."</p>
+    <table class="rubric">
+      <tr><th>Dimension</th><th>The question</th></tr>
+      <tr><td>Differentiator</td><td>Unique vs Microsoft? (portfolio-wide · continuously-updated · auditor-ready)</td></tr>
+      <tr><td>Decision density</td><td>How big / frequent is the decision it drives? Is there a € attached?</td></tr>
+      <tr><td>JOIN advantage</td><td>Does it need a database join no other tool has?</td></tr>
+      <tr><td>Persona fit</td><td>Does it move the primary persona's KPI — the partner managing 10–50 tenants?</td></tr>
+    </table>
+    <div class="formula">value = (differentiator × decision × join × persona)   ·   horizon = value ÷ build-readiness</div>
+  </section>
+
+  <section>
+    <div class="eyebrow">The roadmap</div>
+    <h2>Ranked by value, banded by horizon</h2>
+
+    <!-- SHIPPED -->
+    <div class="band">
+      <div class="band-h"><span class="lbl shipped">✅ Shipped to mockup</span><span class="sub">The knowledge + accountability layer — now feeds everything below.</span></div>
+      <div class="item">
+        <div class="rank sym">✓</div>
+        <div class="top"><h3>Documents</h3><span class="chip done">Done</span><span class="chip quality">Quality</span></div>
+        <p class="decide"><b>Decision:</b> "Hand the auditor / new analyst / exec a trustworthy model doc — without writing it." The biggest single "nobody else does that" moment.</p>
+        <p class="why">Auto-Word from semantic models, 4 audience variants, automated Fabric data + manual knowledge combined.</p>
+      </div>
+      <div class="item">
+        <div class="rank sym">✓</div>
+        <div class="top"><h3>Business Glossary</h3><span class="chip done">Done</span><span class="chip quality">Quality</span></div>
+        <p class="decide"><b>Decision:</b> "Is this the official definition? What uses it?" — and it flows into every document.</p>
+        <p class="why">Tenant-wide dictionary attached to model objects. No Fabric API exposes business semantics.</p>
+      </div>
+      <div class="item">
+        <div class="rank sym">✓</div>
+        <div class="top"><h3>Ownership</h3><span class="chip done">Done</span><span class="chip gov">Governance</span></div>
+        <p class="decide"><b>Decision:</b> "Who's accountable for this model? Whose signature ships on the auditor doc?"</p>
+        <p class="why">Workspace-default + per-model override accountability. Fabric tracks permission, not accountability.</p>
+      </div>
+    </div>
+
+    <!-- NOW -->
+    <div class="band">
+      <div class="band-h"><span class="lbl now">🔥 Now — build next</span><span class="sub">Highest value, data is ready.</span></div>
+      <div class="item now">
+        <div class="rank">1</div>
+        <div class="top"><h3>Portfolio "fix-first" command center</h3><span class="chip revisit">Revisit /dashboard</span><span class="chip finops">FinOps</span></div>
+        <p class="decide"><b>Decision:</b> "Across all 10–50 of my customers, what do I fix first — and which customer — before Tuesday's QBR?" The single highest decision-density screen in the product.</p>
+        <p class="why">The vision's literal moat: <span class="mono">getPartnerPortfolio</span> — the only place a partner sees the whole portfolio at once. Microsoft's portals are tenant-scoped; this is impossible there. The second "wow" after Documents.</p>
+        <div class="vbars">
+          <span>Differentiator <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></span>
+          <span>Decision <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></span>
+          <span>JOIN <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></span>
+          <span>Persona <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEXT -->
+    <div class="band">
+      <div class="band-h"><span class="lbl next">⏭ Next</span><span class="sub">Very high value, leverages what we just shipped.</span></div>
+      <div class="item next">
+        <div class="rank">2</div>
+        <div class="top"><h3>Users page (UPN-first)</h3><span class="chip new">New</span><span class="chip gov">Governance</span></div>
+        <p class="decide"><b>Decision:</b> "Which licenses am I wasting? Whose access is risky?" Hard-€ outcome per user.</p>
+        <p class="why">The natural pair to Ownership we just shipped — <b>Ownership = who's accountable; Users = who actually uses it + what it costs.</b> JOIN: activity × license cost × access risk × ownership. PRD already approved.</p>
+        <div class="vbars">
+          <span>Differentiator <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></span>
+          <span>Decision <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></span>
+          <span>JOIN <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></span>
+          <span>Persona <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></span>
+        </div>
+      </div>
+      <div class="item next">
+        <div class="rank">3</div>
+        <div class="top"><h3>Audit &amp; Compliance</h3><span class="chip new">New</span><span class="chip gov">Governance</span></div>
+        <p class="decide"><b>Decision:</b> "What evidence do I bring the auditor Tuesday?" Revenue-linked (Pro→Enterprise upsell).</p>
+        <p class="why">"Auditor-ready export" is one of the three named differentiators. Consumes the Ownership <b>sign-off block</b> + Governance Section B (both now in place). Export log + off-hours + RLS evaluation + SOC 2 ZIP.</p>
+        <div class="vbars">
+          <span>Differentiator <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></span>
+          <span>Decision <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></span>
+          <span>JOIN <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></span>
+          <span>Persona <span class="pip"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HELD -->
+    <div class="band">
+      <div class="band-h"><span class="lbl held">⏸ Held — data-blocked</span><span class="sub">High value, but the data axis isn't live yet. Design once it lands.</span></div>
+      <div class="item">
+        <div class="rank sym">◷</div>
+        <div class="top"><h3>Lineage Explorer (env-wide)</h3><span class="chip new">New</span><span class="chip quality">Quality</span></div>
+        <p class="decide"><b>Decision:</b> "If I change this source, what breaks?" Impact analysis across the whole environment.</p>
+        <p class="why"><b>Blocked on:</b> the <span class="mono">fabric_reports</span> axis (T1.8) — the graph needs report nodes to be worth drawing. Designing now risks building against data that doesn't exist.</p>
+      </div>
+      <div class="item">
+        <div class="rank sym">◷</div>
+        <div class="top"><h3>Reports &amp; Apps catalog</h3><span class="chip new">New</span><span class="chip finops">FinOps</span></div>
+        <p class="decide"><b>Decision:</b> "Which reports are dead — am I paying capacity to refresh them?" A vision-named pain point.</p>
+        <p class="why"><b>Blocked on:</b> same <span class="mono">fabric_reports</span> axis (T1.8). Dormant detection + per-report cost share-of-bill once the axis is in.</p>
+      </div>
+    </div>
+
+    <!-- LATER -->
+    <div class="band">
+      <div class="band-h"><span class="lbl later">🅿 Later / folded</span><span class="sub">Premature or low differentiator right now.</span></div>
+      <div class="item">
+        <div class="rank sym">·</div>
+        <div class="top"><h3>Intelligence sidebar (agentic)</h3><span class="chip agentic">Agentic</span></div>
+        <p class="why">Q3+. The vision is explicit: agents need the inventory <b>wide</b> first. Building it before the data graph is broad = premature. Standing subscriptions, not chat.</p>
+      </div>
+      <div class="item">
+        <div class="rank sym">·</div>
+        <div class="top"><h3>Tenant Activity (forensic search)</h3><span class="chip gov">Governance</span></div>
+        <p class="why">Folded behind <b>Users</b> — it's the forensic sibling/enabler on the same backend, not a standalone hero screen. Ships as part of the Users + Audit data layer.</p>
+      </div>
+      <div class="item">
+        <div class="rank sym">·</div>
+        <div class="top"><h3>Model Health tab</h3><span class="chip quality">Quality</span></div>
+        <p class="why">Incremental polish on the existing model surface — weak differentiator vs the screens above. Background, not a hero.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <section>
+    <div class="eyebrow">The discipline</div>
+    <h2>What we're deliberately NOT building yet</h2>
+    <div class="cut">
+      <p style="margin:0 0 4px;">Ten very-high-value screens beat twenty mediocre ones. The cut is as important as the list:</p>
+      <ul>
+        <li><b>Lineage Explorer &amp; Reports &amp; Apps</b> — genuinely high value, but designing them now means guessing at data that isn't ingested yet. Held, not dropped.</li>
+        <li><b>Agentic sidebar</b> — needs the inventory wide first. Premature by design.</li>
+        <li><b>Model Health</b> — a polish tab, not a differentiator. Doesn't earn a hero slot.</li>
+        <li><b>Standalone Tenant Activity</b> — real value, but it's an enabler folded into Users, not its own headline.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Where the two roadmaps meet</div>
+    <h2>The bridge</h2>
+    <div class="bridge">
+      <p style="margin:0;">This page ranks by value. When you accept an item, it crosses into the implementation backlog and gets a Tier + dependencies + estimate. The mockup designs it; you accept it; engineering sequences it.</p>
+      <div class="flow">value-ranked here ──▶ you accept ──▶ tiered in LayerPulse BACKLOG.md ──▶ /prd ──▶ /build-feature ──▶ shipped</div>
+      <p style="margin:12px 0 0;font-size:14px;color:var(--muted);">See the full per-screen path on the <a href="./process.html" style="color:var(--sky);font-weight:600;text-decoration:none;">process page</a>.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div>Living document — re-ranked as data axes land and screens ship. Canonical markdown: <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/VALUE-ROADMAP.md" target="_blank" rel="noreferrer">docs/VALUE-ROADMAP.md</a>. Back to the <a href="./">review hub</a>.</div>
+  </footer>
+</div>
+</body>
+</html>
