@@ -89,6 +89,17 @@ export function Glossary() {
     review:   g.items.filter(i => i.status === 'under-review').length,
   };
 
+  // Stat cards derive from g.items (single source of truth) so they can never
+  // drift from the term list / filter chips. (Replaced hardcoded g.stats.)
+  const GLOSSARY_REF_DATE = '2026-05-24';
+  const gStats = {
+    total:         g.items.length,
+    approved:      counts.approved,
+    proposed:      counts.proposed,
+    reviewOverdue: g.items.filter(i => i.nextReview && i.nextReview < GLOSSARY_REF_DATE).length,
+    orphanTerms:   g.items.filter(i => !(((i.linkedTo || {}).models) || []).length).length,
+  };
+
   const userName = (email) => DATA.ownership.aadUsers.find(u => u.email === email)?.name || email;
 
   return (
@@ -105,11 +116,11 @@ export function Glossary() {
       </div>
 
       <div className="lp-grid-5 fade-in">
-        <StatCard label="Total terms"    value={g.stats.total}        icon="folders"        tone="sky"/>
-        <StatCard label="Approved"       value={g.stats.approved}     sub={`${Math.round(g.stats.approved / g.stats.total * 100)}% of total`} icon="shield-check" tone="emerald"/>
-        <StatCard label="Proposed"       value={g.stats.proposed}     sub="Pending review" icon="zap"          tone="violet"/>
-        <StatCard label="Review overdue" value={g.stats.reviewOverdue} sub="Past review date" icon="alert-triangle" tone="amber"/>
-        <StatCard label="Orphan terms"   value={g.stats.orphanTerms}  sub="No model linked"  icon="git-branch"   tone="rose"/>
+        <StatCard label="Total terms"    value={gStats.total}        icon="folders"        tone="sky"/>
+        <StatCard label="Approved"       value={gStats.approved}     sub={`${Math.round(gStats.approved / gStats.total * 100)}% of total`} icon="shield-check" tone="emerald"/>
+        <StatCard label="Proposed"       value={gStats.proposed}     sub="Pending review" icon="zap"          tone="violet"/>
+        <StatCard label="Review overdue" value={gStats.reviewOverdue} sub="Past review date" icon="alert-triangle" tone="amber"/>
+        <StatCard label="Orphan terms"   value={gStats.orphanTerms}  sub="No model linked"  icon="git-branch"   tone="rose"/>
       </div>
 
       <div className="gloss-shell fade-in d2" style={{ marginTop: 22 }}>

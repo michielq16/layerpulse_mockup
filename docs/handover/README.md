@@ -63,6 +63,24 @@ When a screen's design is signed off, the mockup designer should proactively ass
 
 ---
 
+## Reviewing a bundle — open every artifact (presence ≠ review)
+
+**The rule:** a bundle is "reviewed" only when every artifact has been *opened and read* — not when a directory listing confirms the files exist. This applies to **both** the mockup designer's pre-handover verify **and** the LP-side consumption.
+
+**Why this rule exists (2026-05-24).** The Business Glossary bundle passed a markdown review and an `ls` of the screenshots dir — both "green." But the screen's *Total terms* StatCard read **53** while the term list (and the type/domain filters) held **65**: a hardcoded `stats.total` had drifted from the `items` array. Only **opening the screenshot** and cross-checking it against the PRD caught the self-contradiction. The visual artifacts carry exactly what markdown can't (counts in context, layout, density, chip tones, drawer composition) — so skipping them is skipping the point of the bundle.
+
+**Checklist — run before calling a bundle reviewed:**
+
+- [ ] Open **every screenshot** and read it — counts, states, tones, empty-states. Cross-check the numbers against the PRD and against each other (no internal contradictions, e.g. a KPI card vs a filter total).
+- [ ] Load the **live route** and perform one real interaction (open a drawer/modal, switch a tab/view).
+- [ ] Open the **review HTML** in a browser (don't just confirm the file is there).
+- [ ] Read **both** `.md` files (screen narrative + PRD).
+- [ ] Reconcile: do the visual, the markdown, and the live screen tell the *same* story? Flag any drift before hand-off.
+
+"The folder has the files" is not a review. Opening them is.
+
+---
+
 ## Screenshots — capture convention
 
 LayerPulse backlog items need visuals. Capture per screen:
