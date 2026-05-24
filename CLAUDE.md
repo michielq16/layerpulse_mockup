@@ -163,6 +163,15 @@ The product owner reviews in **HTML, not markdown** — dense markdown is high c
 - **The hub** is `public/review/index.html` → `/review/`. One link to hand the PO/LP. Add a card whenever you ship a new review page.
 - **Handover bundle** (per screen) = `docs/screens/<x>.md` + `docs/prds/<x>.md` + `public/review/<x>.html` + `docs/handover/screenshots/<x>/` + the live route. See `docs/handover/README.md` for the full bridge spec + the "offer" step.
 - **At sign-off, proactively offer the bundle** (don't wait to be asked): post the handover block, confirm all four artifacts exist (generate missing ones), refresh the hub card, and grep `<lp-product>/docs/BACKLOG.md` to name the correct pillar so the PO doesn't mis-slot it. The mockup *offers*; the PO *accepts* into the backlog (never write the LP backlog directly).
+- **Whenever a bundle is delivered/offered, render it as an artifact table — and ALWAYS include a clickable URL per row, not just a path.** The PO reviews by clicking; a bare repo path (`docs/prds/x.md`) is not reviewable in chat. Required columns: **Artifact · State · URL**. URL rules: PO review + live route → production `https://layerpulze-mockup.vercel.app/...` once merged, else the confirmed branch-preview URL; specs (screen.md / prd.md) → GitHub blob `https://github.com/michielq16/layerpulse_mockup/blob/main/<path>`; screenshots → GitHub tree `.../tree/main/docs/handover/screenshots/<x>/`. Lead with the PO review page (the "start here" row). Template:
+
+  | Artifact | State | URL |
+  |---|---|---|
+  | PO review (start here) | ✅ live | https://layerpulze-mockup.vercel.app/review/&lt;x&gt;.html |
+  | Live screen | ✅ live | https://layerpulze-mockup.vercel.app/&lt;route&gt; |
+  | Screen narrative | ✅ on main | https://github.com/michielq16/layerpulse_mockup/blob/main/docs/screens/&lt;x&gt;.md |
+  | PRD | ✅ on main | https://github.com/michielq16/layerpulse_mockup/blob/main/docs/prds/&lt;x&gt;.md |
+  | Screenshots | ✅ on main | https://github.com/michielq16/layerpulse_mockup/tree/main/docs/handover/screenshots/&lt;x&gt; |
 
 ## Delivery protocol — always open a PR and link the preview
 
