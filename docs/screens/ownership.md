@@ -1,110 +1,54 @@
 # Screen: Ownership — role tagging (Owner / SME / Steward)
 
-> ⚠️ **SIMPLIFIED 2026-05-24 — this narrative below is being rewritten.** The inheritance + per-model/per-report **override** model was **cut** (operator decision: too complex for the value). The live screen now uses **simple tagging**: tag a model's Owner / SME / Steward = covered; untagged = a gap, shown in per-role **coverage dots** (one dot per model, colored by ratio — no O/S/W letters, no fractions). A "tag all models in a workspace" shortcut handles bulk (it writes tags; it is **not** a persistent default/inheritance). Sections below that describe "workspace defaults," "inheritance," or "overrides" are **superseded** — see the live screen + `public/review/ownership.html` for the current design; this file gets a full rewrite before Ownership is formalized onto the LP backlog.
-
-**Pillar:** Governance & Compliance (foundation for every other LP surface)
-**Persona:** Both — partner (sees ownership per customer), direct customer (assigns its own)
-**Value-loop quadrant:** Ingest (manual entry) — operator captures business judgement that no Fabric API exposes
-**Decision the user makes:** "Who's accountable for this workspace/model? Who do I call when it breaks? Whose signature ships on the auditor doc?"
-**Data joins required:** None upstream — this IS the upstream. LP DB is the source of truth.
-**Sample data:** `DATA.ownership` in `src/data.jsx` — 12 workspace defaults · 7 per-model overrides · 8 AAD users · 5 role labels · 8 audit-log entries.
+**Pillar:** Governance & Compliance (the manual-accountability foundation other surfaces consume)
+**Persona:** Both — partner (accountability per customer tenant) + direct customer
+**Value-loop quadrant:** Ingest (manual capture) — the human judgement no Fabric API exposes
+**Decision the user makes:** "Who's accountable for this model — and where are the gaps I need to fill before an audit / before it breaks?"
+**Data joins required:** None upstream — this *is* the upstream. LP DB is the source of truth; it joins into the Documents sign-off and the partner Team & Seats coverage.
+**Sample data:** `DATA.ownership` in `src/data.jsx` — workspaces · AAD user pool · per-model role tags (`rolesPerModel`) · audit log.
 
 ## Why this exists
 
-Fabric tells us *who has permissions* (workspace admin/member, dataset build/read). It does NOT tell us:
-- Who's the **business-accountable owner** of a workspace
-- Who's the **BI steward** for governance reviews
-- Who to call when a model breaks at 02:00 UTC
-- Who signs off on the auditor doc for SOC 2 evidence
+Fabric tells us who has **permissions** (workspace Admin/Member, dataset Build/Read). It does **not** tell us who's **accountable**: who owns the model, who's the subject-matter expert, who stewards it for governance. That mapping is human judgement, and no API carries it. Ownership is where a person captures it once, and it flows into the Documents cover + sign-off block and the partner-portal coverage view.
 
-That mapping is human business judgement. Every prior LP screen treated "owner" as a string column on the model — but that string had nowhere to come from. This is the form that fills it.
+## The model — simple tagging (no inheritance, no overrides)
 
-**Workspace-default inheritance** is the 90% case: a workspace has a lead, and every model in that workspace inherits them.
+**Tag an item with someone = covered. Not tagged = a gap, shown in the dots.** That's the whole model. There is deliberately **no** workspace-default inheritance, **no** per-model/per-report override, and **no** resolution rule — that machinery was cut as complexity that didn't earn its keep (operator decision 2026-05-24). Scale is handled by a **"tag all models in a workspace"** shortcut, which simply writes the same tag across the workspace's models — it is a bulk write, not a persistent relationship to maintain.
 
-**Per-model overrides** handle the long tail: workspace admin gives publish rights to a downstream user → they build a report → they become the de-facto owner of *that* report, while the workspace lead remains accountable for everything else. The "why" field captures the context that justified the exception.
+Three roles per model: **Owner** (accountable), **SME** (subject expert), **Steward** (maintains/reviews; can be several).
 
 ## Happy path
 
-1. User lands on `/ownership`. Header: title + sub + `+ Assign default` CTA.
-2. **5-KPI strip:** Workspaces · Defaults set · Missing defaults · Per-model overrides · Stewards active.
-3. **Workspace defaults section** (table):
-   1. Filter row: search · status chips (All / Current / Review due / No owner) · env pills (PROD / UAT / DEV / All).
-   2. Grid: workspace name · env badge · default lead (avatar + name + email) · stewards count · overrides count (clickable, opens drawer) · last reviewed · status pill · row settings icon.
-   3. **No-owner rows get a rose-tinted background and inline "Assign →" CTA.**
-   4. Edit icon opens drawer.
-4. **Per-model overrides section:**
-   1. List of `<own-override>` cards — left-edge violet accent.
-   2. Each shows: model name + workspace · violet "Override" pill · the **why** text (audit-quality context) · "Owner now / Set on / Set by" meta.
-   3. Actions per card: Open model · Edit override.
-5. **Activity (audit log):** dated rows of every ownership change — who · when · what changed.
+1. User lands on `/ownership`. Header + `+ Tag owner` CTA.
+2. **5-KPI strip:** Workspaces · Owners tagged (/workspaces) · No owner · Coverage gaps · Stewards active.
+3. **Ownership-by-workspace table:** workspace · env · owner (avatar + name, or "Untagged · Tag →") · **role coverage** · last reviewed · status · ⚙.
+4. **Role coverage cell** — one line per role: the role **word** + a dot per model in the workspace; filled dots = models with that role tagged, colored by ratio (all = green · ~half = amber · few = red · none = grey). The dots are the count — no fractions, no letter codes.
+5. The ⚙ on a row opens the **tag drawer** (tag Owner / SME / Stewards across that workspace's models — the bulk shortcut). Per-model tagging happens on the model's Ownership tab.
+6. **Activity (audit log):** dated who/what changes.
 
-## Drawer (Assign default / Edit default / Edit override / View workspace overrides)
+## Edge states (minimum 2)
 
-Same shell across all variants: right-side drawer (560px), sticky head + body + foot.
-
-**Default form fields:**
-- Workspace (locked if editing)
-- Default lead (select from AAD pool — `DATA.ownership.aadUsers`)
-- Role grid (2×3): Data lead / BI steward / Backup owner / Source DBA / Business owner — each with description blurb
-- Stewards (multi-select; "+ Add steward" affordance)
-- Review cadence (Quarterly default / Monthly / Annually / On change)
-
-**Override form fields:**
-- Override owner (select from AAD)
-- **Why** (textarea, required) — audit-quality context. Stays attached forever.
-
-## Edge states
-
-- **No workspace default set:** rose-tinted row + inline "Assign →" link. Until set, every model in that workspace falls through to the missing-default state (Documents modal's auditor render flags it explicitly).
-- **Status = Review overdue:** amber pill + nudge to re-review.
-- **Empty filter result:** "No workspaces match. Adjust filters above."
-- **No overrides yet (clean workspace):** override section renders empty with "No overrides — workspace default is canonical."
-- **ESC + backdrop click:** closes drawer.
-
-## ModelOwnership — inline on `/models/[id]/ownership` (5th tab)
-
-Same sample data, scoped view:
-
-- **Inherited from workspace** block — read-only card showing the workspace default (lead · stewards · last reviewed · status). "Override" action prominent if you're going to break inheritance.
-- **Override for this model** block — empty by default (inherits). When set, renders an `<own-override>` card with why + meta + Edit affordance.
-- **Activity** block — audit-log entries touching this model OR its workspace.
+- **Untagged workspace:** rose-tinted "No owner" status + inline "Tag →".
+- **No models in workspace:** coverage cell reads "no models."
+- **Partial coverage:** amber/red dots per role surface the gap directly; the "Coverage gaps" KPI counts workspaces missing any role.
+- **Review overdue:** amber status pill.
+- **ESC / backdrop:** closes the drawer.
 
 ## Components used
 
-- `StatCard` × 5 — KPI strip
-- `lp-grid-5` (new) — 5-column KPI grid (collapses to 3 below 1200px)
-- `lp-card-flush` + filter row — search + status chips + env pills
-- `own-ws-table` + `own-ws-row` (new) — workspace defaults grid
-- `own-avatar` (new) — initials-circle, reused everywhere
-- `own-status` (new) — current/stale/missing pill (emerald/amber/rose)
-- `own-override` (new) — left-violet-accent override card
-- `own-override-pill` (new) — small "Override" badge
-- `own-audit` + `own-audit-row` (new) — date/who/change log
-- `own-drawer-backdrop` + `own-drawer` (new) — shared right-side drawer shell (reused by Glossary)
-- `own-role-grid` + `own-role-tab` (new) — role-picker 2×3 grid
-- `own-form` + `own-form-row` (new) — drawer form atoms
-- `model-own-card` + `model-own-card-head` + `model-own-card-meta` (new) — inline block for the model-tab variant
+- `StatCard` × 5 (KPI strip) · `lp-grid-5`
+- `own-ws-table` / `own-ws-row` — workspace table (7 columns; Overrides column removed)
+- `RoleCoverageCell` — per-role dots (`role-cov-cell` / `role-cov-row` / `role-cov-name` / `rc-dot` tiers)
+- `own-avatar` · `own-status` pill · `own-audit` log
+- tag drawer (shared right-side shell) + role/steward form atoms
 
-## Metrics surfaced
+## How it feeds other surfaces
 
-- Workspaces · Defaults set / total · Missing defaults · Per-model overrides / total models · Stewards active
-- Per-row: stewards count · overrides count · last reviewed date
-
-## Benefit hypothesis
-
-- Within 30 days of shipping, **Doc Coverage % rises 5-10 points** because the Documents modal can populate the Auditor render's Owners + Sign-off page without falling back to empty state.
-- Partners can answer "who owns X" for any customer model in <5s (was: 10-minute Slack thread).
-- Sets the data shape for downstream surfaces — Documents (auditor preset) · Audit & Compliance (priority #4) · Alerts (route ownership escalations to the right person).
-
-## Open questions / future iterations
-
-- **Bulk reassign** — "Marc Q just left, reassign all his models to Alex". Defer; needs careful UX.
-- **AAD group sync** — pull workspace members from Graph and pre-fill the select. Currently mocked from `DATA.ownership.aadUsers`.
-- **Approval workflow** — should role changes require a second steward to approve? Defer until SOC 2 audit feedback comes in.
-- **Notifications** — "Your workspace default ownership has been reassigned" — out of scope; wire after `/alerts` integration.
+- **Documents** — the resolved Owner + Domain credit the cover; Owner + Stewards render the back-page sign-off. Untagged → explicit "No owner assigned — add via /ownership" (never fabricated).
+- **Partner portal · Team & Seats** — "covered vs gap" rolls up to the partner-side coverage view.
 
 ## Notes for LP-side PRD authoring
 
-- Storage shape: `workspace_owners(workspace_id, lead_email, role_label, last_review_at, review_cadence, set_by, set_at)` + `model_owner_overrides(model_id, lead_email, why, set_at, set_by)` + `model_owner_audit_log(workspace_id, model_id, change_type, details, who, at)`.
-- `role_label` is a controlled vocabulary (5 values today). Add to a `role_labels` table for extensibility, but treat as append-only (renaming breaks audit log).
-- The "Why" override field is the differentiator. Don't let users skip it — the audit value of overrides is *why*, not *who*.
+- Storage collapses to **one association table** — e.g. `model_role_tags(model_id, role, user_email, set_by, set_at)` with `role ∈ {owner, sme, steward}` (steward many-per-model). No `workspace_owners` default rows, no `model_owner_overrides`, no resolution layer.
+- Coverage = counts over `model_role_tags`; a "gap" = a model missing a role tag. Bulk "tag all in workspace" = a loop of inserts, not a stored default.
+- `role` is a small controlled vocabulary; keep append-only if it ever grows.
