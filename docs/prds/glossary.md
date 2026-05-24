@@ -191,9 +191,11 @@ business_terms
 ## 10. Open questions
 
 - **OQ-1** Glossary scope confirmed tenant-wide single dictionary (operator). Per-workspace dictionaries rejected (duplication).
-- **OQ-2** Multiple terms on one measure — which is the "primary" for the doc description? (Needs a primary flag on the attachment.)
+- **OQ-2** ✅ **Resolved 2026-05-23** — multiple terms on one measure: a **"primary" flag** on the attachment picks the canonical definition for the doc.
 - **OQ-3** Domain list: tenant-configurable vs fixed 7? (Mock: fixed Finance/Sales/Marketing/Operations/HR/Product/Compliance.)
 - **OQ-4** Should `why` be required on attachments (like the ownership override "why")? Audit value vs friction.
+- **OQ-5** ✅ **Resolved 2026-05-23** — **standalone governance screen**, not part of Documents (value is independent of doc generation; Documents is a consumer). Accepted into LayerPulse backlog as **T1.16**.
+- **OQ-6** ✅ **Resolved 2026-05-23** — attachment auto-suggest (name match) is deferred to **Phase 2**; v1 is manual attachment only.
 
 ## 11. Acceptance checklist for `/build-feature`
 

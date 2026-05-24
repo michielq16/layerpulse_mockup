@@ -39,6 +39,8 @@
   .decisions li{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:15px 18px;margin-bottom:11px;display:flex;gap:13px;align-items:flex-start;}
   .decisions .q-num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px;}
   .decisions .q-body b{display:block;font-size:15px;color:var(--navy);margin-bottom:2px;} .decisions .q-body span{font-size:14px;color:var(--muted);}
+  .decisions li.done .q-num{background:#16a34a;}
+  .decisions .q-res{display:block;font-size:13.5px;color:#166534;font-weight:600;margin-top:6px;}
   footer{border-top:1px solid var(--line);padding-top:24px;margin-top:10px;font-size:14px;color:var(--muted);} footer a{color:var(--sky);text-decoration:none;font-weight:600;}
   .back{display:inline-block;margin-bottom:14px;color:#cfe2f5;text-decoration:none;font-size:14px;}
 </style>
@@ -109,12 +111,12 @@
   </section>
 
   <section>
-    <div class="eyebrow">Over to you</div>
-    <h2>A few decisions we need from you</h2>
+    <div class="eyebrow">Decided</div>
+    <h2>Decisions — resolved</h2>
     <ul class="decisions">
-      <li><span class="q-num">1</span><span class="q-body"><b>Its own thing, or part of Documents?</b><span>The glossary powers document definitions, so it's a dependency either way — but it could be a standalone governance screen.</span></span></li>
-      <li><span class="q-num">2</span><span class="q-body"><b>One measure, several terms — which wins?</b><span>If a measure has more than one attached term, which definition shows in the doc? (We'd add a "primary" flag.)</span></span></li>
-      <li><span class="q-num">3</span><span class="q-body"><b>Auto-suggest later?</b><span>v1 is manual attachment. Later we could suggest terms by name match. Worth it, or keep it human-only?</span></span></li>
+      <li class="done"><span class="q-num">✓</span><span class="q-body"><b>Its own thing, or part of Documents?</b><span>The glossary powers document definitions, but its value stands alone — definitions show next to DAX in workspace → semantic model, no document needed.</span><span class="q-res">Resolved: standalone governance screen (Documents is a consumer, not its home). Accepted into the LayerPulse backlog as T1.16.</span></span></li>
+      <li class="done"><span class="q-num">✓</span><span class="q-body"><b>One measure, several terms — which wins?</b><span>If a measure has more than one attached term, which definition is authoritative for the document?</span><span class="q-res">Resolved: a "primary" flag on the attachment picks the canonical definition.</span></span></li>
+      <li class="done"><span class="q-num">✓</span><span class="q-body"><b>Auto-suggest later?</b><span>Should the system suggest term attachments by name match?</span><span class="q-res">Resolved: v1 is manual attachment only; name-match auto-suggest is a later (Phase 2) enhancement.</span></span></li>
     </ul>
   </section>
 
