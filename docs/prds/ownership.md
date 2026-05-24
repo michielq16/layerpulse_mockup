@@ -1,4 +1,6 @@
-# PRD — Ownership & Stewardship (workspace defaults + per-model overrides)
+# PRD — Ownership & Stewardship (role tagging)
+
+> ⚠️ **SIMPLIFIED 2026-05-24 — pending full rewrite.** The **workspace-default inheritance + per-model/per-report override** model (incl. the `model_owner_overrides` table, the resolution rule, and the required "why") was **cut** by operator decision — too complex for the value. The v1 model is **simple tagging**: each model carries Owner / SME / Steward tags; tagged = covered, untagged = a gap (shown in per-role coverage dots). A "tag all models in a workspace" action is a bulk write, not a relationship. **Data contract collapses** to one association table (e.g. `model_role_tags(model_id, role, user_email, set_by, set_at)`) — no overrides/defaults/resolution layer. Functional requirements, data contract, and joins below referencing inheritance/overrides are **superseded**; this PRD is the design brief and will be re-authored LP-side via `/prd` against the simplified model.
 
 | | |
 |---|---|

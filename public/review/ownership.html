@@ -82,29 +82,30 @@
   </section>
 
   <section>
-    <div class="eyebrow">How it stays low-effort</div>
-    <h2>Workspace default, model override</h2>
+    <div class="eyebrow">How it works — deliberately simple</div>
+    <h2>Just tag who's accountable</h2>
     <div class="card">
       <div class="flow">
-        <span class="step">Set an owner on the <b>workspace</b> once</span><span class="arr">→</span>
-        <span class="step">Every model inherits it</span><span class="arr">→</span>
-        <span class="step">Override <b>one model</b> only when it differs</span>
+        <span class="step">Tag an item with <b>someone</b></span><span class="arr">→</span>
+        <span class="step">Covered ✓</span><span class="arr">·</span>
+        <span class="step">Not tagged = <b>a gap</b>, shown in the dots</span>
       </div>
-      <p style="margin:16px 0 0;font-size:14.5px;color:var(--muted);">This mirrors how teams actually work: a workspace has an owner, but individual reports often have their own owner. You only do extra work where reality is different from the default.</p>
+      <p style="margin:16px 0 0;font-size:14.5px;color:var(--muted);">No inheritance, no overrides, no model/report exception rules — that complexity isn't worth it. Tag a model's Owner / SME / Steward and you're done. A "tag all models in a workspace" shortcut handles bulk so big workspaces aren't tedious — it just writes the tags, it's not a relationship to maintain.</p>
     </div>
   </section>
 
   <section>
     <div class="eyebrow">See the gaps at a glance</div>
-    <h2>Role coverage</h2>
-    <p class="lead">A single colored dot per model shows how complete its accountability is — so you can spot what's missing before an auditor does.</p>
+    <h2>Coverage dots</h2>
+    <p class="lead">Per workspace, one line per role — a dot for every model, filled when that role is tagged. The color tells you the health at a glance.</p>
     <div class="card">
       <div class="legend">
-        <span class="it"><span class="dot full"></span> All 4 roles filled</span>
-        <span class="it"><span class="dot partial"></span> Owner set, gaps remain</span>
-        <span class="it"><span class="dot low"></span> Mostly empty</span>
-        <span class="it"><span class="dot empty"></span> Nothing assigned</span>
+        <span class="it"><span class="dot full"></span> All models tagged</span>
+        <span class="it"><span class="dot partial"></span> About half tagged</span>
+        <span class="it"><span class="dot low"></span> Only a few tagged</span>
+        <span class="it"><span class="dot empty"></span> Untagged (a gap)</span>
       </div>
+      <p style="margin:14px 0 0;font-size:14px;color:var(--muted);">Example — <b>Owner</b> ●●●●●● (all green), <b>SME</b> ●●●○○ (amber), <b>Steward</b> ●●○○○ (red). The dots are the count; no fractions, no letter codes.</p>
     </div>
   </section>
 
@@ -118,7 +119,7 @@
     <div class="eyebrow">See it for real</div>
     <h2>The live screen</h2>
     <a class="btn" href="https://layerpulze-mockup.vercel.app/ownership" target="_blank" rel="noreferrer">Open Ownership →</a>
-    <p style="margin-top:12px;font-size:14px;color:var(--muted);">Tip: pick a model to see its per-model panel — owner, SME, stewards, domain, and the workspace it inherits from.</p>
+    <p style="margin-top:12px;font-size:14px;color:var(--muted);">Tip: each workspace row shows the Owner / SME / Steward dots; the ⚙ button tags roles across all its models at once.</p>
   </section>
 
   <section>

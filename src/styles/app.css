@@ -2694,7 +2694,7 @@ select.input::-ms-expand { display: none; }
 }
 .own-ws-row {
   display: grid;
-  grid-template-columns: 1.4fr 0.5fr 1.6fr 0.7fr 0.6fr 0.9fr 0.9fr 0.3fr;
+  grid-template-columns: 1.4fr 0.5fr 1.5fr 1.5fr 0.9fr 0.9fr 0.3fr;
   gap: 12px;
   align-items: center;
   padding: 12px 16px;
@@ -2858,19 +2858,19 @@ select.input::-ms-expand { display: none; }
 }
 .role-cov-row {
   display: grid;
-  grid-template-columns: 10px 14px 36px;
-  gap: 7px;
+  grid-template-columns: 56px 1fr;
+  gap: 9px;
   align-items: center;
-  font-size: 10.5px;
+  font-size: 11px;
 }
-.role-cov-label {
-  width: 14px; height: 14px; border-radius: 3px;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 9px; font-weight: 700; letter-spacing: 0; color: #fff;
-}
-.role-cov-label-sky     { background: oklch(0.55 0.18 237); }
-.role-cov-label-emerald { background: oklch(0.55 0.16 145); }
-.role-cov-label-amber   { background: oklch(0.62 0.16 65); }
+.role-cov-name { color: var(--muted-foreground); font-size: 10.5px; }
+.role-cov-dots { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+.rc-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: var(--muted); }
+.rc-full    { background: oklch(0.58 0.18 145); }   /* green */
+.rc-partial { background: oklch(0.70 0.17 75);  }   /* amber */
+.rc-low     { background: oklch(0.58 0.22 25);  }   /* red */
+.rc-empty   { background: oklch(0.88 0.01 250); }   /* grey — untagged slot */
+.dark .rc-empty { background: oklch(0.30 0.01 250); }
 
 /* Threshold-toned dot — single visual cue for the coverage health.
    display:block is REQUIRED so width/height apply on the <span>. */

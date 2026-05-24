@@ -11,14 +11,11 @@ export function userByEmail(email) {
 }
 
 export function resolveModelOwner(modelName, workspace) {
-  const o = DATA.ownership;
-  const override  = o.overrides.find(x => x.model === modelName);
-  if (override) {
-    return { name: override.leadName, email: override.leadEmail, source: 'override', set: override.set, setBy: override.setBy, why: override.why };
-  }
-  const wsDefault = o.workspaceDefaults.find(w => w.ws === workspace);
+  // Simple tagging (no inheritance/override): a model's owner is whoever is
+  // tagged on its workspace. Tagged = covered; untagged = gap.
+  const wsDefault = DATA.ownership.workspaceDefaults.find(w => w.ws === workspace);
   if (wsDefault?.leadName) {
-    return { name: wsDefault.leadName, email: wsDefault.leadEmail, source: 'workspace', set: wsDefault.lastReview, setBy: '—', why: null };
+    return { name: wsDefault.leadName, email: wsDefault.leadEmail, source: 'tagged' };
   }
   return null;
 }
@@ -73,11 +70,11 @@ export function workspaceRoleCoverage(workspace) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   /ownership — workspace defaults + per-model overrides
-   Manual-data foundation: captures business role assignments that no
-   Fabric API exposes. Workspace-level default inheritance is the
-   90% case; per-model override handles the long tail (a downstream
-   user becomes the de-facto owner of their report).
+   /ownership — simple role tagging (no inheritance/override)
+   Manual-data foundation: captures business role assignments (Owner / SME /
+   Steward) that no Fabric API exposes. Tag an item with someone = covered;
+   untagged = a gap, visible in the dots. A "tag all models in workspace"
+   shortcut handles scale — it just writes tags, it is not a relationship.
    ───────────────────────────────────────────────────────────────────────── */
 
 const STATUS = {
@@ -86,35 +83,34 @@ const STATUS = {
   missing: { label: 'No owner', tone: 'rose' },
 };
 
-/* Inline cell — 3 stacked bars for Owner / SME / Stewards coverage.
-   Width is PROPORTIONAL to coverage; color is threshold-tone:
-     · 100%   → green  (full bar)
-     · 50-99% → amber  (~half-to-full)
-     · 1-49%  → red    (short bar)
-     · 0%     → no fill (track only; 0/N text carries the signal)
-   Role label on the left keeps its role-tone (sky/emerald/amber)
-   so you can still see which role is which at a glance. */
+/* Inline cell — one line per role: word label + a dot per model.
+   Filled dots = models with that role tagged; color = coverage tier
+   (all=green · ~half=amber · some=red · none=all grey). The dots carry
+   the count, so no fraction text and no letter badges. */
 function RoleCoverageCell({ cov }) {
   if (cov.total === 0) return <span className="own-empty">no models</span>;
   const tier = (n) => {
-    if (n === 0)                return 'empty';
+    if (n === 0)    return 'empty';
     const pct = n / cov.total;
-    if (pct >= 1)               return 'full';
-    if (pct >= 0.5)             return 'partial';
+    if (pct >= 1)   return 'full';
+    if (pct >= 0.5) return 'partial';
     return 'low';
   };
   const rows = [
-    { label: 'O', tone: 'sky',     n: cov.ownerSet,   name: 'Owner' },
-    { label: 'S', tone: 'emerald', n: cov.smeSet,     name: 'SME' },
-    { label: 'W', tone: 'amber',   n: cov.stewardSet, name: 'Stewards' },
+    { name: 'Owner',   n: cov.ownerSet },
+    { name: 'SME',     n: cov.smeSet },
+    { name: 'Steward', n: cov.stewardSet },
   ];
   return (
     <span className="role-cov-cell">
       {rows.map(r => (
-        <span key={r.label} className="role-cov-row" title={`${r.name}: ${r.n}/${cov.total} models`}>
-          <span className={'role-cov-dot role-cov-dot-' + tier(r.n)}/>
-          <span className={'role-cov-label role-cov-label-' + r.tone}>{r.label}</span>
-          <span className="mono role-cov-num">{r.n}/{cov.total}</span>
+        <span key={r.name} className="role-cov-row" title={`${r.name}: ${r.n} of ${cov.total} models tagged`}>
+          <span className="role-cov-name">{r.name}</span>
+          <span className="role-cov-dots">
+            {Array.from({ length: cov.total }).map((_, i) => (
+              <span key={i} className={'rc-dot ' + (i < r.n ? 'rc-' + tier(r.n) : 'rc-empty')}/>
+            ))}
+          </span>
         </span>
       ))}
     </span>
@@ -143,31 +139,37 @@ export function Ownership({ onOpenModel }) {
     missing: o.workspaceDefaults.filter(w => w.status === 'missing').length,
   };
 
+  // Workspaces where any role is missing on any model (a tagging gap).
+  const coverageGaps = o.workspaceDefaults.filter(w => {
+    const c = workspaceRoleCoverage(w.ws);
+    return c.total > 0 && (c.ownerSet < c.total || c.smeSet < c.total || c.stewardSet < c.total);
+  }).length;
+
   return (
     <>
       <div className="lp-page-head">
         <div className="fade-in">
           <h1 className="lp-page-title">Ownership</h1>
-          <p className="lp-page-sub">Workspace defaults inherit down. Override per model when a downstream user owns the report. Fabric tells us who has <i>permissions</i>; LP captures who's <i>accountable</i>.</p>
+          <p className="lp-page-sub">Tag who's accountable for each model — Owner, SME, Steward. Tagged shows in the dots; untagged is a gap. Fabric tells us who has <i>permissions</i>; LP captures who's <i>accountable</i>.</p>
         </div>
         <div className="fade-in d2" style={{ display: 'flex', gap: 8 }}>
           <button className="btn btn-outline btn-sm"><Icon name="external" size={14}/>Export CSV</button>
-          <button className="btn btn-sm doc-gen-cta" onClick={() => setDrawer({ kind: 'add-default' })}><Icon name="plus" size={14}/>Assign default</button>
+          <button className="btn btn-sm doc-gen-cta" onClick={() => setDrawer({ kind: 'add-default' })}><Icon name="plus" size={14}/>Tag owner</button>
         </div>
       </div>
 
       <div className="lp-grid-5 fade-in">
         <StatCard label="Workspaces"       value={o.stats.workspaces}        icon="folders"  tone="sky"/>
-        <StatCard label="Defaults set"     value={o.stats.assignedDefaults}  unit={`/${o.stats.workspaces}`} sub={`${Math.round(o.stats.assignedDefaults / o.stats.workspaces * 100)}% coverage`} icon="shield-check" tone="emerald"/>
-        <StatCard label="Missing defaults" value={o.stats.missingDefaults}   sub="Action required" icon="alert-triangle" tone="rose"/>
-        <StatCard label="Per-model overrides" value={o.stats.modelsWithOverride} unit={`/${o.stats.totalModels}`} sub="Exceptions to workspace default" icon="git-branch" tone="amber"/>
+        <StatCard label="Owners tagged"    value={o.stats.assignedDefaults}  unit={`/${o.stats.workspaces}`} sub={`${Math.round(o.stats.assignedDefaults / o.stats.workspaces * 100)}% of workspaces`} icon="shield-check" tone="emerald"/>
+        <StatCard label="No owner"         value={o.stats.missingDefaults}   sub="Untagged — action required" icon="alert-triangle" tone="rose"/>
+        <StatCard label="Coverage gaps"    value={coverageGaps}              sub="workspaces missing a role" icon="git-branch" tone="amber"/>
         <StatCard label="Stewards active"  value={o.stats.stewardsActive}    icon="users"    tone="violet"/>
       </div>
 
       {/* ── Workspace defaults section ─────────────────────────────── */}
 
       <div className="lp-section-head" style={{ marginTop: 22 }}>
-        <h2>Workspace defaults <span className="count">{filteredWs.length} of {o.workspaceDefaults.length}</span></h2>
+        <h2>Ownership by workspace <span className="count">{filteredWs.length} of {o.workspaceDefaults.length}</span></h2>
         <span className="lp-eyebrow">Last reviewed by anyone · {o.stats.lastReviewed}</span>
       </div>
 
@@ -197,9 +199,8 @@ export function Ownership({ onOpenModel }) {
         <div className="own-ws-row own-ws-head">
           <span>Workspace</span>
           <span>Env</span>
-          <span>Default lead</span>
+          <span>Owner</span>
           <span>Role coverage</span>
-          <span>Overrides</span>
           <span>Last reviewed</span>
           <span>Status</span>
           <span></span>
@@ -219,91 +220,20 @@ export function Ownership({ onOpenModel }) {
                     <div className="own-lead-mail mono">{w.leadEmail}</div>
                   </span>
                 </>) : (
-                  <span className="own-empty">No default assigned · <a onClick={() => setDrawer({ kind: 'edit-default', ws: w.ws })}>Assign →</a></span>
+                  <span className="own-empty">Untagged · <a onClick={() => setDrawer({ kind: 'edit-default', ws: w.ws })}>Tag →</a></span>
                 )}
               </span>
               <RoleCoverageCell cov={cov}/>
-              <span className="mono own-num">{w.overrides > 0 ? <a onClick={() => setDrawer({ kind: 'workspace-overrides', ws: w.ws })}>{w.overrides}</a> : '—'}</span>
               <span className="mono own-rev">{w.lastReview || <span className="own-empty">never</span>}</span>
               <span><span className={'own-status own-status-' + st.tone}><span className="dot"/>{st.label}</span></span>
               <span className="own-actions">
-                <button className="btn btn-ghost btn-sm" title="Edit" onClick={() => setDrawer({ kind: 'edit-default', ws: w.ws })}><Icon name="settings" size={13}/></button>
+                <button className="btn btn-ghost btn-sm" title="Tag all models in this workspace" onClick={() => setDrawer({ kind: 'edit-default', ws: w.ws })}><Icon name="settings" size={13}/></button>
               </span>
             </div>
           );
         })}
         {filteredWs.length === 0 && (
           <div className="empty" style={{ padding: 28 }}>No workspaces match. Adjust filters above.</div>
-        )}
-      </div>
-
-      {/* ── Per-model overrides section ────────────────────────────── */}
-
-      <div className="lp-section-head" style={{ marginTop: 26 }}>
-        <h2>Per-model overrides <span className="count">{o.overrides.length}</span></h2>
-        <span className="lp-eyebrow">Models where the owner differs from the workspace default</span>
-      </div>
-
-      <div className="own-override-list fade-in d3">
-        {o.overrides.map(ov => (
-          <div key={ov.id} className="own-override">
-            <div className="own-override-main">
-              <div className="own-override-head">
-                <span className="own-override-model">{ov.model}</span>
-                <span className="sep">·</span>
-                <span className="mono own-override-ws">{ov.ws}</span>
-                <span className="own-override-pill">Override</span>
-              </div>
-              <div className="own-override-why">{ov.why}</div>
-              <div className="own-override-meta">
-                <span><b>Owner now:</b> {ov.leadName}</span>
-                <span className="sep">·</span>
-                <span className="mono">{ov.leadEmail}</span>
-                <span className="sep">·</span>
-                <span>Set <b>{ov.set}</b> by {ov.setBy}</span>
-              </div>
-            </div>
-            <div className="own-override-actions">
-              <button className="btn btn-ghost btn-sm" title="Open model" onClick={() => onOpenModel?.(ov.ws, ov.model)}><Icon name="external" size={13}/>Open</button>
-              <button className="btn btn-ghost btn-sm" title="Edit override" onClick={() => setDrawer({ kind: 'edit-override', id: ov.id })}><Icon name="settings" size={13}/></button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Per-report overrides section ───────────────────────────── */}
-
-      <div className="lp-section-head" style={{ marginTop: 26 }}>
-        <h2>Per-report overrides <span className="count">{o.reportOverrides.length}</span></h2>
-        <span className="lp-eyebrow">Reports whose owner differs from the underlying semantic model — usually a downstream team built a thin report on a shared model</span>
-      </div>
-
-      <div className="own-override-list fade-in d3">
-        {o.reportOverrides.map(ro => (
-          <div key={ro.id} className="own-override own-override-report">
-            <div className="own-override-main">
-              <div className="own-override-head">
-                <span className="own-override-model">{ro.reportName}</span>
-                <span className="own-override-pill own-override-pill-report">{ro.reportKind}</span>
-                <span className="sep">·</span>
-                <span className="own-override-mc">on <b>{ro.modelName}</b></span>
-              </div>
-              <div className="own-override-why">{ro.why}</div>
-              <div className="own-override-meta">
-                <span><b>Owner now:</b> {ro.ownerName}</span>
-                <span className="sep">·</span>
-                <span className="mono">{ro.ownerEmail}</span>
-                <span className="sep">·</span>
-                <span>Set <b>{ro.set}</b> by {ro.setBy}</span>
-              </div>
-            </div>
-            <div className="own-override-actions">
-              <button className="btn btn-ghost btn-sm" title="Edit override"><Icon name="settings" size={13}/></button>
-            </div>
-          </div>
-        ))}
-        {o.reportOverrides.length === 0 && (
-          <div className="empty" style={{ padding: 20 }}>No report-level overrides. Reports inherit ownership from their semantic model.</div>
         )}
       </div>
 
@@ -357,10 +287,10 @@ function OwnershipDrawer({ drawer, onClose }) {
 
   let title, body;
   if (isAdd) {
-    title = 'Assign workspace default';
+    title = 'Tag owner';
     body = <DefaultForm initialWs="" initialLead="" />;
   } else if (isEditDef) {
-    title = `Edit default · ${drawer.ws}`;
+    title = `Tag roles · ${drawer.ws} (all models)`;
     body = <DefaultForm initialWs={drawer.ws} initialLead={existingWs?.leadEmail || ''} stewards={existingWs?.stewards || 0}/>;
   } else if (isAddOv) {
     title = drawer.modelName ? `Override owner · ${drawer.modelName}` : 'Add override';

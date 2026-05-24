@@ -1,4 +1,6 @@
-# Screen: Ownership — workspace defaults + per-model overrides
+# Screen: Ownership — role tagging (Owner / SME / Steward)
+
+> ⚠️ **SIMPLIFIED 2026-05-24 — this narrative below is being rewritten.** The inheritance + per-model/per-report **override** model was **cut** (operator decision: too complex for the value). The live screen now uses **simple tagging**: tag a model's Owner / SME / Steward = covered; untagged = a gap, shown in per-role **coverage dots** (one dot per model, colored by ratio — no O/S/W letters, no fractions). A "tag all models in a workspace" shortcut handles bulk (it writes tags; it is **not** a persistent default/inheritance). Sections below that describe "workspace defaults," "inheritance," or "overrides" are **superseded** — see the live screen + `public/review/ownership.html` for the current design; this file gets a full rewrite before Ownership is formalized onto the LP backlog.
 
 **Pillar:** Governance & Compliance (foundation for every other LP surface)
 **Persona:** Both — partner (sees ownership per customer), direct customer (assigns its own)
