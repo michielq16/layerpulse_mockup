@@ -1543,18 +1543,21 @@ const DATA = {
       { key: 'business-owner',label: 'Business owner',   tone: 'rose',    desc: 'Sponsor on the business side. Sign-off on definitions and KPIs.' },
     ],
     workspaceDefaults: [
-      { ws: 'Finance-Prod',   env: 'PROD', leadName: 'Alex Rivera',     leadEmail: 'a.rivera@contoso.com',    stewards: 3, overrides: 4, lastReview: '2026-05-15', status: 'current' },
-      { ws: 'Operations',     env: 'PROD', leadName: 'Sofia Lindqvist', leadEmail: 's.lindqvist@contoso.com', stewards: 2, overrides: 2, lastReview: '2026-05-09', status: 'current' },
-      { ws: 'RetailOps',      env: 'PROD', leadName: 'Sofia Lindqvist', leadEmail: 's.lindqvist@contoso.com', stewards: 1, overrides: 1, lastReview: '2026-05-08', status: 'current' },
-      { ws: 'Ops-Score',      env: 'PROD', leadName: 'Karim Andersen',  leadEmail: 'k.andersen@contoso.com',  stewards: 4, overrides: 0, lastReview: '2026-04-30', status: 'current' },
-      { ws: 'Exec-Reports',   env: 'PROD', leadName: 'Marc Qureshi',    leadEmail: 'm.qureshi@contoso.com',   stewards: 2, overrides: 0, lastReview: '2026-05-12', status: 'current' },
-      { ws: 'Sales-NA',       env: 'PROD', leadName: 'Priya Nair',      leadEmail: 'p.nair@contoso.com',      stewards: 2, overrides: 0, lastReview: '2026-05-11', status: 'current' },
-      { ws: 'Sales-EMEA',     env: 'PROD', leadName: 'Tomas Heřmánek',  leadEmail: 't.hermanek@contoso.com',  stewards: 1, overrides: 0, lastReview: '2026-04-28', status: 'stale'   },
-      { ws: 'HR-Data',        env: 'DEV',  leadName: 'Janice Patel',    leadEmail: 'j.patel@contoso.com',     stewards: 1, overrides: 0, lastReview: '2026-04-22', status: 'stale'   },
-      { ws: 'Marketing',      env: 'DEV',  leadName: 'Peter Nguyen',    leadEmail: 'p.nguyen@contoso.com',    stewards: 2, overrides: 0, lastReview: '2026-05-04', status: 'current' },
-      { ws: 'Mobile-BI',      env: 'PROD', leadName: 'Marc Qureshi',    leadEmail: 'm.qureshi@contoso.com',   stewards: 1, overrides: 0, lastReview: '2026-05-10', status: 'current' },
-      { ws: 'Supply-Chain',   env: 'UAT',  leadName: null,              leadEmail: null,                      stewards: 0, overrides: 0, lastReview: null,         status: 'missing' },
-      { ws: 'Customer-Success', env: 'PROD', leadName: null,            leadEmail: null,                      stewards: 0, overrides: 0, lastReview: null,         status: 'missing' },
+      // V2 schema: leadName/Email = Workspace owner; primaryContact* = optional ops contact.
+      // criticality drives risk sort + visual treatment. lastUpdate / noOwnerDays /
+      // overdueDays drive escalation timers. reports = report count for "X models · Y reports".
+      { ws: 'Finance-Prod',      env: 'PROD', leadName: 'Alex Rivera',     leadEmail: 'a.rivera@contoso.com',    primaryContactName: 'Sarah Jones',     primaryContactEmail: 's.jones@contoso.com',     criticality: 'business-critical', stewards: 3, lastReview: '2026-05-15', lastUpdate: '2d ago',  reports: 4, status: 'current' },
+      { ws: 'Operations',        env: 'PROD', leadName: 'Sofia Lindqvist', leadEmail: 's.lindqvist@contoso.com', primaryContactName: 'Karim Andersen',  primaryContactEmail: 'k.andersen@contoso.com',  criticality: 'business-critical', stewards: 2, lastReview: '2026-05-09', lastUpdate: '5d ago',  reports: 3, status: 'current' },
+      { ws: 'RetailOps',         env: 'PROD', leadName: 'Sofia Lindqvist', leadEmail: 's.lindqvist@contoso.com', primaryContactName: null,              primaryContactEmail: null,                      criticality: 'internal',          stewards: 1, lastReview: '2026-05-08', lastUpdate: '8d ago',  reports: 2, status: 'current' },
+      { ws: 'Ops-Score',         env: 'PROD', leadName: 'Karim Andersen',  leadEmail: 'k.andersen@contoso.com',  primaryContactName: 'Sofia Lindqvist', primaryContactEmail: 's.lindqvist@contoso.com', criticality: 'internal',          stewards: 4, lastReview: '2026-04-30', lastUpdate: '12d ago', reports: 4, status: 'current' },
+      { ws: 'Exec-Reports',      env: 'PROD', leadName: 'Marc Qureshi',    leadEmail: 'm.qureshi@contoso.com',   primaryContactName: 'Alex Rivera',     primaryContactEmail: 'a.rivera@contoso.com',    criticality: 'critical',          stewards: 2, lastReview: '2026-05-12', lastUpdate: '12d ago', reports: 3, status: 'current' },
+      { ws: 'Sales-NA',          env: 'PROD', leadName: 'Priya Nair',      leadEmail: 'p.nair@contoso.com',      primaryContactName: 'Marc Qureshi',    primaryContactEmail: 'm.qureshi@contoso.com',   criticality: 'business-critical', stewards: 2, lastReview: '2026-05-11', lastUpdate: '9d ago',  reports: 2, status: 'current' },
+      { ws: 'Sales-EMEA',        env: 'PROD', leadName: 'Tomas Heřmánek',  leadEmail: 't.hermanek@contoso.com',  primaryContactName: 'Priya Nair',      primaryContactEmail: 'p.nair@contoso.com',      criticality: 'internal',          stewards: 1, lastReview: '2026-04-28', lastUpdate: '21d ago', reports: 1, status: 'stale'   },
+      { ws: 'HR-Data',           env: 'DEV',  leadName: 'Janice Patel',    leadEmail: 'j.patel@contoso.com',     primaryContactName: 'Peter Nguyen',    primaryContactEmail: 'p.nguyen@contoso.com',    criticality: 'internal',          stewards: 1, lastReview: '2026-04-22', lastUpdate: '28d ago', reports: 1, status: 'stale'   },
+      { ws: 'Marketing',         env: 'DEV',  leadName: 'Peter Nguyen',    leadEmail: 'p.nguyen@contoso.com',    primaryContactName: null,              primaryContactEmail: null,                      criticality: 'internal',          stewards: 2, lastReview: '2026-05-04', lastUpdate: '8d ago',  reports: 2, status: 'current' },
+      { ws: 'Mobile-BI',         env: 'PROD', leadName: 'Marc Qureshi',    leadEmail: 'm.qureshi@contoso.com',   primaryContactName: 'Marc Qureshi',    primaryContactEmail: 'm.qureshi@contoso.com',   criticality: 'internal',          stewards: 1, lastReview: '2026-05-10', lastUpdate: '14d ago', reports: 5, status: 'current' },
+      { ws: 'Supply-Chain',      env: 'UAT',  leadName: null,              leadEmail: null,                      primaryContactName: null,              primaryContactEmail: null,                      criticality: 'critical',          stewards: 0, lastReview: null,         lastUpdate: null,      reports: 6, status: 'missing' },
+      { ws: 'Customer-Success',  env: 'PROD', leadName: null,              leadEmail: null,                      primaryContactName: null,              primaryContactEmail: null,                      criticality: 'business-critical', stewards: 0, lastReview: null,         lastUpdate: '21d ago', reports: 2, status: 'missing' },
     ],
     overrides: [
       // Per-model overrides. The "why" copy is the manual context that justified
@@ -1617,6 +1620,21 @@ const DATA = {
 
       // Marketing Funnel — no roles assigned (orphan case)
       // Supply Chain Pipeline — no roles (UAT model, never scanned)
+
+      // ── V2 (2026-05-26): owner role tags per model — simulates the bulk
+      //    "Tag all in workspace" state. rev-forecast + supply-pipeline left
+      //    untagged on purpose so the Models tab has live "Missing" rows.
+      { modelId: 'sales-analytics',  role: 'owner', userEmail: 'a.rivera@contoso.com',   set: '2026-05-08', setBy: 'Alex Rivera',     why: '' },
+      { modelId: 'budget-planning',  role: 'owner', userEmail: 'a.rivera@contoso.com',   set: '2026-04-30', setBy: 'Alex Rivera',     why: '' },
+      { modelId: 'kpi-dashboard',    role: 'owner', userEmail: 'a.rivera@contoso.com',   set: '2026-05-02', setBy: 'Alex Rivera',     why: '' },
+      { modelId: 'expense-pnl',      role: 'owner', userEmail: 'a.rivera@contoso.com',   set: '2026-04-18', setBy: 'Alex Rivera',     why: '' },
+      { modelId: 'gl-balances',      role: 'owner', userEmail: 'a.rivera@contoso.com',   set: '2026-05-01', setBy: 'Alex Rivera',     why: '' },
+      { modelId: 'retail-ops',       role: 'owner', userEmail: 's.lindqvist@contoso.com',set: '2026-04-04', setBy: 'Sofia Lindqvist', why: '' },
+      { modelId: 'mgmt-change',      role: 'owner', userEmail: 's.lindqvist@contoso.com',set: '2026-04-12', setBy: 'Sofia Lindqvist', why: '' },
+      { modelId: 'ops-scorecard',    role: 'owner', userEmail: 'k.andersen@contoso.com', set: '2026-04-30', setBy: 'Karim Andersen',  why: '' },
+      { modelId: 'hr-headcount',     role: 'owner', userEmail: 'j.patel@contoso.com',    set: '2026-05-14', setBy: 'Janice Patel',    why: '' },
+      { modelId: 'marketing-funnel', role: 'owner', userEmail: 'p.nguyen@contoso.com',   set: '2026-05-04', setBy: 'Peter Nguyen',    why: '' },
+      { modelId: 'mooring-dash',     role: 'owner', userEmail: 's.lindqvist@contoso.com',set: '2026-04-15', setBy: 'Sofia Lindqvist', why: '' },
     ],
 
     /* Domain assignment per model — controlled vocabulary shared with glossary

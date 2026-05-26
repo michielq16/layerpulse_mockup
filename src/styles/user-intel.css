@@ -958,3 +958,96 @@
   border: 1px solid var(--border); border-radius: 10px;
   margin-top: 8px; padding: 10px 14px;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Ownership V2 cockpit (own2-*)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Tab toggle */
+.own2-tabs { display: flex; gap: 4px; margin: 22px 0 12px; border-bottom: 1px solid var(--border); }
+.own2-tab {
+  background: transparent; border: 0; padding: 9px 18px 11px;
+  font-family: inherit; font-size: 13.5px; font-weight: 600; color: var(--muted-foreground);
+  cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.own2-tab:hover { color: var(--foreground); }
+.own2-tab.active { color: var(--foreground); border-bottom-color: oklch(0.55 0.18 237); }
+
+/* Filter bar */
+.own2-filterbar {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  background: var(--card); border: 1px solid var(--border); border-radius: 11px;
+  padding: 10px 14px; margin-bottom: 14px;
+}
+.own2-sort { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; }
+
+/* Row — card-table hybrid */
+.own2-list { display: flex; flex-direction: column; gap: 10px; }
+.own2-row {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 12px 16px; transition: border-color 0.12s, background 0.12s;
+}
+.own2-row:hover { border-color: oklch(0.85 0.04 250); }
+.own2-row-rose  { border-left: 5px solid oklch(0.62 0.20 25); background: oklch(0.97 0.02 25); }
+.own2-row-amber { border-left: 5px solid oklch(0.70 0.17 75); background: oklch(0.98 0.03 75); }
+.dark .own2-row-rose  { background: oklch(0.20 0.02 25); }
+.dark .own2-row-amber { background: oklch(0.20 0.02 75); }
+
+.own2-row-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.own2-row-name { font-size: 14.5px; font-weight: 700; color: var(--foreground); }
+.own2-row-ws { font-size: 11.5px; color: var(--muted-foreground); font-family: var(--font-mono); }
+.own2-alert-icon-rose { color: oklch(0.55 0.20 25); }
+.own2-alert-icon-amber { color: oklch(0.60 0.16 65); }
+
+.own2-esc {
+  font-size: 11px; color: var(--muted-foreground);
+  padding: 2px 7px; border-radius: 5px; background: var(--muted);
+}
+.own2-esc-bad  { background: oklch(0.94 0.06 25); color: oklch(0.42 0.17 25); font-weight: 600; }
+.own2-esc-warn { background: oklch(0.95 0.07 75); color: oklch(0.40 0.16 65); font-weight: 600; }
+
+.own2-row-meta {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  margin: 7px 0 9px; font-size: 11.5px; color: var(--muted-foreground);
+}
+.own2-sep { color: var(--border); }
+
+.own2-row-roles { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+
+/* Role chip */
+.own2-role {
+  display: inline-flex; align-items: baseline; gap: 6px; font-size: 12.5px;
+  min-width: 0;
+}
+.own2-role-lbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted-foreground); font-weight: 600; }
+.own2-role-mark { font-size: 12px; font-weight: 700; color: oklch(0.45 0.16 145); }
+.own2-role-missing .own2-role-mark { color: oklch(0.55 0.20 25); }
+.own2-role-name { font-weight: 500; color: var(--foreground); white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+.own2-role-missing .own2-role-name { color: oklch(0.50 0.18 25); font-style: italic; font-weight: 500; }
+.own2-role-subtle .own2-role-name { color: var(--muted-foreground); }
+.own2-role-title { font-size: 11px; color: var(--muted-foreground); }
+
+/* Criticality chip */
+.own2-crit {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em;
+  padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+}
+.own2-crit-rose  { background: oklch(0.94 0.07 25);  color: oklch(0.45 0.20 25); }
+.own2-crit-amber { background: oklch(0.95 0.08 75);  color: oklch(0.42 0.17 65); }
+.own2-crit-sky   { background: oklch(0.95 0.05 237); color: oklch(0.45 0.18 237); }
+.own2-crit-slate { background: var(--muted);         color: var(--muted-foreground); }
+
+/* Model coverage chip */
+.own2-cov {
+  font-size: 11.5px; font-weight: 500;
+  background: transparent; border: 1px solid var(--border); border-radius: 6px;
+  padding: 4px 9px; color: var(--foreground); cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.own2-cov:hover { background: var(--muted); }
+.own2-cov b { font-weight: 700; }
+.own2-cov-emerald { color: oklch(0.42 0.14 145); border-color: oklch(0.80 0.10 145); }
+.own2-cov-amber   { color: oklch(0.42 0.17 65);  border-color: oklch(0.82 0.10 75); }
+.own2-cov-rose    { color: oklch(0.48 0.20 25);  border-color: oklch(0.82 0.10 25); }
+.own2-cov-empty   { color: var(--muted-foreground); cursor: default; }

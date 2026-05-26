@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>LayerPulse — Ownership & Stewardship · Plain-language review</title>
+<title>LayerPulse — Ownership &amp; Stewardship · Plain-language review</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-  :root{--navy:#0D3159;--sky:#2491eb;--gold:#FFBF3C;--ink:#1f2937;--muted:#64748b;--line:#e5e8ec;--bg:#f4f6f9;--card:#fff;}
+  :root{--navy:#0D3159;--sky:#2491eb;--gold:#FFBF3C;--orange:#F56E23;--ink:#1f2937;--muted:#64748b;--line:#e5e8ec;--bg:#f4f6f9;--card:#fff;}
   *{box-sizing:border-box} html,body{margin:0;padding:0}
   body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;}
-  .wrap{max-width:880px;margin:0 auto;padding:0 22px 80px;} .mono{font-family:'JetBrains Mono',monospace;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px 80px;} .mono{font-family:'JetBrains Mono',monospace;}
   header.hero{background:linear-gradient(135deg,#0D3159 0%,#13447a 100%);color:#fff;padding:54px 0 46px;margin-bottom:38px;}
   .hero .wrap{padding-bottom:0;}
   .hero-mark{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;margin-bottom:22px;opacity:.92;}
   .hero-mark .dot{width:26px;height:26px;border-radius:7px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
   .hero h1{font-size:34px;line-height:1.15;margin:0 0 12px;font-weight:700;letter-spacing:-.02em;}
-  .hero p{font-size:18px;margin:0;color:#cfe2f5;max-width:640px;}
+  .hero p{font-size:18px;margin:0;color:#cfe2f5;max-width:660px;}
   .hero .meta{margin-top:20px;font-size:13px;color:#9cc2e8;display:flex;gap:18px;flex-wrap:wrap;} .hero .meta b{color:#fff;font-weight:600;}
   section{margin-bottom:42px;}
   .eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--sky);margin-bottom:8px;}
@@ -25,20 +25,28 @@
   .lead{font-size:17px;color:var(--muted);margin:0 0 22px;max-width:680px;} p{margin:0 0 14px;}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:0 1px 3px rgba(13,49,89,.04);}
   .bigidea{border-left:5px solid var(--gold);} .bigidea p{font-size:17px;margin:0;} .bigidea p+p{margin-top:12px;}
-  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;} @media(max-width:680px){.cards{grid-template-columns:1fr;}}
-  .roles{display:grid;grid-template-columns:1fr 1fr;gap:14px;} @media(max-width:680px){.roles{grid-template-columns:1fr;}}
-  .role{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
-  .role .tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:5px;margin-bottom:8px;}
-  .role.owner .tag{background:#dbeafe;color:#1e40af;} .role.sme .tag{background:#ede9fe;color:#5b21b6;}
-  .role.stew .tag{background:#d1fae5;color:#065f46;} .role.dom .tag{background:#fef3c7;color:#92400e;}
-  .role h3{margin:0 0 4px;font-size:16px;color:var(--navy);} .role p{font-size:14px;margin:0;color:var(--ink);}
-  .flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14.5px;}
-  .flow .step{background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 14px;}
-  .flow .arr{color:var(--muted);font-weight:700;}
-  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;font-size:13.5px;align-items:center;}
-  .legend .it{display:inline-flex;align-items:center;gap:7px;}
-  .dot{width:11px;height:11px;border-radius:50%;display:inline-block;}
-  .dot.full{background:#16a34a;} .dot.partial{background:#f59e0b;} .dot.low{background:#ef4444;} .dot.empty{background:#cbd5e1;}
+  .twobox{display:grid;grid-template-columns:1fr 1fr;gap:16px;} @media(max-width:680px){.twobox{grid-template-columns:1fr;}}
+  .twobox .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+  .twobox .box.ws{border-top:4px solid var(--sky);} .twobox .box.mo{border-top:4px solid #7c3aed;}
+  .twobox h3{margin:0 0 6px;font-size:17px;color:var(--navy);}
+  .twobox ul{margin:8px 0 0;padding-left:18px;} .twobox li{font-size:14px;margin-bottom:4px;}
+  .pillar{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:5px;margin-left:6px;vertical-align:middle;}
+  .p-ws{background:#dbeafe;color:#1e40af;} .p-mo{background:#ede9fe;color:#5b21b6;}
+  .row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px;}
+  .row.bad{border-left:5px solid #dc2626;background:#fef2f2;}
+  .row .head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:700;color:var(--navy);}
+  .crit{font-size:10px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:4px;}
+  .crit-c{background:#fee2e2;color:#991b1b;} .crit-bc{background:#fef3c7;color:#92400e;} .crit-i{background:#dbeafe;color:#1e40af;}
+  .esc{font-size:11px;font-weight:700;background:#fee2e2;color:#991b1b;padding:2px 7px;border-radius:5px;}
+  .esc.ok{background:#f1f5f9;color:#475569;font-weight:500;}
+  .roles{display:flex;gap:18px;flex-wrap:wrap;margin-top:9px;font-size:13px;}
+  .role .lbl{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+  .role .v{font-weight:500;margin-left:6px;}
+  .role .x{color:#dc2626;font-style:italic;}
+  .role .ok{color:#16a34a;font-weight:700;margin:0 2px;}
+  .role .miss{color:#dc2626;font-weight:700;margin:0 2px;}
+  .cov{margin-top:8px;font-size:11.5px;color:var(--muted);}
+  .cov b{color:var(--navy);}
   .btn{display:inline-flex;align-items:center;gap:7px;background:var(--sky);color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:9px 16px;border-radius:9px;}
   .decisions{list-style:none;margin:0;padding:0;}
   .decisions li{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:15px 18px;margin-bottom:11px;display:flex;gap:13px;align-items:flex-start;}
@@ -46,16 +54,15 @@
   .decisions .q-body b{display:block;font-size:15px;color:var(--navy);margin-bottom:2px;} .decisions .q-body span{font-size:14px;color:var(--muted);}
   footer{border-top:1px solid var(--line);padding-top:24px;margin-top:10px;font-size:14px;color:var(--muted);} footer a{color:var(--sky);text-decoration:none;font-weight:600;}
   .back{display:inline-block;margin-bottom:14px;color:#cfe2f5;text-decoration:none;font-size:14px;}
-  .callout{background:#eef6fd;border:1px solid #cfe6fb;border-radius:11px;padding:14px 18px;font-size:14.5px;color:#0d3159;}
 </style>
 </head>
 <body>
 <header class="hero">
   <div class="wrap">
     <a class="back" href="./">← Review hub</a>
-    <div class="hero-mark"><span class="dot" style="background:var(--gold)"></span> LayerPulse</div>
+    <div class="hero-mark"><span class="dot">LP</span> LayerPulse</div>
     <h1>Ownership &amp; Stewardship — in plain language</h1>
-    <p>Who is <i>accountable</i> for each model — the human names a document needs and an auditor asks for. Fabric tracks access; it doesn't track accountability. This is where we capture it.</p>
+    <p>The governance cockpit that answers <i>"what accountability risk needs attention right now?"</i> — not a spreadsheet of who owns what.</p>
     <div class="meta"><span>📄 <b>For:</b> Product owner review</span><span>⏱ <b>Read:</b> ~4 min</span></div>
   </div>
 </header>
@@ -63,77 +70,121 @@
 
   <section>
     <div class="eyebrow">The one-sentence version</div>
-    <h2>What we're building</h2>
+    <h2>Accountability, captured once, surfaced where it matters</h2>
     <div class="card bigidea">
-      <p>Fabric can tell you who has <i>permission</i> to a model. It cannot tell you who is <i>responsible</i> for it — who signs off, who answers the auditor, who knows the business meaning.</p>
-      <p>Ownership is the LP screen where a human captures that accountability once. It then flows onto the model page and into the sign-off block of every generated document.</p>
+      <p>Fabric can tell you who has <i>permission</i>. It cannot tell you who is <i>accountable</i> — who runs the workspace, who explains the metric, who signs off when the auditor calls.</p>
+      <p>This page captures the accountability layer, splits it cleanly between workspaces (operational) and semantic models (business logic), and sorts everything by risk so the gaps surface first.</p>
     </div>
   </section>
 
   <section>
-    <div class="eyebrow">Four roles</div>
-    <h2>Who's on the hook</h2>
-    <div class="roles">
-      <div class="role owner"><span class="tag">Owner</span><h3>Accountable</h3><p>The single name responsible for the model. Signs off on documents.</p></div>
-      <div class="role sme"><span class="tag">SME</span><h3>Knows the meaning</h3><p>The subject-matter expert who can explain what the numbers mean.</p></div>
-      <div class="role stew"><span class="tag">Stewards</span><h3>Maintain it</h3><p>One or more people who keep the model healthy day to day.</p></div>
-      <div class="role dom"><span class="tag">Domain</span><h3>Classifies it</h3><p>The business area (Finance, Sales…) the model belongs to.</p></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="eyebrow">How it works — deliberately simple</div>
-    <h2>Just tag who's accountable</h2>
-    <div class="card">
-      <div class="flow">
-        <span class="step">Tag an item with <b>someone</b></span><span class="arr">→</span>
-        <span class="step">Covered ✓</span><span class="arr">·</span>
-        <span class="step">Not tagged = <b>a gap</b>, shown in the dots</span>
+    <div class="eyebrow">Two layers, different responsibilities</div>
+    <h2>Workspace owns operations · Model owns business logic</h2>
+    <p class="lead">Same page, two tabs. Different role sets because the responsibilities differ — forcing identical roles where they don't fit just makes the UX vague.</p>
+    <div class="twobox">
+      <div class="box ws">
+        <h3>🏢 Workspace <span class="pillar p-ws">Operations</span></h3>
+        <p style="margin:6px 0 8px;font-size:14px;">Container · boundary · lifecycle · access</p>
+        <ul>
+          <li><b>Workspace owner</b> — accountable operationally (capacity, lifecycle, escalation)</li>
+          <li><b>Primary contact</b> — optional day-to-day operational/escalation contact</li>
+        </ul>
+        <p style="font-size:13px;color:var(--muted);margin-top:10px;">No SME or Steward here — they're semantically weak on a container.</p>
       </div>
-      <p style="margin:16px 0 0;font-size:14.5px;color:var(--muted);">No inheritance, no overrides, no model/report exception rules — that complexity isn't worth it. Tag a model's Owner / SME / Steward and you're done. A "tag all models in a workspace" shortcut handles bulk so big workspaces aren't tedious — it just writes the tags, it's not a relationship to maintain.</p>
-    </div>
-  </section>
-
-  <section>
-    <div class="eyebrow">See the gaps at a glance</div>
-    <h2>Coverage dots</h2>
-    <p class="lead">Per workspace, one line per role — a dot for every model, filled when that role is tagged. The color tells you the health at a glance.</p>
-    <div class="card">
-      <div class="legend">
-        <span class="it"><span class="dot full"></span> All models tagged</span>
-        <span class="it"><span class="dot partial"></span> About half tagged</span>
-        <span class="it"><span class="dot low"></span> Only a few tagged</span>
-        <span class="it"><span class="dot empty"></span> Untagged (a gap)</span>
+      <div class="box mo">
+        <h3>📊 Semantic model <span class="pillar p-mo">Business logic</span></h3>
+        <p style="margin:6px 0 8px;font-size:14px;">KPIs · DAX · metric definitions · analytical truth</p>
+        <ul>
+          <li><b>Owner</b> — accountable for the model</li>
+          <li><b>SME</b> — explains the metric / business logic / KPI</li>
+          <li><b>Steward</b> — data quality + change review (can be several)</li>
+        </ul>
       </div>
-      <p style="margin:14px 0 0;font-size:14px;color:var(--muted);">Example — <b>Owner</b> ●●●●●● (all green), <b>SME</b> ●●●○○ (amber), <b>Steward</b> ●●○○○ (red). The dots are the count; no fractions, no letter codes.</p>
     </div>
   </section>
 
   <section>
-    <div class="eyebrow">Why it matters for documents</div>
-    <h2>It powers the sign-off block</h2>
-    <div class="callout">When you generate a document, the cover credits the <b>Owner</b> and <b>Domain</b>, and the back page renders a real <b>sign-off block</b> with the Owner + Stewards. No ownership captured → the document shows an explicit "No owner assigned — add via /ownership," never a fabricated name.</div>
+    <div class="eyebrow">How it scans — Workspaces tab</div>
+    <h2>Risk-first rows, gaps float to top</h2>
+    <p class="lead">The page leads with what's broken. Each row is one workspace; criticality and escalation timers sit next to the name so urgency is unmissable.</p>
+
+    <div class="row bad">
+      <div class="head">⚠ Supply-Chain <span class="crit crit-c">CRITICAL</span> <span class="esc">No owner · 34d</span></div>
+      <div class="cov">F64 · UAT · 1 model · 6 reports</div>
+      <div class="roles">
+        <span class="role"><span class="lbl">Workspace owner</span><span class="v"><span class="miss">✗</span><span class="x">Missing</span></span></span>
+        <span class="role"><span class="lbl">Primary contact</span><span class="v"><span class="miss">✗</span><span class="x">none yet</span></span></span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">Finance-Prod <span class="crit crit-bc">BUSINESS-CRITICAL</span> <span class="esc ok">Reviewed 2026-05-15 · Updated 2d ago</span></div>
+      <div class="cov">F64 · PROD · 6 models · 4 reports</div>
+      <div class="roles">
+        <span class="role"><span class="lbl">Workspace owner</span><span class="v"><span class="ok">✓</span> Alex Rivera</span></span>
+        <span class="role"><span class="lbl">Primary contact</span><span class="v"><span class="ok">✓</span> Sarah Jones</span></span>
+      </div>
+      <div class="cov"><b>Model coverage 6 of 6 ✓</b> — click to drill into the Semantic models tab filtered to this workspace.</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Semantic models tab</div>
+    <h2>One row per model, three role chips</h2>
+    <p class="lead">Switch tab and the unit becomes the model. Owner / SME / Steward are visible side-by-side; the same risk-first sort floats the gaps.</p>
+
+    <div class="row bad">
+      <div class="head">⚠ Revenue Forecast <span style="font-size:11px;color:var(--muted);font-family:monospace;">Finance-Prod · PROD</span> <span class="crit crit-bc">BUSINESS-CRITICAL</span> <span class="esc">No owner · 18d</span></div>
+      <div class="cov">9 tables · 31 measures · 19 glossary terms</div>
+      <div class="roles">
+        <span class="role"><span class="lbl">Owner</span><span class="v"><span class="miss">✗</span><span class="x">Missing</span></span></span>
+        <span class="role"><span class="lbl">SME</span><span class="v"><span class="ok">✓</span> Alex Rivera</span></span>
+        <span class="role"><span class="lbl">Steward</span><span class="v"><span class="ok">✓</span> Tomas Heřmánek</span></span>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="head">Sales Analytics <span style="font-size:11px;color:var(--muted);font-family:monospace;">Finance-Prod · PROD</span> <span class="crit crit-bc">BUSINESS-CRITICAL</span> <span class="esc ok">Updated 1d ago</span></div>
+      <div class="cov">12 tables · 42 measures · 38 glossary terms</div>
+      <div class="roles">
+        <span class="role"><span class="lbl">Owner</span><span class="v"><span class="ok">✓</span> Alex Rivera</span></span>
+        <span class="role"><span class="lbl">SME</span><span class="v"><span class="ok">✓</span> Tomas Heřmánek</span></span>
+        <span class="role"><span class="lbl">Steward</span><span class="v"><span class="ok">✓</span> 2 tagged</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">What's different from V1</div>
+    <h2>From admin page → governance operations center</h2>
+    <div class="card">
+      <p><b>The cockpit identity.</b> The page now answers <i>"what governance risk needs attention now?"</i> by default — risk-sorted rows, criticality chips, escalation timers (<i>No owner · 34d</i>), and an At-risk filter pill at the top of the bar.</p>
+      <p><b>Different roles per layer.</b> Workspace gets two chips (Owner + Primary contact). Model gets three (Owner + SME + Steward). No forced uniformity.</p>
+      <p><b>Cross-layer insight.</b> Each workspace row carries a <i>Model coverage X of Y</i> chip — the operational view tells you whether the workspace is run, the chip tells you whether its <i>semantic</i> accountability holds up. Click to drill into the Models tab pre-filtered.</p>
+      <p><b>Ownership health score</b> (top KPI) — single number with a 60-day trend. Turns the page into a governance maturity story, not just a list.</p>
+      <p><b>No inheritance, no overrides.</b> Tagging is direct. Bulk "tag all in workspace" exists as a write shortcut, not a relationship.</p>
+    </div>
   </section>
 
   <section>
     <div class="eyebrow">See it for real</div>
     <h2>The live screen</h2>
     <a class="btn" href="https://layerpulze-mockup.vercel.app/ownership" target="_blank" rel="noreferrer">Open Ownership →</a>
-    <p style="margin-top:12px;font-size:14px;color:var(--muted);">Tip: each workspace row shows the Owner / SME / Steward dots; the ⚙ button tags roles across all its models at once.</p>
+    <p style="margin-top:12px;font-size:14px;color:var(--muted);">Tip: try the <b>At-risk</b> chip — it filters to the rows that need work. Click <b>Model coverage</b> on any row to jump into the Models tab pre-filtered.</p>
   </section>
 
   <section>
     <div class="eyebrow">Over to you</div>
-    <h2>A few decisions we need from you</h2>
+    <h2>Decisions for V1</h2>
     <ul class="decisions">
-      <li><span class="q-num">1</span><span class="q-body"><b>Stewards — one or many?</b><span>We've modelled stewards as a list. Confirm a model can have several, while Owner stays singular.</span></span></li>
-      <li><span class="q-num">2</span><span class="q-body"><b>Suggest people from access data?</b><span>We can pre-suggest likely owners from who actually uses/admins the workspace. Helpful, or noise?</span></span></li>
-      <li><span class="q-num">3</span><span class="q-body"><b>Does Ownership block Documents v1?</b><span>The sign-off block degrades gracefully without it — so Documents can ship first. Confirm sequencing.</span></span></li>
+      <li><span class="q-num">1</span><span class="q-body"><b>V1 scope = Workspace + Semantic model only?</b><span>Reports / dataflows / dashboards deferred to V4 (after the simpler model proves out). My lean: yes — confirmed in the design discussion.</span></span></li>
+      <li><span class="q-num">2</span><span class="q-body"><b>Standalone tier row vs fold into E Governance?</b><span>Accountability ≠ access; my lean is standalone (ships independently, blocks Documents sign-off, distinct value).</span></span></li>
+      <li><span class="q-num">3</span><span class="q-body"><b>Bulk-tag persistence question for future V2?</b><span>Today: bulk writes individual tags (no relationship). Future: do newly-discovered models *auto-inherit* the workspace owner (marked "inherited") until refined? Useful, but defer.</span></span></li>
     </ul>
   </section>
 
   <footer>
-    <div>Detailed spec for the build team: <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/prds/ownership.md" target="_blank" rel="noreferrer">PRD</a> · <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/screens/ownership.md" target="_blank" rel="noreferrer">Screen narrative</a>.</div>
+    <div>Detailed spec for the build team: <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/prds/ownership.md" target="_blank" rel="noreferrer">PRD</a> · <a href="https://github.com/michielq16/layerpulse_mockup/blob/main/docs/screens/ownership.md" target="_blank" rel="noreferrer">Screen narrative</a>. Back to the <a href="./">review hub</a>.</div>
   </footer>
 </div>
 </body>
