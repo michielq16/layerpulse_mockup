@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>LayerPulse — Implementation roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0D3159; --sky:#2491eb; --gold:#FFBF3C; --orange:#F56E23;
+    --ink:#1f2937; --muted:#64748b; --line:#e5e8ec; --bg:#f4f6f9; --card:#fff;
+    --g:#16a34a; --a:#d97706; --r:#dc2626; --v:#7c3aed; --slate:#475569;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px 80px;}
+  header.hero{background:linear-gradient(135deg,#0D3159 0%,#13447a 100%);color:#fff;padding:50px 0 44px;margin-bottom:34px;}
+  .hero .wrap{padding-bottom:0;}
+  .crumb{font-size:13px;color:#9fc1e6;margin-bottom:12px;}
+  .crumb a{color:#9fc1e6;text-decoration:none;} .crumb a:hover{color:#fff;}
+  .hero h1{font-size:32px;line-height:1.18;margin:0 0 10px;font-weight:700;letter-spacing:-.02em;}
+  .hero p{font-size:17px;margin:0;color:#cfe2f5;max-width:680px;}
+  .toplinks{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;}
+  .toplinks a{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.13);color:#fff;text-decoration:none;font-weight:600;font-size:13.5px;padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.22);}
+  .toplinks a:hover{background:rgba(255,255,255,.22);}
+  .toplinks a.val{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+  .toplinks a.val:hover{background:#e6a82e;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--sky);margin-bottom:7px;}
+  h2{font-size:23px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--navy);}
+  p.lead{font-size:15.5px;color:var(--muted);margin:0 0 18px;max-width:760px;}
+  section{margin-bottom:42px;}
+  .twobridge{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px;}
+  @media(max-width:740px){.twobridge{grid-template-columns:1fr;}}
+  .bcard{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:18px 20px;display:block;text-decoration:none;color:inherit;transition:transform .12s,box-shadow .12s;}
+  .bcard:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(13,49,89,.09);}
+  .bcard.impl{border-top:4px solid var(--sky);}
+  .bcard.val{border-top:4px solid var(--gold);}
+  .bcard .tag{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);}
+  .bcard.impl .tag{color:var(--sky);}
+  .bcard.val .tag{color:var(--orange);}
+  .bcard h3{margin:5px 0 4px;font-size:18px;color:var(--navy);}
+  .bcard p{margin:0;font-size:14px;color:var(--ink);}
+  .bcard .more{margin-top:8px;font-size:13px;font-weight:600;color:var(--sky);}
+  .bcard.val .more{color:var(--orange);}
+
+  .tier{margin-bottom:38px;}
+  .tier-head{display:flex;align-items:baseline;gap:14px;margin-bottom:10px;}
+  .tier-head h2{margin:0;}
+  .tier-head .ct{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);background:#fff;border:1px solid var(--line);padding:3px 8px;border-radius:5px;}
+
+  .rows{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+  @media(max-width:880px){.rows{grid-template-columns:1fr;}}
+  .row{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:15px 17px;display:flex;flex-direction:column;}
+  .row.shipped{background:#f7fff9;border-color:#cdeed5;}
+  .row.inflight{background:#fffaf0;border-color:#fde6b0;}
+  .row.blocked{background:#fdf4f4;border-color:#f7d4d4;}
+  .row .head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px;}
+  .row .id{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:var(--slate);background:#eef2f7;padding:2px 7px;border-radius:5px;flex-shrink:0;}
+  .row .id.ship{background:#dcfce7;color:#15803d;}
+  .row .id.inf{background:#fef3c7;color:#92400e;}
+  .row .id.blk{background:#fee2e2;color:#991b1b;}
+  .row h4{margin:0;font-size:14.5px;font-weight:600;color:var(--navy);line-height:1.4;}
+  .row p{margin:6px 0 8px;font-size:13.5px;color:var(--ink);line-height:1.5;}
+  .row .foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:6px;font-size:11.5px;}
+  .row .foot .chip{background:#f1f5f9;color:var(--slate);padding:2px 7px;border-radius:4px;font-weight:500;}
+  .row .foot .chip.eff{background:#e0f2fe;color:#075985;}
+  .row .foot .chip.dep{background:#fef3c7;color:#92400e;}
+  .row .foot .chip.val{background:#ede9fe;color:#5b21b6;}
+  .row .foot .chip.bun{background:#fce7f3;color:#9d174d;}
+  .row .link{margin-top:8px;}
+  .row .link a{font-size:12px;color:var(--sky);text-decoration:none;font-weight:600;}
+  .row .link a:hover{text-decoration:underline;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:12px;background:#fff;border:1px solid var(--line);border-radius:11px;padding:12px 16px;margin-bottom:18px;font-size:13px;}
+  .legend .l{display:inline-flex;align-items:center;gap:6px;}
+  .legend .sw{display:inline-block;width:12px;height:12px;border-radius:3px;}
+  .legend .sw.ship{background:#dcfce7;border:1px solid #cdeed5;}
+  .legend .sw.inf{background:#fef3c7;border:1px solid #fde6b0;}
+  .legend .sw.blk{background:#fee2e2;border:1px solid #f7d4d4;}
+  .legend .sw.todo{background:#f1f5f9;border:1px solid var(--line);}
+
+  details.pillars{background:#fff;border:1px solid var(--line);border-radius:11px;padding:0;margin-bottom:14px;}
+  details.pillars[open]{box-shadow:0 2px 8px rgba(13,49,89,.06);}
+  details.pillars > summary{padding:14px 18px;font-weight:600;color:var(--navy);cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  details.pillars > summary::after{content:"+";font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--muted);}
+  details.pillars[open] > summary::after{content:"−";}
+  details.pillars > div{padding:0 18px 18px;}
+
+  .ptable{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .ptable th{text-align:left;font-weight:600;padding:8px 10px;background:var(--navy);color:#fff;font-size:12px;letter-spacing:.05em;text-transform:uppercase;}
+  .ptable td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;}
+  .ptable tr:last-child td{border-bottom:none;}
+  .ptable .nm{font-weight:600;color:var(--navy);min-width:160px;}
+
+  .ship-list{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;font-size:13px;}
+  @media(max-width:680px){.ship-list{grid-template-columns:1fr;}}
+  .ship-list .si{background:#fff;border:1px solid var(--line);border-radius:7px;padding:7px 11px;display:flex;gap:9px;align-items:center;}
+  .ship-list .si .pr{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--sky);font-weight:600;flex-shrink:0;}
+  .ship-list .si .t{color:var(--ink);}
+
+  footer{border-top:1px solid var(--line);padding-top:22px;margin-top:18px;font-size:13.5px;color:var(--muted);}
+  footer a{color:var(--sky);text-decoration:none;font-weight:600;}
+  code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:#f1f5f9;padding:1px 5px;border-radius:4px;}
+  .note{font-size:13.5px;background:#fffbeb;border:1px solid #fde68a;border-left:5px solid var(--gold);border-radius:9px;padding:11px 15px;color:#7c5500;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="crumb"><a href="./">← Review hub</a></div>
+    <h1>The implementation roadmap</h1>
+    <p>What's <b>buildable next</b> and in what order — the engineering view of LayerPulse's <code>BACKLOG.md</code> translated into plain language. Tiered by ship-cost, not by value. Pair this with the <b>value roadmap</b> to see <i>"why this, why now."</i></p>
+    <div class="toplinks">
+      <a class="val" href="./roadmap.html">⭐ Value roadmap →</a>
+      <a href="./">📋 Review hub</a>
+      <a href="./process.html">🔄 The E2E process</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <div class="eyebrow">Two roadmaps, one product</div>
+    <h2>How this page relates to the value roadmap</h2>
+    <p class="lead">The <b>value roadmap</b> ranks by <i>"what should we fight for."</i> This page ranks by <i>"what's buildable and in what order."</i> Same items, different lens. A value-ranked screen lands here as a tier row once it's PRD-approved and slotted; once shipped, it shows up in <a href="#shipped">Recently shipped</a>.</p>
+    <div class="twobridge">
+      <a class="bcard val" href="./roadmap.html">
+        <span class="tag">Value roadmap</span>
+        <h3>What's worth the most</h3>
+        <p>Ranked by differentiator × decision density × the JOIN only LayerPulse has. PO-owned. Answers <i>"what should we fight for first."</i></p>
+        <div class="more">Open ranking →</div>
+      </a>
+      <a class="bcard impl" href="#tier1">
+        <span class="tag">Implementation roadmap · this page</span>
+        <h3>What's buildable next</h3>
+        <p>Tier 0–3 · pillar status · inventory expansion · recently shipped. Engineering-owned. Answers <i>"what's the order."</i></p>
+        <div class="more">Jump to Tier 1 ↓</div>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">How to read</div>
+    <h2>Tiers, statuses, and what's where</h2>
+    <p class="lead">Items move down-and-right over time: from Tier 1 (next 4 weeks) → in-flight → shipped. Tier 3 is background polish that only gets pulled forward when a Tier 1 ship lands in the same area.</p>
+    <div class="legend">
+      <div class="l"><span class="sw todo"></span> Queued — not yet started</div>
+      <div class="l"><span class="sw inf"></span> In flight — under active development</div>
+      <div class="l"><span class="sw ship"></span> Shipped</div>
+      <div class="l"><span class="sw blk"></span> Blocked</div>
+    </div>
+    <p class="lead" style="margin-top:0;">Chips on each row: <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;background:#e0f2fe;color:#075985;padding:2px 6px;border-radius:4px;">effort</span> the developer-time budget · <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;background:#fef3c7;color:#92400e;padding:2px 6px;border-radius:4px;">depends on</span> what must land first · <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;background:#ede9fe;color:#5b21b6;padding:2px 6px;border-radius:4px;">validation</span> how we'll prove the data is correct · <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;background:#fce7f3;color:#9d174d;padding:2px 6px;border-radius:4px;">mockup bundle</span> design brief already exists.</p>
+  </section>
+
+  <!-- TIER 0 -->
+  <section class="tier" id="tier0">
+    <div class="tier-head"><h2>🚨 Tier 0 — Ship-blockers</h2><span class="ct">0 open</span></div>
+    <p class="lead">Drop-everything bugs. Currently empty — the last two Tier 0s (PR #237 pricing-state, PR #235 capacity-count drift) shipped 2026-05-16.</p>
+  </section>
+
+  <!-- TIER 1 -->
+  <section class="tier" id="tier1">
+    <div class="tier-head"><h2>⭐ Tier 1 — Highest functional-screen value (next 4 weeks)</h2><span class="ct">8 open · 4 shipped</span></div>
+    <p class="lead">What ships first. Each row is a customer-visible screen or a foundation that unblocks one. Sorted by priority, not by tier number.</p>
+
+    <div class="rows">
+
+      <div class="row inflight">
+        <div class="head"><h4>C2d Documents — generators 8-12</h4><span class="id inf">T1.5b</span></div>
+        <p>The Generate flow is live; now the four <b>per-audience generators</b> become subsets of the Perfect Document (Auditor / Analyst / Executive / Engineer), plus multi-format + auto-regen + retention. Auto-burn-eligible per story.</p>
+        <div class="foot"><span class="chip eff">~2-3 weeks</span><span class="chip dep">depends on T1.18</span><span class="chip val">contract-test vs reference .docx</span></div>
+      </div>
+
+      <div class="row inflight">
+        <div class="head"><h4>The Perfect Document (C2d — T1.18)</h4><span class="id inf">T1.18</span></div>
+        <p>Two-part canonical model doc: <b>Model Scorecard</b> (KEEP/OPTIMIZE/RETIRE verdict + adoption/cost/quality/refresh RAG + per-report dead-weight) and <b>Technical Reference</b>. Deterministic, no AI. The next P1.</p>
+        <div class="foot"><span class="chip eff">~1.5-2 weeks</span><span class="chip val">vitest + .docx contract</span><span class="chip bun">mockup bundle</span></div>
+        <div class="link"><a href="./complete-document.html">→ See the design</a></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>Audit &amp; Compliance page</h4><span class="id">T1.12</span></div>
+        <p>New <code>/audit</code> route with three tabs — Export log, Off-hours access heatmap, RLS evaluation — plus a one-click SOC 2 evidence pack ZIP. Sales-motion test for Pro→Enterprise upsell.</p>
+        <div class="foot"><span class="chip eff">~13d / 2-2.5 weeks</span><span class="chip val">compare-vs-rest</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>Tenant Activity screen</h4><span class="id">T1.13</span></div>
+        <p>New <code>/activity</code> route — Bloomberg-terminal forensic search + filters + CSV export over the raw <code>activity_events</code> table. Sibling to the Users page.</p>
+        <div class="foot"><span class="chip eff">~6-7d / 1-1.5 weeks</span><span class="chip val">compare-vs-rest</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>Reports axis — <code>fabric_reports</code></h4><span class="id">T1.8</span></div>
+        <p>Full Admin API ingest for reports + PBIR definitions. New table + collector + a minimal Reports list screen. Unlocks the Reports &amp; Apps pillar UI and the Lineage Explorer reports column.</p>
+        <div class="foot"><span class="chip eff">~1 week</span><span class="chip val">compare-vs-rest</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>Dataflows axis — <code>fabric_dataflows</code></h4><span class="id">T1.9</span></div>
+        <p>Gen1 + Gen2 dataflows from the Admin API. New table + collector + dataflows list screen.</p>
+        <div class="foot"><span class="chip eff">~1 week</span><span class="chip val">compare-vs-rest</span></div>
+      </div>
+
+      <div class="row shipped">
+        <div class="head"><h4>BPA-driven Quality Engine overhaul</h4><span class="id ship">T1.19</span></div>
+        <p>Replaced the 6 stub quality dimensions with a ported BPA engine (~20 named rules with remediation). Shipped 2026-05-25 (#346). Spike-validated on 18 real models. Phase 2 = Scanner extensions (formatString / displayFolder) to unlock 4-7 more rules.</p>
+        <div class="foot"><span class="chip">Phase 1 done</span><span class="chip">Phase 2 pending</span></div>
+      </div>
+
+      <div class="row shipped">
+        <div class="head"><h4>Business Glossary pillar — v1</h4><span class="id ship">T1.17</span></div>
+        <p>Tenant-wide dictionary (KPI / metric / dimension / business term / acronym / process) + many-to-many attachment to model objects + per-measure Vocabulary panel on model overview. v1 SHIPPED 2026-05-25 across 6 sub-PRs (#339-#345). P3 doc-binding deferred.</p>
+        <div class="foot"><span class="chip">v1 complete</span><span class="chip bun">mockup bundle</span></div>
+        <div class="link"><a href="./glossary.html">→ See the design</a></div>
+      </div>
+
+      <div class="row shipped">
+        <div class="head"><h4>Telemetry rollup (foundational)</h4><span class="id ship">T1.16</span></div>
+        <p>Precomputed daily per-artifact aggregates (migration 0032). Unblocks the cost-vs-adoption matrix on Overview and the Perfect Document's adoption / cost / refresh RAG axes. Shipped 2026-05-24 (#330).</p>
+        <div class="foot"><span class="chip">shipped</span></div>
+      </div>
+
+      <div class="row shipped">
+        <div class="head"><h4>Documents Generate flow (Stories 1-7)</h4><span class="id ship">T1.5</span></div>
+        <p>The full document-generation surface: page shell, model picker (v3 with KPIs on real data), section selector, live preview, DOCX renderer, <code>documents</code> table. Shipped 2026-05-18→22.</p>
+        <div class="foot"><span class="chip">shipped</span><span class="chip bun">mockup bundle</span></div>
+        <div class="link"><a href="./documents.html">→ See the design</a></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>Ownership pillar</h4><span class="id">Proposed</span></div>
+        <p>Tenant-wide accountability at two layers (Workspace = Owner + Primary contact / Semantic Model = Owner + SME + Steward). Risk-first cockpit with criticality chips, escalation timers, and a 0-100 health score. Mockup bundle ready, awaiting LP-side PRD slot.</p>
+        <div class="foot"><span class="chip eff">~1.5-2 weeks</span><span class="chip bun">mockup bundle</span></div>
+        <div class="link"><a href="./ownership.html">→ See the design</a></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TIER 2 -->
+  <section class="tier" id="tier2">
+    <div class="tier-head"><h2>⚡ Tier 2 — Stable-screen prerequisites</h2><span class="ct">8 open · 12 shipped</span></div>
+    <p class="lead">Infrastructure that unblocks Tier 1. Mostly internal tooling — validation scripts, schema migrations, ship-it gates. Not customer-visible on its own.</p>
+
+    <div class="rows">
+
+      <div class="row">
+        <div class="head"><h4><code>/ship-it</code> data-quality gate</h4><span class="id">T2.4</span></div>
+        <p>Ship-time check: when a PR touches a known KPI, the matching <code>pnpm validate:*</code> must pass before Gate 5. Closes the loop from definition sheet → live data parity.</p>
+        <div class="foot"><span class="chip eff">~2h skill update</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>DAX syntax highlighting + virtualization</h4><span class="id">T2-cluster</span></div>
+        <p>Code-block polish for measure DAX surfaces: full color palette + search debounce + react-window virtualization for very long DAX bodies. Needs PRD (virtualization brings a new dependency).</p>
+        <div class="foot"><span class="chip eff">~2-3d</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>FUAM column drop (H4 completion)</h4><span class="id">T2.15</span></div>
+        <p>The FUAM UI is gone; DB columns + collector + email refs remain. Pure code cleanup, no new screen value. Pull in when a pillar bumps into FUAM artifacts.</p>
+        <div class="foot"><span class="chip eff">1-2 days</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>Model Health tab — Stories 1-4</h4><span class="id">T2.9</span></div>
+        <p>New <code>/models/[id]/health</code> tab: Unused Objects + Duplicate DAX + Potential Savings + Top Cleanup Candidates. Pure UI on existing scan data; no schema.</p>
+        <div class="foot"><span class="chip eff">~3-5 days</span><span class="chip val">vitest + e2e</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>Model Health — Story 5 (mark resolved)</h4><span class="id">T2.10</span></div>
+        <p>The schema-touching follow-on after T2.9: a <code>resolved_at</code> / <code>resolved_by</code> migration on the recommendations table so users can mark health-tab items as done.</p>
+        <div class="foot"><span class="chip eff">~1 day</span><span class="chip dep">after T2.9</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>PROD-shape DEV — Slices B + C</h4><span class="id">T2.16</span></div>
+        <p>The last two slices of dev-tenant parity: faker-generated sample data (B) + a sandbox Azure SP wired into the hotmail tenant (C). C needs operator-at-keyboard for <code>az login</code>.</p>
+        <div class="foot"><span class="chip eff">B: 30min · C: 2-4h</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4><code>/kickoff layerpulse</code> + R1 Sentry triage</h4><span class="id">T2.8</span></div>
+        <p>Loop close: the nightly Sentry routine writes a report; <code>/kickoff</code> should scan it at session-start and surface actionable items alongside the memory index. Framework-side skill change.</p>
+        <div class="foot"><span class="chip eff">~1h skill update</span></div>
+      </div>
+
+      <div class="row shipped">
+        <div class="head"><h4><code>pnpm validate:*</code> suite — canonical convention</h4><span class="id ship">T2.3</span></div>
+        <p>Five new validators (activity-events / refreshables / metrics-app / data-sources / reports-apps) + three pre-existing ones backfilled to a canonical pure-outcome-detection template. Shipped 2026-05-19→20.</p>
+        <div class="foot"><span class="chip">shipped</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TIER 3 -->
+  <section class="tier" id="tier3">
+    <div class="tier-head"><h2>🧹 Tier 3 — Polish + residue</h2><span class="ct">background budget · max 2h/week</span></div>
+    <p class="lead">All P1/P2 findings from the May sweeps that don't gate a pillar. Pulled forward only when a Tier 1 ship lands in the same area for natural batching.</p>
+
+    <div class="rows">
+
+      <div class="row">
+        <div class="head"><h4>Capacity Pulse — Daily Cost Trend label</h4><span class="id">T3.4</span></div>
+        <p>KPI label wraps three lines on narrower viewports. Auto-burn-eligible, ~30min, no PRD needed.</p>
+        <div class="foot"><span class="chip eff">~30min</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>Cost Attribution — share% drift</h4><span class="id">T3.6</span></div>
+        <p><code>topItem.sharePct</code> reads 16.8% vs <code>totalSpend</code> 10.1%. Investigation-first; potential overlap with the H2 share-of-bill math PRD.</p>
+        <div class="foot"><span class="chip eff">tbd</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>Workload Mix — pre-cutover labelling</h4><span class="id">T3.7</span></div>
+        <p>The tenant-aggregate row is mis-labelled per-capacity in the pre-cutover state. ~30min auto-burn.</p>
+        <div class="foot"><span class="chip eff">~30min</span></div>
+      </div>
+
+      <div class="row inflight">
+        <div class="head"><h4>Settings — V2 ingestion polish + cron-arm audit</h4><span class="id inf">T3.12</span></div>
+        <p>Dots instead of squares, planned-axes card removed, cron arms re-audited against the actual code (5 listed but 6 actually run). Mockup bundle ready, LP-side ~1h auto-burn.</p>
+        <div class="foot"><span class="chip eff">~1h LP-side</span><span class="chip bun">mockup bundle</span></div>
+        <div class="link"><a href="./settings.html">→ See the design</a></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>Section-2 re-sweep P1 residue (~18 items)</h4><span class="id">batch</span></div>
+        <p>Lineage canvas density, workspaces virtualization, sundry layout fixes. Batched into chore-PRs when a Tier-1 ship in the same area gives natural cover.</p>
+        <div class="foot"><span class="chip">batch when colocated</span></div>
+      </div>
+
+      <div class="row">
+        <div class="head"><h4>Sweep P2s (~37)</h4><span class="id">batch</span></div>
+        <p>Cosmetic-only items from the May sweeps. Bundle 5-10 per PR. Includes the Overview 2-column row-alignment cosmetic.</p>
+        <div class="foot"><span class="chip">batch</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PILLARS -->
+  <section class="tier" id="pillars">
+    <div class="tier-head"><h2>🏗️ Pillar roadmap — multi-week milestones</h2><span class="ct">12 pillars</span></div>
+    <p class="lead">The big-picture units of work, each spanning multiple weeks and multiple PRs. Each pillar has a PRD and a dependency graph; what lands here is a status snapshot.</p>
+
+    <details class="pillars" open>
+      <summary>Capacity &amp; cost pillars (H1-H4) — most mature</summary>
+      <div>
+        <table class="ptable">
+          <tr><th>Pillar</th><th>Status</th><th>What's left</th></tr>
+          <tr><td class="nm">H1 Native Capacity Telemetry</td><td>~90% shipped (PRs #114-#157 + #330 rollup + #335 Overview)</td><td>Only the FUAM column drop (T2.15) remains</td></tr>
+          <tr><td class="nm">H2 Cost Attribution + Workload Mix</td><td>~75% shipped (treemap + per-capacity + Workload Mix + cost chart)</td><td>H2.3 cost-calc schema + throttling-cost column</td></tr>
+          <tr><td class="nm">H3 Throttling &amp; Storage</td><td>PRD drafted</td><td>Q3 — depends on H2 maturity</td></tr>
+          <tr><td class="nm">H4 FUAM Removal</td><td>UI gone; DB columns + collector + emails remain</td><td>1-2 days when prioritized (T2.15)</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details class="pillars">
+      <summary>Documents + Governance pillars (P1 + P2)</summary>
+      <div>
+        <table class="ptable">
+          <tr><th>Pillar</th><th>Status</th><th>What's left</th></tr>
+          <tr><td class="nm">C2d Documents</td><td><b>Generate flow LIVE</b> (Stories 1-7 + 6.5 + picker v2/v3)</td><td>Generators 8-12 (T1.5b); parked Library/retrieval surface needs re-scope</td></tr>
+          <tr><td class="nm">C2d — Perfect Document (T1.18)</td><td>PRD approved · BPA quality (T1.19) shipped as dep</td><td>~1.5-2 weeks · the next P1</td></tr>
+          <tr><td class="nm">E Governance &amp; Security</td><td>Sections A (tenant_settings) + B (rule engine) shipped</td><td>UI Sections C-E pending; depends on AAD groups axis</td></tr>
+          <tr><td class="nm">Business Glossary</td><td>v1 COMPLETE 2026-05-25 (Phase 1 + Phase 2)</td><td>P3 doc-binding deferred to follow-on PRD</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details class="pillars">
+      <summary>Users + Activity pillars (P4)</summary>
+      <div>
+        <table class="ptable">
+          <tr><th>Pillar</th><th>Status</th><th>What's left</th></tr>
+          <tr><td class="nm">Users Page</td><td>PRD approved (12 decisions resolved)</td><td>Q3 — depends on AAD groups + activity events</td></tr>
+          <tr><td class="nm">Activity Events Phase 1+2</td><td>PRD approved</td><td>Schema + collector + minimal UI; Tier-1 candidate</td></tr>
+          <tr><td class="nm">Microsoft Graph integration</td><td>PRD approved · revision pending PO sign-off</td><td>4-phase ramp: licenses → cost → directory → activity</td></tr>
+          <tr><td class="nm">Tenant Activity screen</td><td>PRD approved (T1.13)</td><td>~6-7d Tier-1</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details class="pillars">
+      <summary>Reports / Lineage / D-agentic (P3 + future)</summary>
+      <div>
+        <table class="ptable">
+          <tr><th>Pillar</th><th>Status</th><th>What's left</th></tr>
+          <tr><td class="nm">Reports &amp; Apps pillar</td><td>PRD approved 2026-05-17</td><td>~13d / 5 PRs · ships UI once T1.8 reports axis lands</td></tr>
+          <tr><td class="nm">Cross-workload Lineage Explorer</td><td>PRD approved 2026-05-17</td><td>~15d / 2-3 weeks · Tier-1 once Reports axis ships</td></tr>
+          <tr><td class="nm">Workspaces page upgrade PR3</td><td>PRD approved</td><td>health_scores table + cron + triage UI</td></tr>
+          <tr><td class="nm">D Agentic layer</td><td>PRD scoped · PARKED</td><td>Depends on Users + inventory expansion landing first</td></tr>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <!-- INVENTORY -->
+  <section class="tier" id="inventory">
+    <div class="tier-head"><h2>🆕 Fabric inventory expansion — 7 axes</h2><span class="ct">2/7 in motion</span></div>
+    <p class="lead">Each axis adds new tables + ingestors + screens, sequenced by lowest-auth-cost first (Service-Principal-only before Graph-delegated). The data layer for each axis usually ships as Tier 1; the UI follows as a pillar.</p>
+
+    <table class="ptable">
+      <tr><th>#</th><th>Axis</th><th>Auth needed</th><th>What it unlocks</th></tr>
+      <tr><td><code>0</code></td><td class="nm">M code (Power Query)</td><td>Already fetched (Scanner)</td><td>Documents Story 7 · Lineage sources column · data-source enumeration in the cover</td></tr>
+      <tr><td><code>1</code></td><td class="nm">Reports</td><td>SP-only</td><td>Reports list · PBIR navigator · report-to-dataset lineage</td></tr>
+      <tr><td><code>2</code></td><td class="nm">Dataflows</td><td>SP-only</td><td>Dataflow list · Gen1 vs Gen2 catalog · dataflow-to-dataset chain</td></tr>
+      <tr><td><code>3</code></td><td class="nm">All Fabric items</td><td>SP-only</td><td>Fabric artifacts catalog · unused-item triage · orphan detector</td></tr>
+      <tr><td><code>4</code></td><td class="nm">Users (licenses + Entra)</td><td>Graph delegated</td><td>Users page · cost-per-user · orphan license detector</td></tr>
+      <tr><td><code>5</code></td><td class="nm">AAD security groups</td><td>SP + Graph</td><td>Governance pillar · access audit · orphan workspace</td></tr>
+      <tr><td><code>6</code></td><td class="nm">Apps (Fabric/PBI apps)</td><td>SP-only</td><td>App catalog · app audience matrix · app-to-workspace mapping</td></tr>
+    </table>
+  </section>
+
+  <!-- RECENTLY SHIPPED -->
+  <section class="tier" id="shipped">
+    <div class="tier-head"><h2>✅ Recently shipped</h2><span class="ct">last 15 of 30 PRs on main</span></div>
+    <p class="lead">Auto-generated from <code>BACKLOG.md</code>. Excludes the auto-managed sync commits — only feature/fix PRs shown.</p>
+
+    <div class="ship-list">
+      <div class="si"><span class="pr">#361</span><span class="t">fix(workload-mix): degrade gracefully + capture root cause</span></div>
+      <div class="si"><span class="pr">#360</span><span class="t">feat(cost): T2.14 PR-b — synced pagination + cross-filter</span></div>
+      <div class="si"><span class="pr">#359</span><span class="t">feat(cost): T2.14 PR-a — Cost Attribution harmonization</span></div>
+      <div class="si"><span class="pr">#358</span><span class="t">feat(shell): IdentityCluster pill redesign</span></div>
+      <div class="si"><span class="pr">#357</span><span class="t">feat(h2.3): cost calc + cost_observations_v2 schema</span></div>
+      <div class="si"><span class="pr">#356</span><span class="t">feat(scripts): SBM Offshore glossary seed (prod demo)</span></div>
+      <div class="si"><span class="pr">#355</span><span class="t">feat(shell): identity + org switcher → glass-header top-right</span></div>
+      <div class="si"><span class="pr">#354</span><span class="t">feat(ui): surface system v1 — Chip primitive + sticky convention</span></div>
+      <div class="si"><span class="pr">#352</span><span class="t">feat(glossary): UI/UX polish PR 2</span></div>
+      <div class="si"><span class="pr">#349</span><span class="t">feat(scripts): glossary dev seed (18 sample terms)</span></div>
+      <div class="si"><span class="pr">#347</span><span class="t">feat(glossary): visual surface pass (PR 1/3)</span></div>
+      <div class="si"><span class="pr">#346</span><span class="t">feat(quality): BPA-driven Model Quality Engine (T1.19 Phase 1)</span></div>
+      <div class="si"><span class="pr">#345</span><span class="t">feat(glossary): P2.C Measures-subsection (v1 complete)</span></div>
+      <div class="si"><span class="pr">#344</span><span class="t">feat(glossary): P2.B VocabularyPanel on model overview</span></div>
+      <div class="si"><span class="pr">#343</span><span class="t">feat(glossary): P2.A attach-core (term_attachments CRUD)</span></div>
+    </div>
+    <p class="lead" style="margin-top:14px;font-size:13.5px;">For the full 30-PR window and 92-PRD inventory, see <a href="https://github.com/michielq16/layerpulse/blob/main/docs/BACKLOG.md" target="_blank" rel="noreferrer">BACKLOG.md</a> on the LayerPulse repo.</p>
+  </section>
+
+  <section>
+    <div class="note">
+      <b>The bridge.</b> A value-roadmap item becomes an implementation row when its PRD is authored and slotted into the tier table. Mockup bundles land on the value roadmap first; once accepted, the PO writes the LP-side PRD, the engineering team picks a tier, and the row shows up here. Once the PR merges, it moves to <a href="#shipped">Recently shipped</a>.
+    </div>
+  </section>
+
+  <footer>
+    <div>Translated from <a href="https://github.com/michielq16/layerpulse_mockup/tree/main/docs" target="_blank" rel="noreferrer">LayerPulse <code>BACKLOG.md</code></a>. Refreshed at PO-review cadence — engineering-side updates land continuously. Pair with the <a href="./roadmap.html">value roadmap</a> · <a href="./">Review hub</a>.</div>
+  </footer>
+
+</div>
+</body>
+</html>
