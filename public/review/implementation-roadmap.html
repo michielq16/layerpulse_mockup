@@ -234,9 +234,9 @@
       </div>
 
       <div class="row">
-        <div class="head"><h4>Ownership pillar</h4><span class="id">Proposed</span></div>
-        <p>Tenant-wide accountability at two layers (Workspace = Owner + Primary contact / Semantic Model = Owner + SME + Steward). Risk-first cockpit with criticality chips, escalation timers, and a 0-100 health score. Mockup bundle ready, awaiting LP-side PRD slot.</p>
-        <div class="foot"><span class="chip eff">~1.5-2 weeks</span><span class="chip bun">mockup bundle</span></div>
+        <div class="head"><h4>Ownership &amp; Stewardship pillar</h4><span class="id">T1.20</span></div>
+        <p>Tenant-wide accountability at two layers (Workspace = Owner + Primary contact / Semantic Model = Owner + SME + Steward). Risk-first cockpit with criticality chips, escalation timers, and a 0-100 health score. <b>Sequenced after T1.18</b> — T1.18 ships with the "No owner assigned — add via /ownership" empty-state pre-specified; once T1.20 lands, the empty-states collapse with zero T1.18 renderer change. <b>Supervised /build-feature, not auto-burn</b> (3 schema changes: <code>ownership_tags</code> + <code>ownership_audit_log</code> + <code>workspaces.criticality</code>). PRD authored (PR #368).</p>
+        <div class="foot"><span class="chip eff">~1.5-2 weeks (supervised)</span><span class="chip dep">after T1.18</span><span class="chip val">vitest + e2e-screenshot-diff</span><span class="chip bun">mockup bundle</span></div>
         <div class="link"><a href="./ownership.html">→ See the design</a></div>
       </div>
 
