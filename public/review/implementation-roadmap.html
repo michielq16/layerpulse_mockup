@@ -165,187 +165,160 @@
 
   <!-- TIER 1 -->
   <section class="tier" id="tier1">
-    <div class="tier-head"><h2>⭐ Tier 1 — Highest functional-screen value (next 4 weeks)</h2><span class="ct">8 open · 4 shipped</span></div>
+    <div class="tier-head"><h2>⭐ Tier 1 — Highest functional-screen value (next 4 weeks)</h2><span class="ct"><!-- AUTOGEN:COUNTS:TIER1 -->7 open · 11 shipped</span></div>
     <p class="lead">What ships first. Each row is a customer-visible screen or a foundation that unblocks one. Sorted by priority, not by tier number.</p>
 
+    <!-- AUTOGEN:TIER1:START -->
     <div class="rows">
-
-      <div class="row inflight">
-        <div class="head"><h4>C2d Documents — generators 8-12</h4><span class="id inf">T1.5b</span></div>
-        <p>The Generate flow is live; now the four <b>per-audience generators</b> become subsets of the Perfect Document (Auditor / Analyst / Executive / Engineer), plus multi-format + auto-regen + retention. Auto-burn-eligible per story.</p>
+      <div class="row shipped">
+        <div class="head"><h4>Telemetry rollup (foundational)</h4><span class="id ship">T1.16</span></div>
+        <p>Precomputed daily per-artifact aggregates (migration 0032). Unblocks the cost-vs-adoption matrix on Overview and the Perfect Documents adoption / cost / refresh RAG axes.</p>
+        <div class="foot"><span class="chip">shipped</span></div>
+      </div>
+      <div class="row shipped">
+        <div class="head"><h4>Documents Generate flow (Stories 1-7)</h4><span class="id ship">T1.5</span></div>
+        <p>The full document-generation surface: page shell, model picker (v3 with KPIs on real data), section selector, live preview, DOCX renderer, <code>documents</code> table.</p>
+        <div class="foot"><span class="chip">shipped</span><span class="chip bun">mockup bundle</span></div>
+        <div class="link"><a href="./documents.html">→ See the design</a></div>
+      </div>
+      <div class="row">
+        <div class="head"><h4>C2d Documents — generators 8-12</h4><span class="id">T1.5b</span></div>
+        <p>The Generate flow is live; now the four per-audience generators become subsets of the Perfect Document (Auditor / Analyst / Executive / Engineer), plus multi-format + auto-regen + retention. Auto-burn-eligible per story.</p>
         <div class="foot"><span class="chip eff">~2-3 weeks</span><span class="chip dep">depends on T1.18</span><span class="chip val">contract-test vs reference .docx</span></div>
       </div>
-
-      <div class="row inflight">
-        <div class="head"><h4>The Perfect Document (C2d — T1.18)</h4><span class="id inf">T1.18</span></div>
+      <div class="row">
+        <div class="head"><h4>Reports axis — fabric_reports</h4><span class="id">T1.8</span></div>
+        <p>Full Admin API ingest for reports + PBIR definitions. New table + collector + a minimal Reports list screen. Unlocks the Reports & Apps pillar UI and the Lineage Explorer reports column.</p>
+        <div class="foot"><span class="chip eff">~1 week</span><span class="chip val">compare-vs-rest</span></div>
+      </div>
+      <div class="row">
+        <div class="head"><h4>Dataflows axis — fabric_dataflows</h4><span class="id">T1.9</span></div>
+        <p>Gen1 + Gen2 dataflows from the Admin API. New table + collector + dataflows list screen.</p>
+        <div class="foot"><span class="chip eff">~1 week</span><span class="chip val">compare-vs-rest</span></div>
+      </div>
+      <div class="row">
+        <div class="head"><h4>Audit & Compliance page</h4><span class="id">T1.12</span></div>
+        <p>New <code>/audit</code> route with three tabs — Export log, Off-hours access heatmap, RLS evaluation — plus a one-click SOC 2 evidence pack ZIP. Sales-motion test for Pro→Enterprise upsell.</p>
+        <div class="foot"><span class="chip eff">~13d / 2-2.5 weeks</span><span class="chip val">compare-vs-rest</span></div>
+      </div>
+      <div class="row shipped">
+        <div class="head"><h4>Tenant Activity screen</h4><span class="id ship">T1.13</span></div>
+        <p>New <code>/activity</code> route — Bloomberg-terminal forensic search + filters + CSV export over the raw <code>activity_events</code> table. Sibling to the Users page.</p>
+        <div class="foot"><span class="chip">shipped</span></div>
+      </div>
+      <div class="row">
+        <div class="head"><h4>Business Glossary pillar — v1</h4><span class="id">T1.17</span></div>
+        <p>Tenant-wide dictionary (KPI / metric / dimension / business term / acronym / process) + many-to-many attachment to model objects + per-measure Vocabulary panel on model overview. v1 SHIPPED across 6 sub-PRs (#339-#345). P3 doc-binding deferred.</p>
+        <div class="foot"><span class="chip bun">mockup bundle</span></div>
+        <div class="link"><a href="./glossary.html">→ See the design</a></div>
+      </div>
+      <div class="row">
+        <div class="head"><h4>The Perfect Document (C2d — T1.18)</h4><span class="id">T1.18</span></div>
         <p>Two-part canonical model doc: <b>Model Scorecard</b> (KEEP/OPTIMIZE/RETIRE verdict + adoption/cost/quality/refresh RAG + per-report dead-weight) and <b>Technical Reference</b>. Deterministic, no AI. The next P1.</p>
         <div class="foot"><span class="chip eff">~1.5-2 weeks</span><span class="chip val">vitest + .docx contract</span><span class="chip bun">mockup bundle</span></div>
         <div class="link"><a href="./complete-document.html">→ See the design</a></div>
       </div>
-
-      <div class="row">
-        <div class="head"><h4>Audit &amp; Compliance page</h4><span class="id">T1.12</span></div>
-        <p>New <code>/audit</code> route with three tabs — Export log, Off-hours access heatmap, RLS evaluation — plus a one-click SOC 2 evidence pack ZIP. Sales-motion test for Pro→Enterprise upsell.</p>
-        <div class="foot"><span class="chip eff">~13d / 2-2.5 weeks</span><span class="chip val">compare-vs-rest</span></div>
-      </div>
-
-      <div class="row">
-        <div class="head"><h4>Tenant Activity screen</h4><span class="id">T1.13</span></div>
-        <p>New <code>/activity</code> route — Bloomberg-terminal forensic search + filters + CSV export over the raw <code>activity_events</code> table. Sibling to the Users page.</p>
-        <div class="foot"><span class="chip eff">~6-7d / 1-1.5 weeks</span><span class="chip val">compare-vs-rest</span></div>
-      </div>
-
-      <div class="row">
-        <div class="head"><h4>Reports axis — <code>fabric_reports</code></h4><span class="id">T1.8</span></div>
-        <p>Full Admin API ingest for reports + PBIR definitions. New table + collector + a minimal Reports list screen. Unlocks the Reports &amp; Apps pillar UI and the Lineage Explorer reports column.</p>
-        <div class="foot"><span class="chip eff">~1 week</span><span class="chip val">compare-vs-rest</span></div>
-      </div>
-
-      <div class="row">
-        <div class="head"><h4>Dataflows axis — <code>fabric_dataflows</code></h4><span class="id">T1.9</span></div>
-        <p>Gen1 + Gen2 dataflows from the Admin API. New table + collector + dataflows list screen.</p>
-        <div class="foot"><span class="chip eff">~1 week</span><span class="chip val">compare-vs-rest</span></div>
-      </div>
-
       <div class="row shipped">
         <div class="head"><h4>BPA-driven Quality Engine overhaul</h4><span class="id ship">T1.19</span></div>
-        <p>Replaced the 6 stub quality dimensions with a ported BPA engine (~20 named rules with remediation). Shipped 2026-05-25 (#346). Spike-validated on 18 real models. Phase 2 = Scanner extensions (formatString / displayFolder) to unlock 4-7 more rules.</p>
-        <div class="foot"><span class="chip">Phase 1 done</span><span class="chip">Phase 2 pending</span></div>
-      </div>
-
-      <div class="row shipped">
-        <div class="head"><h4>Business Glossary pillar — v1</h4><span class="id ship">T1.17</span></div>
-        <p>Tenant-wide dictionary (KPI / metric / dimension / business term / acronym / process) + many-to-many attachment to model objects + per-measure Vocabulary panel on model overview. v1 SHIPPED 2026-05-25 across 6 sub-PRs (#339-#345). P3 doc-binding deferred.</p>
-        <div class="foot"><span class="chip">v1 complete</span><span class="chip bun">mockup bundle</span></div>
-        <div class="link"><a href="./glossary.html">→ See the design</a></div>
-      </div>
-
-      <div class="row shipped">
-        <div class="head"><h4>Telemetry rollup (foundational)</h4><span class="id ship">T1.16</span></div>
-        <p>Precomputed daily per-artifact aggregates (migration 0032). Unblocks the cost-vs-adoption matrix on Overview and the Perfect Document's adoption / cost / refresh RAG axes. Shipped 2026-05-24 (#330).</p>
+        <p>Replaced the 6 stub quality dimensions with a ported BPA engine (~20 named rules with remediation). Spike-validated on 18 real models. Phase 2 = Scanner extensions (formatString / displayFolder) to unlock 4-7 more rules.</p>
         <div class="foot"><span class="chip">shipped</span></div>
       </div>
-
-      <div class="row shipped">
-        <div class="head"><h4>Documents Generate flow (Stories 1-7)</h4><span class="id ship">T1.5</span></div>
-        <p>The full document-generation surface: page shell, model picker (v3 with KPIs on real data), section selector, live preview, DOCX renderer, <code>documents</code> table. Shipped 2026-05-18→22.</p>
-        <div class="foot"><span class="chip">shipped</span><span class="chip bun">mockup bundle</span></div>
-        <div class="link"><a href="./documents.html">→ See the design</a></div>
-      </div>
-
       <div class="row">
-        <div class="head"><h4>Ownership &amp; Stewardship pillar</h4><span class="id">T1.20</span></div>
+        <div class="head"><h4>Ownership & Stewardship pillar</h4><span class="id">T1.20</span></div>
         <p>Tenant-wide accountability at two layers (Workspace = Owner + Primary contact / Semantic Model = Owner + SME + Steward). Risk-first cockpit with criticality chips, escalation timers, and a 0-100 health score. <b>Sequenced after T1.18</b> — T1.18 ships with the "No owner assigned — add via /ownership" empty-state pre-specified; once T1.20 lands, the empty-states collapse with zero T1.18 renderer change. <b>Supervised /build-feature, not auto-burn</b> (3 schema changes: <code>ownership_tags</code> + <code>ownership_audit_log</code> + <code>workspaces.criticality</code>). PRD authored (PR #368).</p>
         <div class="foot"><span class="chip eff">~1.5-2 weeks (supervised)</span><span class="chip dep">after T1.18</span><span class="chip val">vitest + e2e-screenshot-diff</span><span class="chip bun">mockup bundle</span></div>
         <div class="link"><a href="./ownership.html">→ See the design</a></div>
       </div>
-
     </div>
+  <!-- AUTOGEN:TIER1:END -->
   </section>
 
   <!-- TIER 2 -->
   <section class="tier" id="tier2">
-    <div class="tier-head"><h2>⚡ Tier 2 — Stable-screen prerequisites</h2><span class="ct">8 open · 12 shipped</span></div>
+    <div class="tier-head"><h2>⚡ Tier 2 — Stable-screen prerequisites</h2><span class="ct"><!-- AUTOGEN:COUNTS:TIER2 -->7 open · 13 shipped</span></div>
     <p class="lead">Infrastructure that unblocks Tier 1. Mostly internal tooling — validation scripts, schema migrations, ship-it gates. Not customer-visible on its own.</p>
 
+    <!-- AUTOGEN:TIER2:START -->
     <div class="rows">
-
       <div class="row">
-        <div class="head"><h4><code>/ship-it</code> data-quality gate</h4><span class="id">T2.4</span></div>
+        <div class="head"><h4>Mockup workflow doc</h4><span class="id">T2.2</span></div>
+        <p>formalize the mockup-first flow in CLAUDE.md or a new skill <code>/mockup</code>.</p>
+        <div class="foot"></div>
+      </div>
+      <div class="row shipped">
+        <div class="head"><h4>pnpm validate:* suite — canonical convention</h4><span class="id ship">T2.3</span></div>
+        <p>Five new validators (activity-events / refreshables / metrics-app / data-sources / reports-apps) + three pre-existing ones backfilled to a canonical pure-outcome-detection template.</p>
+        <div class="foot"><span class="chip">shipped</span></div>
+      </div>
+      <div class="row">
+        <div class="head"><h4>/ship-it data-quality gate</h4><span class="id">T2.4</span></div>
         <p>Ship-time check: when a PR touches a known KPI, the matching <code>pnpm validate:*</code> must pass before Gate 5. Closes the loop from definition sheet → live data parity.</p>
         <div class="foot"><span class="chip eff">~2h skill update</span></div>
       </div>
-
       <div class="row">
-        <div class="head"><h4>DAX syntax highlighting + virtualization</h4><span class="id">T2-cluster</span></div>
-        <p>Code-block polish for measure DAX surfaces: full color palette + search debounce + react-window virtualization for very long DAX bodies. Needs PRD (virtualization brings a new dependency).</p>
-        <div class="foot"><span class="chip eff">~2-3d</span></div>
+        <div class="head"><h4>/kickoff layerpulse + R1 Sentry triage</h4><span class="id">T2.8</span></div>
+        <p>Loop close: the nightly Sentry routine writes a report; <code>/kickoff</code> should scan it at session-start and surface actionable items alongside the memory index. Framework-side skill change.</p>
+        <div class="foot"><span class="chip eff">~1h skill update</span></div>
       </div>
-
       <div class="row">
         <div class="head"><h4>FUAM column drop (H4 completion)</h4><span class="id">T2.15</span></div>
         <p>The FUAM UI is gone; DB columns + collector + email refs remain. Pure code cleanup, no new screen value. Pull in when a pillar bumps into FUAM artifacts.</p>
         <div class="foot"><span class="chip eff">1-2 days</span></div>
       </div>
-
-      <div class="row">
-        <div class="head"><h4>Model Health tab — Stories 1-4</h4><span class="id">T2.9</span></div>
-        <p>New <code>/models/[id]/health</code> tab: Unused Objects + Duplicate DAX + Potential Savings + Top Cleanup Candidates. Pure UI on existing scan data; no schema.</p>
-        <div class="foot"><span class="chip eff">~3-5 days</span><span class="chip val">vitest + e2e</span></div>
-      </div>
-
-      <div class="row">
-        <div class="head"><h4>Model Health — Story 5 (mark resolved)</h4><span class="id">T2.10</span></div>
-        <p>The schema-touching follow-on after T2.9: a <code>resolved_at</code> / <code>resolved_by</code> migration on the recommendations table so users can mark health-tab items as done.</p>
-        <div class="foot"><span class="chip eff">~1 day</span><span class="chip dep">after T2.9</span></div>
-      </div>
-
       <div class="row">
         <div class="head"><h4>PROD-shape DEV — Slices B + C</h4><span class="id">T2.16</span></div>
         <p>The last two slices of dev-tenant parity: faker-generated sample data (B) + a sandbox Azure SP wired into the hotmail tenant (C). C needs operator-at-keyboard for <code>az login</code>.</p>
         <div class="foot"><span class="chip eff">B: 30min · C: 2-4h</span></div>
       </div>
-
-      <div class="row">
-        <div class="head"><h4><code>/kickoff layerpulse</code> + R1 Sentry triage</h4><span class="id">T2.8</span></div>
-        <p>Loop close: the nightly Sentry routine writes a report; <code>/kickoff</code> should scan it at session-start and surface actionable items alongside the memory index. Framework-side skill change.</p>
-        <div class="foot"><span class="chip eff">~1h skill update</span></div>
-      </div>
-
       <div class="row shipped">
-        <div class="head"><h4><code>pnpm validate:*</code> suite — canonical convention</h4><span class="id ship">T2.3</span></div>
-        <p>Five new validators (activity-events / refreshables / metrics-app / data-sources / reports-apps) + three pre-existing ones backfilled to a canonical pure-outcome-detection template. Shipped 2026-05-19→20.</p>
+        <div class="head"><h4>Model Health tab — Stories 1-4</h4><span class="id ship">T2.9</span></div>
+        <p>New <code>/models/[id]/health</code> tab: Unused Objects + Duplicate DAX + Potential Savings + Top Cleanup Candidates. Pure UI on existing scan data; no schema.</p>
         <div class="foot"><span class="chip">shipped</span></div>
       </div>
-
+      <div class="row">
+        <div class="head"><h4>Model Health — Story 5 (mark resolved)</h4><span class="id">T2.10</span></div>
+        <p>The schema-touching follow-on after T2.9: a <code>resolved_at</code> / <code>resolved_by</code> migration on the recommendations table so users can mark health-tab items as done.</p>
+        <div class="foot"><span class="chip eff">~1 day</span><span class="chip dep">after T2.9</span></div>
+      </div>
+      <div class="row">
+        <div class="head"><h4>DEV database separation + populated seed env</h4><span class="id">T2.12</span></div>
+        <p>(2-part, agreed 2026-05-24 during PR #335 / Overview PR2).</p>
+        <div class="foot"></div>
+      </div>
     </div>
+  <!-- AUTOGEN:TIER2:END -->
   </section>
 
   <!-- TIER 3 -->
   <section class="tier" id="tier3">
-    <div class="tier-head"><h2>🧹 Tier 3 — Polish + residue</h2><span class="ct">background budget · max 2h/week</span></div>
+    <div class="tier-head"><h2>🧹 Tier 3 — Polish + residue</h2><span class="ct"><!-- AUTOGEN:COUNTS:TIER3 -->9 polish items</span></div>
     <p class="lead">All P1/P2 findings from the May sweeps that don't gate a pillar. Pulled forward only when a Tier 1 ship lands in the same area for natural batching.</p>
 
+    <!-- AUTOGEN:TIER3:START -->
     <div class="rows">
-
       <div class="row">
         <div class="head"><h4>Capacity Pulse — Daily Cost Trend label</h4><span class="id">T3.4</span></div>
         <p>KPI label wraps three lines on narrower viewports. Auto-burn-eligible, ~30min, no PRD needed.</p>
         <div class="foot"><span class="chip eff">~30min</span></div>
       </div>
-
       <div class="row">
         <div class="head"><h4>Cost Attribution — share% drift</h4><span class="id">T3.6</span></div>
         <p><code>topItem.sharePct</code> reads 16.8% vs <code>totalSpend</code> 10.1%. Investigation-first; potential overlap with the H2 share-of-bill math PRD.</p>
         <div class="foot"><span class="chip eff">tbd</span></div>
       </div>
-
       <div class="row">
         <div class="head"><h4>Workload Mix — pre-cutover labelling</h4><span class="id">T3.7</span></div>
         <p>The tenant-aggregate row is mis-labelled per-capacity in the pre-cutover state. ~30min auto-burn.</p>
         <div class="foot"><span class="chip eff">~30min</span></div>
       </div>
-
-      <div class="row inflight">
-        <div class="head"><h4>Settings — V2 ingestion polish + cron-arm audit</h4><span class="id inf">T3.12</span></div>
+      <div class="row">
+        <div class="head"><h4>Settings — V2 ingestion polish + cron-arm audit</h4><span class="id">T3.12</span></div>
         <p>Dots instead of squares, planned-axes card removed, cron arms re-audited against the actual code (5 listed but 6 actually run). Mockup bundle ready, LP-side ~1h auto-burn.</p>
         <div class="foot"><span class="chip eff">~1h LP-side</span><span class="chip bun">mockup bundle</span></div>
         <div class="link"><a href="./settings.html">→ See the design</a></div>
       </div>
-
-      <div class="row">
-        <div class="head"><h4>Section-2 re-sweep P1 residue (~18 items)</h4><span class="id">batch</span></div>
-        <p>Lineage canvas density, workspaces virtualization, sundry layout fixes. Batched into chore-PRs when a Tier-1 ship in the same area gives natural cover.</p>
-        <div class="foot"><span class="chip">batch when colocated</span></div>
-      </div>
-
-      <div class="row">
-        <div class="head"><h4>Sweep P2s (~37)</h4><span class="id">batch</span></div>
-        <p>Cosmetic-only items from the May sweeps. Bundle 5-10 per PR. Includes the Overview 2-column row-alignment cosmetic.</p>
-        <div class="foot"><span class="chip">batch</span></div>
-      </div>
-
     </div>
+  <!-- AUTOGEN:TIER3:END -->
   </section>
 
   <!-- PILLARS -->
@@ -353,57 +326,59 @@
     <div class="tier-head"><h2>🏗️ Pillar roadmap — multi-week milestones</h2><span class="ct">12 pillars</span></div>
     <p class="lead">The big-picture units of work, each spanning multiple weeks and multiple PRs. Each pillar has a PRD and a dependency graph; what lands here is a status snapshot.</p>
 
+    <!-- AUTOGEN:PILLARS:START -->
     <details class="pillars" open>
-      <summary>Capacity &amp; cost pillars (H1-H4) — most mature</summary>
+      <summary>Capacity & cost (H1-H4)</summary>
       <div>
         <table class="ptable">
           <tr><th>Pillar</th><th>Status</th><th>What's left</th></tr>
-          <tr><td class="nm">H1 Native Capacity Telemetry</td><td>~90% shipped (PRs #114-#157 + #330 rollup + #335 Overview)</td><td>Only the FUAM column drop (T2.15) remains</td></tr>
-          <tr><td class="nm">H2 Cost Attribution + Workload Mix</td><td>~75% shipped (treemap + per-capacity + Workload Mix + cost chart)</td><td>H2.3 cost-calc schema + throttling-cost column</td></tr>
-          <tr><td class="nm">H3 Throttling &amp; Storage</td><td>PRD drafted</td><td>Q3 — depends on H2 maturity</td></tr>
-          <tr><td class="nm">H4 FUAM Removal</td><td>UI gone; DB columns + collector + emails remain</td><td>1-2 days when prioritized (T2.15)</td></tr>
+          <tr><td class="nm">H1 Native Capacity Telemetry</td><td><b>~90% shipped</b> (#114-#157 H1.1-1.6 + Story 5; + telemetry rollup #330, active-users #332, Overview cost axis #335; PRD <code>implemented</code>)</td><td>Only FUAM column drop (T2.15) remains</td></tr>
+          <tr><td class="nm">H2 Cost Attribution + Workload Mix</td><td><b>~75% shipped</b> (#127 treemap + #146 per-capacity + #178 Workload Mix + #259-#261 GFP + cost chart #335)</td><td>Remaining: H2.3 cost-calc schema + throttling-cost column</td></tr>
+          <tr><td class="nm">H3 Throttling &amp; Storage</td><td>PRD drafted (<code>docs/prd/h3-throttling-storage.md</code>)</td><td>Q3 — depends on H2 maturity</td></tr>
+          <tr><td class="nm">H4 FUAM Removal</td><td>UI done, DB columns + collector + email refs remain</td><td>1-2 days when prioritized</td></tr>
         </table>
       </div>
     </details>
 
     <details class="pillars">
-      <summary>Documents + Governance pillars (P1 + P2)</summary>
+      <summary>Documents + Governance (P1 + P2)</summary>
       <div>
         <table class="ptable">
           <tr><th>Pillar</th><th>Status</th><th>What's left</th></tr>
-          <tr><td class="nm">C2d Documents</td><td><b>Generate flow LIVE</b> (Stories 1-7 + 6.5 + picker v2/v3)</td><td>Generators 8-12 (T1.5b); parked Library/retrieval surface needs re-scope</td></tr>
-          <tr><td class="nm">C2d — Perfect Document (T1.18)</td><td>PRD approved · BPA quality (T1.19) shipped as dep</td><td>~1.5-2 weeks · the next P1</td></tr>
-          <tr><td class="nm">E Governance &amp; Security</td><td>Sections A (tenant_settings) + B (rule engine) shipped</td><td>UI Sections C-E pending; depends on AAD groups axis</td></tr>
-          <tr><td class="nm">Business Glossary</td><td>v1 COMPLETE 2026-05-25 (Phase 1 + Phase 2)</td><td>P3 doc-binding deferred to follow-on PRD</td></tr>
+          <tr><td class="nm">C2d Documents pillar</td><td><b>Generate flow SHIPPED + LIVE</b> (Stories 1-7 + 6.5 + picker v2/v3, #289-#327). Remaining: generators 8-12 (T1.5b) + parked Library/retrieval surface.</td><td>P1 — generators 8-12 next; retrieval surface re-scope</td></tr>
+          <tr><td class="nm">E Governance &amp; Security</td><td><b>Sections A (tenant_settings #269) + B (rule engine #283) SHIPPED</b>; UI Sections C-E pending. PRD approved 2026-05-13</td><td>Q3 — depends on AAD groups axis from inventory expansion</td></tr>
         </table>
       </div>
     </details>
 
     <details class="pillars">
-      <summary>Users + Activity pillars (P4)</summary>
+      <summary>Users + Activity (P4)</summary>
       <div>
         <table class="ptable">
           <tr><th>Pillar</th><th>Status</th><th>What's left</th></tr>
-          <tr><td class="nm">Users Page</td><td>PRD approved (12 decisions resolved)</td><td>Q3 — depends on AAD groups + activity events</td></tr>
-          <tr><td class="nm">Activity Events Phase 1+2</td><td>PRD approved</td><td>Schema + collector + minimal UI; Tier-1 candidate</td></tr>
-          <tr><td class="nm">Microsoft Graph integration</td><td>PRD approved · revision pending PO sign-off</td><td>4-phase ramp: licenses → cost → directory → activity</td></tr>
-          <tr><td class="nm">Tenant Activity screen</td><td>PRD approved (T1.13)</td><td>~6-7d Tier-1</td></tr>
+          <tr><td class="nm">Users Page pillar</td><td>PRD approved 2026-05-13 (12 decisions resolved)</td><td>Q3 — depends on AAD groups + activity events</td></tr>
+          <tr><td class="nm">GFP Phase 4 (filter consistency + Workload Mix interactivity)</td><td>9/9 shipped — pillar COMPLETE 2026-05-17 (PRs #255-263)</td><td>Polish + Workspaces virtualization deferred to Tier-3</td></tr>
+          <tr><td class="nm">Microsoft Graph integration</td><td>PRD approved (revision pending PO sign-off)</td><td>Tier-1 Phase 1 (licenses) in T1.8/T1.9; full pillar Q3</td></tr>
+          <tr><td class="nm">Activity Events Phase 1+2</td><td>PRD approved</td><td>Tier-1 candidate (1-2 days; foundation for Users)</td></tr>
         </table>
       </div>
     </details>
 
     <details class="pillars">
-      <summary>Reports / Lineage / D-agentic (P3 + future)</summary>
+      <summary>Reports / Lineage / Agentic (P3 + future)</summary>
       <div>
         <table class="ptable">
           <tr><th>Pillar</th><th>Status</th><th>What's left</th></tr>
-          <tr><td class="nm">Reports &amp; Apps pillar</td><td>PRD approved 2026-05-17</td><td>~13d / 5 PRs · ships UI once T1.8 reports axis lands</td></tr>
-          <tr><td class="nm">Cross-workload Lineage Explorer</td><td>PRD approved 2026-05-17</td><td>~15d / 2-3 weeks · Tier-1 once Reports axis ships</td></tr>
-          <tr><td class="nm">Workspaces page upgrade PR3</td><td>PRD approved</td><td>health_scores table + cron + triage UI</td></tr>
-          <tr><td class="nm">D Agentic layer</td><td>PRD scoped · PARKED</td><td>Depends on Users + inventory expansion landing first</td></tr>
+          <tr><td class="nm">D Agentic layer</td><td>PRD scoped</td><td>Q3 — depends on Users + inventory expansion landing</td></tr>
+          <tr><td class="nm">Workspaces page upgrade PR3</td><td>PRD approved 2026-05-13</td><td>Tier-1 if Workspaces UX gets a refresh</td></tr>
+          <tr><td class="nm">PERF-2 Redis read-cache</td><td><b>shipped PR #252</b> 2026-05-16 — module at <code>src/lib/cache/</code> wraps 3 hot read helpers (60s/300s/30s TTLs)</td><td>n/a — pillar complete</td></tr>
+          <tr><td class="nm">AI Agents pillar</td><td>PARKED 2026-05-13 (merging with D); <b>Impact Analyst portion superseded by Lineage Explorer pillar 2026-05-17</b></td><td>n/a — folded into D + Lineage Explorer</td></tr>
+          <tr><td class="nm">Cross-workload Lineage Explorer</td><td>PRD approved 2026-05-17 (<code>docs/prd/lineage-explorer-pillar.md</code>) — supersedes Impact Analyst portion of parked AI Agents pillar; absorbs T1.3b (<code>/self/lineage</code> decision) + Lineage canvas density redesign cluster</td><td>~15d / 2-3 weeks; Tier-1 candidate once Reports axis (T1.8) lands so graph has report nodes</td></tr>
+          <tr><td class="nm">Reports &amp; Apps pillar</td><td>PRD approved 2026-05-17 (<code>docs/prd/reports-apps-pillar.md</code>) — extends T1.8 fabric_reports axis with full UI + Apps surface</td><td>~13d / 5 PRs; T1.8 ships the data layer, this PRD ships the UI + Apps extension</td></tr>
         </table>
       </div>
     </details>
+  <!-- AUTOGEN:PILLARS:END -->
   </section>
 
   <!-- INVENTORY -->
@@ -411,16 +386,18 @@
     <div class="tier-head"><h2>🆕 Fabric inventory expansion — 7 axes</h2><span class="ct">2/7 in motion</span></div>
     <p class="lead">Each axis adds new tables + ingestors + screens, sequenced by lowest-auth-cost first (Service-Principal-only before Graph-delegated). The data layer for each axis usually ships as Tier 1; the UI follows as a pillar.</p>
 
+    <!-- AUTOGEN:INVENTORY:START -->
     <table class="ptable">
       <tr><th>#</th><th>Axis</th><th>Auth needed</th><th>What it unlocks</th></tr>
-      <tr><td><code>0</code></td><td class="nm">M code (Power Query)</td><td>Already fetched (Scanner)</td><td>Documents Story 7 · Lineage sources column · data-source enumeration in the cover</td></tr>
-      <tr><td><code>1</code></td><td class="nm">Reports</td><td>SP-only</td><td>Reports list · PBIR navigator · report-to-dataset lineage</td></tr>
-      <tr><td><code>2</code></td><td class="nm">Dataflows</td><td>SP-only</td><td>Dataflow list · Gen1 vs Gen2 catalog · dataflow-to-dataset chain</td></tr>
-      <tr><td><code>3</code></td><td class="nm">All Fabric items</td><td>SP-only</td><td>Fabric artifacts catalog · unused-item triage · orphan detector</td></tr>
-      <tr><td><code>4</code></td><td class="nm">Users (licenses + Entra)</td><td>Graph delegated</td><td>Users page · cost-per-user · orphan license detector</td></tr>
-      <tr><td><code>5</code></td><td class="nm">AAD security groups</td><td>SP + Graph</td><td>Governance pillar · access audit · orphan workspace</td></tr>
-      <tr><td><code>6</code></td><td class="nm">Apps (Fabric/PBI apps)</td><td>SP-only</td><td>App catalog · app audience matrix · app-to-workspace mapping</td></tr>
+      <tr><td><code>0</code></td><td class="nm">M code (Power Query)</td><td><b>None</b> (SP already has access; tenant flags ON)</td><td>C2d Documents Story 7 (Power Query section) · Lineage Explorer Sources column · Data-source enumeration in Cover &amp; summary</td></tr>
+      <tr><td><code>1</code></td><td class="nm">Reports</td><td>SP-only (same as existing scanner)</td><td>Reports list / PBIR navigator / report-to-dataset lineage</td></tr>
+      <tr><td><code>2</code></td><td class="nm">Dataflows</td><td>SP-only</td><td>Dataflow list / Gen1 vs Gen2 catalog / dataflow-to-dataset chain</td></tr>
+      <tr><td><code>3</code></td><td class="nm">All Fabric items (artifacts)</td><td>SP-only</td><td>Fabric artifacts catalog / unused-item triage / orphan detector</td></tr>
+      <tr><td><code>4</code></td><td class="nm">Users (licenses + Entra)</td><td><b>Graph delegated</b> (multi-tenant app reg already specced)</td><td>Users page / cost-per-user / orphan license detector</td></tr>
+      <tr><td><code>5</code></td><td class="nm">AAD security groups + role assignments</td><td>SP for workspace roles; Graph for AAD</td><td>Governance pillar / access audit / orphan workspace</td></tr>
+      <tr><td><code>6</code></td><td class="nm">Apps (Fabric/PBI apps)</td><td>SP-only</td><td>App catalog / app audience matrix / app-to-workspace mapping</td></tr>
     </table>
+  <!-- AUTOGEN:INVENTORY:END -->
   </section>
 
   <!-- RECENTLY SHIPPED -->
@@ -428,23 +405,25 @@
     <div class="tier-head"><h2>✅ Recently shipped</h2><span class="ct">last 15 of 30 PRs on main</span></div>
     <p class="lead">Auto-generated from <code>BACKLOG.md</code>. Excludes the auto-managed sync commits — only feature/fix PRs shown.</p>
 
+    <!-- AUTOGEN:SHIPPED:START -->
     <div class="ship-list">
-      <div class="si"><span class="pr">#361</span><span class="t">fix(workload-mix): degrade gracefully + capture root cause</span></div>
-      <div class="si"><span class="pr">#360</span><span class="t">feat(cost): T2.14 PR-b — synced pagination + cross-filter</span></div>
-      <div class="si"><span class="pr">#359</span><span class="t">feat(cost): T2.14 PR-a — Cost Attribution harmonization</span></div>
-      <div class="si"><span class="pr">#358</span><span class="t">feat(shell): IdentityCluster pill redesign</span></div>
-      <div class="si"><span class="pr">#357</span><span class="t">feat(h2.3): cost calc + cost_observations_v2 schema</span></div>
-      <div class="si"><span class="pr">#356</span><span class="t">feat(scripts): SBM Offshore glossary seed (prod demo)</span></div>
-      <div class="si"><span class="pr">#355</span><span class="t">feat(shell): identity + org switcher → glass-header top-right</span></div>
-      <div class="si"><span class="pr">#354</span><span class="t">feat(ui): surface system v1 — Chip primitive + sticky convention</span></div>
-      <div class="si"><span class="pr">#352</span><span class="t">feat(glossary): UI/UX polish PR 2</span></div>
-      <div class="si"><span class="pr">#349</span><span class="t">feat(scripts): glossary dev seed (18 sample terms)</span></div>
-      <div class="si"><span class="pr">#347</span><span class="t">feat(glossary): visual surface pass (PR 1/3)</span></div>
-      <div class="si"><span class="pr">#346</span><span class="t">feat(quality): BPA-driven Model Quality Engine (T1.19 Phase 1)</span></div>
-      <div class="si"><span class="pr">#345</span><span class="t">feat(glossary): P2.C Measures-subsection (v1 complete)</span></div>
-      <div class="si"><span class="pr">#344</span><span class="t">feat(glossary): P2.B VocabularyPanel on model overview</span></div>
-      <div class="si"><span class="pr">#343</span><span class="t">feat(glossary): P2.A attach-core (term_attachments CRUD)</span></div>
+      <div class="si"><span class="pr">#377</span><span class="t">feat(model-health): T2.9 Stories 2-4 — Duplicate DAX, Potential Savings, Cleanup Candidates</span></div>
+      <div class="si"><span class="pr">#376</span><span class="t">feat(overview): T2.13 — brush-to-zoom on Overview charts</span></div>
+      <div class="si"><span class="pr">#378</span><span class="t">fix(scripts): diagnose-format-strings.ts getDefinition arg count (P0 — prod build broken)</span></div>
+      <div class="si"><span class="pr">#375</span><span class="t">chore(e2e): Playwright spec for prod Overview latency measurement + finding</span></div>
+      <div class="si"><span class="pr">#374</span><span class="t">docs(scoping): T1.13 Tenant Activity — file-by-file implementation plan</span></div>
+      <div class="si"><span class="pr">#373</span><span class="t">feat(governance): Section C.5-C.7 — finding card + accept-risk + settings grid + deep-link (PR4 of 5)</span></div>
+      <div class="si"><span class="pr">#372</span><span class="t">feat(governance): Section C.1-C.4 — route + shell + gauge + severity bar + findings list (PR3 of 5)</span></div>
+      <div class="si"><span class="pr">#371</span><span class="t">feat(documents): T1.18 PR2 — Perfect Document Scorecard renderer</span></div>
+      <div class="si"><span class="pr">#370</span><span class="t">perf(overview): cut Evidence Snapshot wall from ~10s to ~500ms</span></div>
+      <div class="si"><span class="pr">#369</span><span class="t">feat(quality): T1.19 Phase 2 — TMDL formatString + displayFolder extraction</span></div>
+      <div class="si"><span class="pr">#367</span><span class="t">chore(docs): governance screens spec — Section C PR3/PR4 surface</span></div>
+      <div class="si"><span class="pr">#368</span><span class="t">docs(prd): T1.20 Ownership pillar — implementation PRD from mockup brief</span></div>
+      <div class="si"><span class="pr">#366</span><span class="t">chore: T1.20 Ownership pillar BACKLOG row + Overview latency profilers</span></div>
+      <div class="si"><span class="pr">#365</span><span class="t">chore(scoping): T1.19 Phase 2 forensic + T1.18 PR2/PR3 design docs</span></div>
+      <div class="si"><span class="pr">#364</span><span class="t">feat(documents): T1.18 PR1 — Perfect Document Scorecard data layer + verdict wiring</span></div>
     </div>
+  <!-- AUTOGEN:SHIPPED:END -->
     <p class="lead" style="margin-top:14px;font-size:13.5px;">For the full 30-PR window and 92-PRD inventory, see <a href="https://github.com/michielq16/layerpulse/blob/main/docs/BACKLOG.md" target="_blank" rel="noreferrer">BACKLOG.md</a> on the LayerPulse repo.</p>
   </section>
 
