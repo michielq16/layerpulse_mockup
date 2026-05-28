@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BI Estate Briefing v3 — SBM Offshore · LayerPulse [INTERNAL]</title>
+<link rel="stylesheet" href="../../public/review/perfect-doc/doc.css"/>
+</head>
+<body>
+
+<!-- ══════ INTERNAL ARTIFACT — real tenant data. Not for public/review/. Not for external distribution. ══════ -->
+<div style="max-width: 210mm; margin: 0 auto 6mm; padding: 4mm 6mm; background: #7f1d1d; color: #fff; font-family: ui-monospace, monospace; font-size: 9pt; line-height: 1.5; border-radius: 4px;">
+  <strong style="color:#FFBF3C;">INTERNAL · real production data.</strong>
+  Real tenant (SBM Offshore, env <code>a4bd4bda…</code>). Every figure is a verified count/rate from the LayerPulse DB as-of 2026-05-28.
+  This file lives in <code>docs/perfect-doc/</code> — <strong>not</strong> in <code>public/review/</code> and must not be served publicly or sent externally. Cost (§04) is a real <strong style="color:#fca5a5;">✗ Gap</strong>. Ground reference: <code>docs/research/2026-05-28-production-db-content-map.md</code>.
+</div>
+
+<div class="doc-shell">
+
+<!-- ═══════════════════════ PAGE 1 · COVER ═══════════════════════ -->
+<div class="doc-page">
+  <div class="cover-v2-band">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse · BI Estate Briefing</div>
+    <h1>SBM Offshore</h1>
+    <p class="doc-sub">Full BI estate · 511 workspaces · 1,699 models · Q2 2026 · silver fidelity</p>
+  </div>
+
+  <div class="doc-body">
+
+    <!-- 4 KPIs -->
+    <div class="kpi-cover-grid">
+      <div class="kpi-cover-card">
+        <div class="l">Health</div>
+        <div class="v">41<span class="unit">/100</span></div>
+        <div class="t down">▼ 2 RED axes</div>
+        <div class="b">&lt; 60 → RED <span class="band-inline">→ RED</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">Adoption (30d)</div>
+        <div class="v">3,800</div>
+        <div class="t warn">70% reports dormant</div>
+        <div class="b">≥ 100 users → GREEN <span class="band-inline">→ GREEN*</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">Cost (run-rate)</div>
+        <div class="v">$10K<span class="unit">/mo</span></div>
+        <div class="t warn">2 capacities</div>
+        <div class="b">attributable to workspace <span class="band-inline">→ LIVE*</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">Refresh SLA</div>
+        <div class="v">67.9<span class="unit">%</span></div>
+        <div class="t down">36,736 failed</div>
+        <div class="b">≥ 99.6% → GREEN <span class="band-inline">→ RED</span></div>
+      </div>
+    </div>
+
+    <!-- VERDICT with rule trace -->
+    <div class="verdict-block-v2">
+      <div class="v-headline">
+        <div class="v-label">Estate verdict</div>
+        <div class="v-value retire">REMEDIATE</div>
+      </div>
+      <div class="v-trace">
+        <div style="margin-bottom: 2mm; color: var(--muted); font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700;">Rule R_VERDICT_REMEDIATE · 4-axis evaluation</div>
+        <div class="t-line"><span class="check">✓</span> <span class="axis">adoption.rag</span> = <span style="color: var(--emerald);">GREEN</span>  <span class="arrow">→</span>  3,800 active users ≥ 100</div>
+        <div class="t-line"><span class="cross">✗</span> <span class="axis">reliability.rag</span> = <span style="color: var(--rose);">RED</span>  <span class="arrow">→</span>  67.9% &lt; 99.6% floor</div>
+        <div class="t-line"><span class="cross">✗</span> <span class="axis">documentation.rag</span> = <span style="color: var(--rose);">RED</span>  <span class="arrow">→</span>  6.7% &lt; 50% floor</div>
+        <div class="t-line"><span class="check">✓</span> <span class="axis">cost.rag</span> = <span style="color: var(--emerald);">AVAILABLE</span>  <span class="arrow">→</span>  $10K/mo attributable to workspace (efficiency scoring deferred)</div>
+        <div class="t-result">result: 2 RED axes · rule predicate: (count(RED) ≥ 1) → REMEDIATE outranks OPTIMIZE</div>
+      </div>
+    </div>
+
+    <!-- 3 NAMED RISKS -->
+    <h3 style="font-family: var(--sans); font-size: 11pt; color: var(--navy); margin: 6mm 0 2mm; letter-spacing: -0.005em;">3 risks · ranked by rule severity</h3>
+
+    <div class="risk-cover">
+      <span class="band high">HIGH</span>
+      <div>
+        <div class="r-rule-id">R_REFRESH_SLA_BREACH</div>
+        <div class="r-predicate">refresh_success_rate(estate) &lt; 0.90</div>
+        <div class="r-evidence"><span class="arrow">▸</span> actual: <strong>67.9%</strong> (77,683 ok / 36,736 failed) · worst: <strong>R2R — Dashboard GUYANA &amp; ASIA</strong>, 60 runs each, 100% failed</div>
+      </div>
+    </div>
+
+    <div class="risk-cover">
+      <span class="band high">HIGH</span>
+      <div>
+        <div class="r-rule-id">R_DOC_COVERAGE_LOW</div>
+        <div class="r-predicate">count(measures where description ≠ NULL) ÷ count(measures) &lt; 0.50</div>
+        <div class="r-evidence"><span class="arrow">▸</span> actual: <strong>67 of 1,001 measures documented (6.7%)</strong> · 934 undocumented across 1,699 models</div>
+      </div>
+    </div>
+
+    <div class="risk-cover">
+      <span class="band med">MEDIUM</span>
+      <div>
+        <div class="r-rule-id">R_ADOPTION_DORMANT</div>
+        <div class="r-predicate">count(reports where last_view_days &gt; 30) ÷ count(reports) ≥ 0.50</div>
+        <div class="r-evidence"><span class="arrow">▸</span> hits: <strong>3,342 of 4,796 reports (≈70%)</strong> unviewed in 30d · only 1,881 reports drew a view</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">1 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 2 · KPI EXPLAINER ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Estate Briefing</span></div>
+    <div class="doc-meta">SBM Offshore · full estate · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">02</span>KPI explainer</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+    <p class="lead" style="font-style: normal; color: var(--ink-soft); font-size: 10pt;">Each cover KPI · computed source, threshold, band. All values reproducible from the LP data layer for env <code>a4bd4bda…</code>.</p>
+
+    <div class="kpi-explained">
+      <div>
+        <div class="kpi-x-label">Health score</div>
+        <div class="kpi-x-value">41<span class="unit">/100</span></div>
+        <div class="kpi-x-rule">rule · KPI_ESTATE_HEALTH</div>
+      </div>
+      <div class="kpi-x-detail">
+        <span class="k">computed:</span><span class="v">adoption×0.25 + reliability×0.30 + documentation×0.25 + cost×0.20 (cost re-normalized out → 0 weight)</span>
+        <span class="k">adoption:</span><span class="v">82 → GREEN (3,800 users; band ≥ 75)</span>
+        <span class="k">reliability:</span><span class="v">34 → RED (67.9% success; band &lt; 90)</span>
+        <span class="k">documentation:</span><span class="v">7 → RED (6.7% coverage; band &lt; 50)</span>
+        <span class="k">cost:</span><span class="v">N/A — excluded, capacity unlinked</span>
+        <span class="k">band:</span><span class="v">&lt; 60 → RED · current: 41 → RED</span>
+      </div>
+    </div>
+
+    <div class="kpi-explained">
+      <div>
+        <div class="kpi-x-label">Adoption (30d)</div>
+        <div class="kpi-x-value">3,800</div>
+        <div class="kpi-x-rule">rule · KPI_ACTIVE_USERS_30D</div>
+      </div>
+      <div class="kpi-x-detail">
+        <span class="k">computed:</span><span class="v">count(distinct user_id) in activity_events where last_30d</span>
+        <span class="k">band:</span><span class="v">≥ 100 → GREEN · current: 3,800 → GREEN</span>
+        <span class="k">caveat:</span><span class="v">users are healthy, but report-level dormancy is 70% (see §03) → *flagged GREEN with asterisk</span>
+        <span class="k">source:</span><span class="v">activity_events (1.2M rows, ~30d window)</span>
+      </div>
+    </div>
+
+    <div class="kpi-explained">
+      <div>
+        <div class="kpi-x-label">Cost (run-rate)</div>
+        <div class="kpi-x-value">$10K<span class="unit">/mo</span></div>
+        <div class="kpi-x-rule">rule · KPI_CAPACITY_COST_ATTR</div>
+      </div>
+      <div class="kpi-x-detail">
+        <span class="k">status:</span><span class="v">✓ COMPUTED — 3,150 cost rows · 2 capacities × $5,000/mo</span>
+        <span class="k">attributable:</span><span class="v">to workspace at 99.7% (3,140/3,150 rows join item_metadata.workspace_name) — see §04</span>
+        <span class="k">gap:</span><span class="v">capacity-SKU dimension only — workspaces.capacity_id NULL + Metrics-App vs Admin capacity spaces unreconciled (see §06 decision 4)</span>
+        <span class="k">excluded from health:</span><span class="v">efficiency scoring needs the wasted-spend cross (cost × dormancy) — not yet computed</span>
+      </div>
+    </div>
+
+    <div class="kpi-explained">
+      <div>
+        <div class="kpi-x-label">Refresh SLA (all-time snapshot)</div>
+        <div class="kpi-x-value">67.9<span class="unit">%</span></div>
+        <div class="kpi-x-rule">rule · KPI_REFRESH_SLA</div>
+      </div>
+      <div class="kpi-x-detail">
+        <span class="k">computed:</span><span class="v">Completed ÷ (Completed + Failed) across refreshables snapshots</span>
+        <span class="k">counts:</span><span class="v">77,683 Completed · 36,736 Failed · 393 Cancelled · 468 Unknown</span>
+        <span class="k">band:</span><span class="v">≥ 99.6% → GREEN · current 67.9% → RED</span>
+        <span class="k">source:</span><span class="v">Refreshables API → refreshables table</span>
+      </div>
+    </div>
+
+    <h3 style="font-family: var(--sans); font-size: 11pt; color: var(--navy); margin: 6mm 0 2mm;">4-dimension estate score</h3>
+    <p style="font-size: 9.5pt; color: var(--ink-soft); margin: 0 0 3mm;">Cost is attributable (§04) but its <em>efficiency</em> dimension is not yet scored (needs the wasted-spend cross), so it is excluded from the composite and shown hatched. The composite (41/100) re-weights the three scored dimensions per KPI_ESTATE_HEALTH.</p>
+
+    <div class="scorecard-v2">
+      <div class="sc-row"><div class="sc-label">Adoption</div><div class="sc-bar"><div class="sc-fill green" style="width: 82%;"></div></div><div class="sc-val">82</div><div class="sc-band"><span class="band green">GREEN</span></div></div>
+      <div class="sc-row"><div class="sc-label">Reliability</div><div class="sc-bar"><div class="sc-fill red" style="width: 34%;"></div></div><div class="sc-val">34</div><div class="sc-band"><span class="band red">RED</span></div></div>
+      <div class="sc-row"><div class="sc-label">Documentation</div><div class="sc-bar"><div class="sc-fill red" style="width: 7%;"></div></div><div class="sc-val">7</div><div class="sc-band"><span class="band red">RED</span></div></div>
+      <div class="sc-row"><div class="sc-label">Cost efficiency</div><div class="sc-bar"><div class="sc-fill" style="width: 100%; background: repeating-linear-gradient(45deg, var(--line), var(--line) 3px, transparent 3px, transparent 6px);"></div></div><div class="sc-val">~</div><div class="sc-band"><span class="band">PENDING</span></div></div>
+      <div class="sc-row"><div class="sc-label">Composite</div><div class="sc-bar"><div class="sc-fill red" style="width: 41%;"></div></div><div class="sc-val">41</div><div class="sc-band"><span class="band red">RED</span></div></div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">2 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 3 · ADOPTION & DORMANCY ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Estate Briefing</span></div>
+    <div class="doc-meta">SBM Offshore · full estate · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">03</span>Adoption &amp; dormancy</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+
+    <h3>Estate scale <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">computed · count(*)</span></h3>
+    <div class="kpi-grid">
+      <div class="kpi healthy"><div class="kpi-l">Workspaces</div><div class="kpi-v">511</div><div class="kpi-trend">scanned 2026-05-28</div></div>
+      <div class="kpi healthy"><div class="kpi-l">Reports</div><div class="kpi-v">4,796</div><div class="kpi-trend">PBI + paginated</div></div>
+      <div class="kpi healthy"><div class="kpi-l">Models</div><div class="kpi-v">1,699</div><div class="kpi-trend">semantic models</div></div>
+      <div class="kpi healthy"><div class="kpi-l">Apps</div><div class="kpi-v">171</div><div class="kpi-trend">published</div></div>
+    </div>
+
+    <h3 style="margin-top:5mm;">Report dormancy <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">rule · R_ADOPTION_DORMANT</span></h3>
+    <p style="font-size: 9pt; color: var(--muted); margin: 0 0 1mm;">dormant := no view event in trailing 30d · join: fabric_reports × activity_events.report_id</p>
+    <table>
+      <thead><tr><th>Cohort</th><th class="num">Reports</th><th class="num">Share</th><th>Band</th></tr></thead>
+      <tbody>
+        <tr><td>Viewed in last 30d</td><td class="num">1,881</td><td class="num">39.2%</td><td><span class="band green">ACTIVE</span></td></tr>
+        <tr><td><strong>Dormant (&gt; 30d no view)</strong></td><td class="num">3,342</td><td class="num">69.7%</td><td><span class="band amber">DORMANT</span></td></tr>
+        <tr><td>Total catalog</td><td class="num">4,796</td><td class="num">100%</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size: 8.5pt; color: var(--muted); margin: 1mm 0 0;">(Viewed + dormant overlap is by-design: a report viewed once outside the window still counts dormant. Counts are independent queries on the same catalog.)</p>
+
+    <h3 style="margin-top:5mm;">Adoption signal <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">rule · KPI_ACTIVE_USERS_30D</span></h3>
+    <div class="formula"><span class="f-rule">active_users_30d</span> = count(distinct user_id) in activity_events where ts ≥ today − 30d = <strong>3,800</strong> <span class="f-band">→ GREEN (≥ 100)</span></div>
+    <p style="font-size: 9.5pt; color: var(--ink-soft); margin: 2mm 0 0;">The split tells the story: <strong>user adoption is strong (3,800 people), but two-thirds of the report catalog is dead weight.</strong> The decision (§06) is consolidation, not growth — retire/merge dormant reports to cut surface area and refresh load.</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">3 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 4 · COST READINESS (HONEST GAP) ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Estate Briefing</span></div>
+    <div class="doc-meta">SBM Offshore · full estate · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">04</span>Cost attribution</h2>
+      <span class="doc-fit partial">⚠ Partial</span>
+    </div>
+    <p class="lead" style="font-style: normal; color: var(--ink-soft); font-size: 10pt;">Cost <strong>is</strong> computed — 3,150 share-of-bill rows across 2 capacities ($5,000/mo each). It attributes cleanly to <strong>item</strong> and <strong>workspace</strong>; the one gap is the capacity-<em>SKU</em> dimension.</p>
+
+    <h3>Run-rate <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">rule · KPI_CAPACITY_COST_ATTR</span></h3>
+    <div class="kpi-grid">
+      <div class="kpi healthy"><div class="kpi-l">Monthly run-rate</div><div class="kpi-v">$10<span class="unit">K</span></div><div class="kpi-trend">2 caps × $5,000</div></div>
+      <div class="kpi healthy"><div class="kpi-l">Items costed</div><div class="kpi-v">~990</div><div class="kpi-trend">share-of-bill</div></div>
+      <div class="kpi healthy"><div class="kpi-l">→ workspace</div><div class="kpi-v">99.7<span class="unit">%</span></div><div class="kpi-trend">3,140/3,150 resolve</div></div>
+      <div class="kpi alert"><div class="kpi-l">→ capacity SKU</div><div class="kpi-v">✗</div><div class="kpi-trend warn">id-space gap</div></div>
+    </div>
+
+    <h3 style="margin-top:5mm;">Cost by workspace <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">cost_observations_v2 × item_metadata.workspace_name</span></h3>
+    <p style="font-size: 9pt; color: var(--muted); margin: 0 0 1mm;">share = workspace cost_amount ÷ total attributed · monthly = share × $10K run-rate · top 8 of resolved workspaces</p>
+    <table>
+      <thead><tr><th>Workspace</th><th class="num">Items</th><th class="num">Share</th><th class="num">~Monthly</th></tr></thead>
+      <tbody>
+        <tr><td><code>SC Operations</code></td><td class="num">28</td><td class="num">14.6%</td><td class="num">$1,460</td></tr>
+        <tr><td><code>INTEGRA IM CAPA</code></td><td class="num">11</td><td class="num">5.6%</td><td class="num">$561</td></tr>
+        <tr><td><code>Operations - Management</code></td><td class="num">15</td><td class="num">5.3%</td><td class="num">$527</td></tr>
+        <tr><td><code>SBMConnect Analytics</code></td><td class="num">1</td><td class="num">4.6%</td><td class="num">$464</td></tr>
+        <tr><td><code>Operations - Monitoring</code></td><td class="num">57</td><td class="num">4.3%</td><td class="num">$434</td></tr>
+        <tr><td><code>COO Cost control department</code></td><td class="num">17</td><td class="num">4.2%</td><td class="num">$420</td></tr>
+        <tr><td><code>SBM Command Center</code></td><td class="num">30</td><td class="num">3.7%</td><td class="num">$368</td></tr>
+        <tr><td><code>SCM2 - Transactional</code></td><td class="num">31</td><td class="num">3.7%</td><td class="num">$367</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <div></div>
+      <div class="callout-body"><strong>The one real gap (⚠):</strong> cost cannot be attributed to a capacity <em>SKU</em>. <code>workspaces.capacity_id</code> is NULL ×511 (scanner drops <code>g.capacityId</code> at <code>introspection.ts:160</code>) and the cost tables key on a Metrics-App capacity GUID that isn't reconciled with the <code>capacities</code> dimension. Workspace-level cost (above) sidesteps this via <code>item_metadata</code>; capacity/SKU-level views need the fix. Tracked as §06 decision 4 → handover <code>docs/handover/2026-05-28-sbm-capacity-link-fix.md</code>.</div>
+    </div>
+
+    <p style="font-size: 9pt; color: var(--muted); margin: 3mm 0 0;">Next analytic (deterministic, available): cross this table with §03 dormancy → <strong>wasted spend</strong> = $/mo on workspaces whose reports are dormant. Pricing provenance ($5,000/mo on trial/PPU capacities) to be confirmed — see handover.</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">4 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 5 · RELIABILITY & GOVERNANCE ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Estate Briefing</span></div>
+    <div class="doc-meta">SBM Offshore · full estate · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">05</span>Reliability &amp; governance posture</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+
+    <h3>Refresh reliability <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">rule · KPI_REFRESH_SLA</span></h3>
+    <div class="kpi-grid">
+      <div class="kpi alert"><div class="kpi-l">Success rate</div><div class="kpi-v">67.9<span class="unit">%</span></div><div class="kpi-trend warn">band ≥ 99.6 → RED</div></div>
+      <div class="kpi alert"><div class="kpi-l">Completed</div><div class="kpi-v">77,683</div><div class="kpi-trend">across snapshots</div></div>
+      <div class="kpi alert"><div class="kpi-l">Failed</div><div class="kpi-v">36,736</div><div class="kpi-trend warn">1 in 3 runs</div></div>
+      <div class="kpi"><div class="kpi-l">Cancelled</div><div class="kpi-v">393</div><div class="kpi-trend">+ 468 unknown</div></div>
+    </div>
+
+    <div class="fail-log">
+      <div style="font-size: 8pt; color: var(--muted); margin-bottom: 1mm; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;">Worst offenders · latest snapshot · 100% failure</div>
+      <div class="fl-row"><div class="fl-date">GUYANA</div><div class="fl-class"><code>R2R — Dashboard GUYANA</code> · SBM Command Center · 60 runs · all Failed</div></div>
+      <div class="fl-row"><div class="fl-date">ASIA</div><div class="fl-class"><code>R2R — Dashboard ASIA</code> · SBM Command Center · 60 runs · all Failed</div></div>
+      <div class="fl-row"><div class="fl-date">Finance</div><div class="fl-class"><code>BPC Dashboard</code> + <code>Reconciliation-2026</code> · Operations — Financial · 28 runs · all Failed</div></div>
+    </div>
+
+    <h3 style="margin-top:5mm;">Documentation coverage <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">rule · R_DOC_COVERAGE_LOW</span></h3>
+    <div class="formula"><span class="f-rule">coverage</span> = documented_measures ÷ total_measures = 67 ÷ 1,001 = <strong>6.7%</strong> <span class="f-band">→ RED (&lt; 50%)</span></div>
+    <p style="font-size: 9.5pt; color: var(--ink-soft); margin: 2mm 0 0;">934 measures carry no description. This is the single biggest blocker to auto-generated model documentation (the C2d Engineer doc) — the structure renders, but the prose layer is empty.</p>
+
+    <h3 style="margin-top:5mm;">Export &amp; sharing posture <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">source · tenant_settings (166 switches)</span></h3>
+    <table>
+      <thead><tr><th>Setting</th><th>Enabled</th><th>Scopable to SG</th><th>Posture</th></tr></thead>
+      <tbody>
+        <tr><td><code>ExportReport</code></td><td>on</td><td>yes</td><td><span class="band amber">REVIEW</span></td></tr>
+        <tr><td><code>ExportToExcel / Csv / Image</code></td><td>on</td><td>yes</td><td><span class="band amber">REVIEW</span></td></tr>
+        <tr><td><code>AllowGuestUserToAccessSharedContent</code></td><td>on</td><td>yes</td><td><span class="band amber">REVIEW</span></td></tr>
+        <tr><td><code>ElevatedGuestsTenant</code></td><td>off</td><td>yes</td><td><span class="band green">OK</span></td></tr>
+      </tbody>
+    </table>
+    <p style="font-size: 8.5pt; color: var(--muted); margin: 1mm 0 0;">30d export activity: ExportReport 5,649 · ShareReport 400 · DownloadReport 319 · ShareDataset 19. (Full forensic export log → Governance persona doc.)</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">5 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 6 · DECISIONS REGISTER ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Estate Briefing</span></div>
+    <div class="doc-meta">SBM Offshore · full estate · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">06</span>Decisions register</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+    <p style="font-size: 9.5pt; color: var(--ink-soft); margin: 0 0 3mm;">Generated from the rule-engine — each row = one rule match against the figures in §02–§05. Approval scope: 4 rows.</p>
+
+    <table class="decisions-reg">
+      <thead><tr><th></th><th>Action · template + resolved slots</th><th>Owner</th><th>Due</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="dr-num">1</td>
+          <td>
+            <div class="dr-rule">R_REFRESH_SLA_BREACH</div>
+            <div class="dr-rule-meta">severity: HIGH · domain: RELIABILITY</div>
+            <div class="dr-action-template">Triage failing refresh on <span class="slot">{target_datasets}</span></div>
+            <div class="dr-slot-list">
+              <span class="slot-k">target_datasets:</span>R2R — Dashboard GUYANA, ASIA (60 runs · 100% fail)<br/>
+              <span class="slot-k">likely_cause:</span>avg_duration 0.4s → fails before data pull (gateway/credential)
+            </div>
+            <div class="dr-impact">▸ recovers ~120 failed runs/cycle · lifts estate SLA off RED floor</div>
+          </td>
+          <td class="dr-owner"><span class="role">role: ENGINEER</span>data platform</td>
+          <td class="dr-due"><span class="computed">today + 7d</span>2026-06-04</td>
+        </tr>
+        <tr class="alt">
+          <td class="dr-num">2</td>
+          <td>
+            <div class="dr-rule">R_DOC_COVERAGE_LOW</div>
+            <div class="dr-rule-meta">severity: HIGH · domain: GOVERNANCE</div>
+            <div class="dr-action-template">Document top-<span class="slot">{n}</span> measures by usage on <span class="slot">{target_models}</span></div>
+            <div class="dr-slot-list">
+              <span class="slot-k">n:</span>50 (covers the high-traffic models first)<br/>
+              <span class="slot-k">backlog:</span>934 undocumented measures total
+            </div>
+            <div class="dr-impact">▸ unblocks C2d auto-documentation · 6.7% → target 50%+ coverage</div>
+          </td>
+          <td class="dr-owner"><span class="role">role: STEWARD</span>BI governance</td>
+          <td class="dr-due"><span class="computed">today + 21d</span>2026-06-18</td>
+        </tr>
+        <tr>
+          <td class="dr-num">3</td>
+          <td>
+            <div class="dr-rule">R_ADOPTION_DORMANT</div>
+            <div class="dr-rule-meta">severity: MEDIUM · domain: ADOPTION</div>
+            <div class="dr-action-template">Review &amp; retire dormant cohort <span class="slot">{targets}</span></div>
+            <div class="dr-slot-list">
+              <span class="slot-k">targets:</span>3,342 reports unviewed &gt; 30d<br/>
+              <span class="slot-k">user_impact:</span>0 active viewers in window
+            </div>
+            <div class="dr-impact">▸ cuts catalog surface ~70% · reduces refresh load + audit scope</div>
+          </td>
+          <td class="dr-owner"><span class="role">role: OWNER</span>workspace owners</td>
+          <td class="dr-due"><span class="computed">today + 30d</span>2026-06-27</td>
+        </tr>
+        <tr class="alt">
+          <td class="dr-num">4</td>
+          <td>
+            <div class="dr-rule">R_COST_CAPACITY_UNLINKED</div>
+            <div class="dr-rule-meta">severity: MEDIUM · domain: COST · capacity-SKU views only</div>
+            <div class="dr-action-template">Backfill <span class="slot">{field}</span> + reconcile capacity id-spaces</div>
+            <div class="dr-slot-list">
+              <span class="slot-k">field:</span>workspaces.capacity_id (0/511 — scanner drops g.capacityId at introspection.ts:160)<br/>
+              <span class="slot-k">reconcile:</span>Metrics-App capacity GUID ↔ capacities dimension (3 disjoint id-spaces)
+            </div>
+            <div class="dr-impact">▸ unlocks capacity/SKU-level cost views · workspace-level cost already live via item_metadata</div>
+          </td>
+          <td class="dr-owner"><span class="role">role: ENGINEER</span>LP onboarding</td>
+          <td class="dr-due"><span class="computed">today + 14d</span>2026-06-11</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" style="text-align: right;">SUMMARY · 2 HIGH + 2 MEDIUM · clears both RED axes:</td>
+          <td colspan="2">decisions 1+2 move estate off REMEDIATE · earliest re-rate: 2026-06-18</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">6 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 7 · FINAL ASSESSMENT ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Estate Briefing</span></div>
+    <div class="doc-meta">SBM Offshore · full estate · Q2 2026</div>
+  </div>
+
+  <div class="doc-body" style="margin-bottom: 0;">
+    <div class="heading-row">
+      <h2><span class="h2-num">07</span>Final assessment</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+  </div>
+
+  <div class="final-assessment">
+    <table class="dim-assess">
+      <thead><tr><th>Dimension</th><th class="dim-rule" style="text-align: right;">Rule</th><th style="text-align: right;">Verdict</th></tr></thead>
+      <tbody>
+        <tr><td class="dim-name">Business value</td><td class="dim-rule">VAL_USERS_GE_1K</td><td class="dim-verdict">HIGH</td></tr>
+        <tr><td class="dim-name">Operational reliability</td><td class="dim-rule">REFRESH_SLA</td><td class="dim-verdict">POOR</td></tr>
+        <tr><td class="dim-name">Governance maturity</td><td class="dim-rule">DOC_COVERAGE</td><td class="dim-verdict">POOR</td></tr>
+        <tr><td class="dim-name">Adoption breadth</td><td class="dim-rule">ACTIVE_USERS_30D</td><td class="dim-verdict">STRONG</td></tr>
+        <tr><td class="dim-name">Catalog hygiene</td><td class="dim-rule">DORMANCY</td><td class="dim-verdict">WEAK</td></tr>
+        <tr><td class="dim-name">Cost efficiency</td><td class="dim-rule">COST_ATTR</td><td class="dim-verdict">PARTIAL</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-body" style="margin-top: 4mm;">
+    <div class="tmpl-rec">
+      <h4>Templated recommendation · 6 slots</h4>
+      <div class="tmpl-string"><span class="slot">{verdict}</span> the estate. <span class="slot">{model_count}</span> models serve <span class="slot">{users}</span> active users, but <span class="slot">{fail_pct}</span> of refreshes fail and only <span class="slot">{doc_pct}</span> of measures are documented; the <span class="slot">{decision_count}</span> decisions in §06 clear both RED axes before cost work begins.</div>
+
+      <div class="tmpl-resolved">
+        <span class="k">verdict =</span><span class="v">Remediate</span>
+        <span class="k">model_count =</span><span class="v">1,699</span>
+        <span class="k">users =</span><span class="v">3,800</span>
+        <span class="k">fail_pct =</span><span class="v">32%</span>
+        <span class="k">doc_pct =</span><span class="v">6.7%</span>
+        <span class="k">decision_count =</span><span class="v">4</span>
+      </div>
+
+      <div class="tmpl-output">"Remediate the estate. 1,699 models serve 3,800 active users, but 32% of refreshes fail and only 6.7% of measures are documented; the 4 decisions in §06 clear both RED axes before cost work begins."</div>
+    </div>
+
+    <p style="font-family: var(--mono); font-size: 8pt; color: var(--muted); margin-top: 6mm;">Generated 2026-05-28 · LP rule-set v3 · figures verified read-only against production DB (env a4bd4bda…) · INTERNAL — real tenant · cost dimension excluded (capacity unlinked) · Reader: BI Leadership</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">7 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

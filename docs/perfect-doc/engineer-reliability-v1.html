@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Refresh Reliability Diagnostic — SBM Offshore · LayerPulse [INTERNAL]</title>
+<link rel="stylesheet" href="../../public/review/perfect-doc/doc.css"/>
+</head>
+<body>
+
+<!-- ══════ INTERNAL ARTIFACT — real tenant data. Not for public/review/. ══════ -->
+<div style="max-width: 210mm; margin: 0 auto 6mm; padding: 4mm 6mm; background: #7f1d1d; color: #fff; font-family: ui-monospace, monospace; font-size: 9pt; line-height: 1.5; border-radius: 4px;">
+  <strong style="color:#FFBF3C;">INTERNAL · real production data.</strong>
+  Real tenant (SBM Offshore, env <code>a4bd4bda…</code>), figures verified read-only from <code>refreshables</code> (the real reliability source — 131K snapshots). <code>refresh_events</code> is excluded: it is a dev fixture, not production. Root-cause error messages are a <strong style="color:#fca5a5;">✗ Gap</strong> (not captured in prod — see §05). Ground reference: <code>docs/research/2026-05-28-production-db-content-map.md</code>.
+</div>
+
+<div class="doc-shell">
+
+<!-- ═══════════════════════ PAGE 1 · COVER ═══════════════════════ -->
+<div class="doc-page">
+  <div class="cover-v2-band">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse · Refresh Reliability Diagnostic</div>
+    <h1>SBM Offshore</h1>
+    <p class="doc-sub">Semantic-model refresh health · latest snapshot 2026-05-28 02:02 UTC · 329 workspaces</p>
+  </div>
+
+  <div class="doc-body">
+
+    <div class="kpi-cover-grid">
+      <div class="kpi-cover-card">
+        <div class="l">Success (snapshot)</div>
+        <div class="v">67<span class="unit">%</span></div>
+        <div class="t down">1,387 ok / 674 fail</div>
+        <div class="b">≥ 99.6% → GREEN <span class="band-inline">→ RED</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">Failed datasets</div>
+        <div class="v">674</div>
+        <div class="t down">of 2,061 w/ outcome</div>
+        <div class="b">≤ 2% → GREEN <span class="band-inline">→ RED</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">OnDemand fail</div>
+        <div class="v">37<span class="unit">%</span></div>
+        <div class="t down">vs 30% Scheduled</div>
+        <div class="b">manual &gt; auto <span class="band-inline">→ AMBER</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">Datasets tracked</div>
+        <div class="v">2,378</div>
+        <div class="t warn">290 never refreshed</div>
+        <div class="b">snapshot scope <span class="band-inline">→ INFO</span></div>
+      </div>
+    </div>
+
+    <div class="verdict-block-v2">
+      <div class="v-headline">
+        <div class="v-label">Reliability verdict</div>
+        <div class="v-value retire">STABILIZE</div>
+      </div>
+      <div class="v-trace">
+        <div style="margin-bottom: 2mm; color: var(--muted); font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700;">Rule R_VERDICT_STABILIZE · 3-axis evaluation</div>
+        <div class="t-line"><span class="cross">✗</span> <span class="axis">fail_rate</span> = <span style="color: var(--rose);">RED</span>  <span class="arrow">→</span>  32.7% &gt; 10% intervention floor</div>
+        <div class="t-line"><span class="cross">✗</span> <span class="axis">total_fail_clusters</span> = <span style="color: var(--rose);">RED</span>  <span class="arrow">→</span>  ≥ 1 workspace at 100% fail</div>
+        <div class="t-line"><span class="check">✓</span> <span class="axis">latency</span> = <span style="color: var(--emerald);">GREEN</span>  <span class="arrow">→</span>  slowest avg 12s; not a perf problem</div>
+        <div class="t-result">result: failure-rate problem, not a latency problem · rule: (fail_rate &gt; 0.10) → STABILIZE</div>
+      </div>
+    </div>
+
+    <h3 style="font-family: var(--sans); font-size: 11pt; color: var(--navy); margin: 6mm 0 2mm; letter-spacing: -0.005em;">3 findings · ranked by rule severity</h3>
+
+    <div class="risk-cover">
+      <span class="band high">HIGH</span>
+      <div>
+        <div class="r-rule-id">R_REFRESH_TOTAL_FAIL</div>
+        <div class="r-predicate">count(dataset where fail_rate == 100% over ≥ 20 runs) ≥ 1</div>
+        <div class="r-evidence"><span class="arrow">▸</span> <strong>R2R — Dashboard GUYANA &amp; ASIA</strong> (60 runs, 100% fail) · workspace <strong>Document Control [UAT]</strong> 20/20 datasets failing</div>
+      </div>
+    </div>
+
+    <div class="risk-cover">
+      <span class="band high">HIGH</span>
+      <div>
+        <div class="r-rule-id">R_REFRESH_RATE_HIGH</div>
+        <div class="r-predicate">snapshot_fail_rate &gt; 0.10</div>
+        <div class="r-evidence"><span class="arrow">▸</span> actual: <strong>32.7%</strong> (674/2,061) · OnDemand 37% &gt; Scheduled 30% — manual reruns failing more than the schedule</div>
+      </div>
+    </div>
+
+    <div class="risk-cover">
+      <span class="band med">GAP</span>
+      <div>
+        <div class="r-rule-id">R_NO_ERROR_CAPTURE</div>
+        <div class="r-predicate">exists(failure_reason on refreshables) == false</div>
+        <div class="r-evidence"><span class="arrow">▸</span> LP records <em>which</em> dataset failed + <em>how often</em>, but not <em>why</em> — no error-message field on the real refresh table (see §05)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">1 / 6</span>
+    <span class="doc-confidential">Internal · Data Platform Engineering</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 2 · FAILURE LANDSCAPE ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Refresh Reliability Diagnostic</span></div>
+    <div class="doc-meta">SBM Offshore · snapshot 2026-05-28</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">02</span>Failure landscape</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+    <p class="lead" style="font-style: normal; color: var(--ink-soft); font-size: 10pt;">Source: <code>refreshables</code>, latest snapshot per dataset. 2,378 datasets tracked; 2,061 carry a refresh outcome (290 never refreshed; 19 Unknown / 6 Cancelled set aside).</p>
+
+    <h3>Outcome × trigger type <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">rule · REFRESH_OUTCOME_MATRIX</span></h3>
+    <table>
+      <thead><tr><th>Trigger</th><th class="num">Completed</th><th class="num">Failed</th><th class="num">Fail %</th><th>Band</th></tr></thead>
+      <tbody>
+        <tr><td><code>Scheduled</code></td><td class="num">819</td><td class="num">351</td><td class="num">30%</td><td><span class="band red">RED</span></td></tr>
+        <tr><td><code>OnDemand</code></td><td class="num">499</td><td class="num">298</td><td class="num">37%</td><td><span class="band red">RED</span></td></tr>
+        <tr><td><code>ViaApi</code></td><td class="num">48</td><td class="num">25</td><td class="num">34%</td><td><span class="band red">RED</span></td></tr>
+        <tr><td><code>FullSchemaRefresh / Enhanced</code></td><td class="num">21</td><td class="num">0</td><td class="num">0%</td><td><span class="band green">GREEN</span></td></tr>
+        <tr><td><strong>All (with outcome)</strong></td><td class="num"><strong>1,387</strong></td><td class="num"><strong>674</strong></td><td class="num"><strong>32.7%</strong></td><td><span class="band red">RED</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <div></div>
+      <div class="callout-body"><strong>Signal:</strong> OnDemand fails <em>more</em> than Scheduled (37% vs 30%). Manual reruns are not recovering — they hit the same underlying fault. This points at a persistent source/credential issue, not transient scheduler contention.</div>
+    </div>
+
+    <h3 style="margin-top:5mm;">Cumulative history <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">all snapshots</span></h3>
+    <div class="formula"><span class="f-rule">cumulative_success</span> = 77,683 ÷ (77,683 + 36,736) = <strong>67.9%</strong> <span class="f-band">→ matches the 67.3% current snapshot — this is chronic, not a spike</span></div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">2 / 6</span>
+    <span class="doc-confidential">Internal · Data Platform Engineering</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 3 · WORST OFFENDERS ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Refresh Reliability Diagnostic</span></div>
+    <div class="doc-meta">SBM Offshore · snapshot 2026-05-28</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">03</span>Worst offenders</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+
+    <h3>By workspace <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">rule · WS_FAIL_RATE · top by failed count</span></h3>
+    <table>
+      <thead><tr><th>Workspace</th><th class="num">Datasets</th><th class="num">Failed</th><th class="num">Fail %</th><th>Band</th></tr></thead>
+      <tbody>
+        <tr><td><code>Document Control [UAT]</code></td><td class="num">20</td><td class="num">20</td><td class="num">100%</td><td><span class="band red">RED</span></td></tr>
+        <tr><td><code>Engineering Data Maturity</code></td><td class="num">21</td><td class="num">14</td><td class="num">67%</td><td><span class="band red">RED</span></td></tr>
+        <tr><td><code>Operations - Fleet Personnel</code></td><td class="num">21</td><td class="num">14</td><td class="num">67%</td><td><span class="band red">RED</span></td></tr>
+        <tr><td><code>Operations - Financial</code></td><td class="num">23</td><td class="num">15</td><td class="num">65%</td><td><span class="band red">RED</span></td></tr>
+        <tr><td><code>Operations - Assets Integrity</code></td><td class="num">52</td><td class="num">20</td><td class="num">38%</td><td><span class="band amber">AMBER</span></td></tr>
+        <tr><td><code>Operations - Monitoring</code></td><td class="num">51</td><td class="num">18</td><td class="num">35%</td><td><span class="band amber">AMBER</span></td></tr>
+        <tr><td><code>INTEGRA Training</code></td><td class="num">77</td><td class="num">22</td><td class="num">29%</td><td><span class="band amber">AMBER</span></td></tr>
+        <tr><td><code>HR – Reporting and Analytics</code></td><td class="num">81</td><td class="num">16</td><td class="num">20%</td><td><span class="band amber">AMBER</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:5mm;">By dataset · 100% failure <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">rule · DS_TOTAL_FAIL</span></h3>
+    <div class="fail-log">
+      <div style="font-size: 8pt; color: var(--muted); margin-bottom: 1mm; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;">every run failing — highest run-count first</div>
+      <div class="fl-row"><div class="fl-date">60 / 60</div><div class="fl-class"><code>R2R — Dashboard GUYANA</code> · SBM Command Center</div></div>
+      <div class="fl-row"><div class="fl-date">60 / 60</div><div class="fl-class"><code>R2R — Dashboard ASIA</code> · SBM Command Center</div></div>
+      <div class="fl-row"><div class="fl-date">28 / 28</div><div class="fl-class"><code>BPC Dashboard</code> + <code>Reconciliation - 2026</code> · Operations — Financial</div></div>
+      <div class="fl-row"><div class="fl-date">21 / 21</div><div class="fl-class"><code>Water Injection Monthly Report</code> · Operations — Monitoring</div></div>
+      <div class="fl-row"><div class="fl-date">20 / 20</div><div class="fl-class"><code>R2R — KPI12 / GLOBAL / BRAZIL</code> · SBM Command Center</div></div>
+    </div>
+    <p style="font-size: 9pt; color: var(--ink-soft); margin: 3mm 0 0;">The <strong>SBM Command Center</strong> R2R dashboard family and the <strong>Operations — Financial</strong> reconciliation pair are the highest-value, highest-failure targets. Fixing these two clusters clears the largest block of failed runs.</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">3 / 6</span>
+    <span class="doc-confidential">Internal · Data Platform Engineering</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 4 · LATENCY PROFILE ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Refresh Reliability Diagnostic</span></div>
+    <div class="doc-meta">SBM Offshore · snapshot 2026-05-28</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">04</span>Latency profile</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+    <p class="lead" style="font-style: normal; color: var(--ink-soft); font-size: 10pt;">Included to rule it out: refresh <em>duration</em> is healthy. The reliability problem is failures, not slowness — don't chase performance tuning here.</p>
+
+    <h3>Slowest completed refreshes <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">average_duration_ms desc</span></h3>
+    <table>
+      <thead><tr><th>Dataset</th><th>Workspace</th><th class="num">Avg</th><th>Band</th></tr></thead>
+      <tbody>
+        <tr><td><code>Category Dashboard</code></td><td>SC Operations</td><td class="num">12.0s</td><td><span class="band green">GOOD</span></td></tr>
+        <tr><td><code>Actual Consistency Report SO1720</code></td><td>Engineering Data Maturity</td><td class="num">3.2s</td><td><span class="band green">GOOD</span></td></tr>
+        <tr><td><code>AB_Tracker_DatasetOnly</code></td><td>AB Tracker_Master</td><td class="num">3.2s</td><td><span class="band green">GOOD</span></td></tr>
+        <tr><td><code>MRS - Performance</code></td><td>SC Operations</td><td class="num">3.0s</td><td><span class="band green">GOOD</span></td></tr>
+        <tr><td><code>Barrier Management Report</code></td><td>Operations - Case for change</td><td class="num">2.9s</td><td><span class="band green">GOOD</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="drift-block" style="margin-top:4mm;">
+      <div class="d-formula">slowest avg = <strong style="color: var(--navy);">12.0s</strong> · p-typical ≈ 2–3s</div>
+      <div class="d-result">rule: avg_duration ≤ 600s → GREEN <span class="band green" style="margin-left: 6px;">GREEN</span> — no latency intervention warranted</div>
+    </div>
+    <p style="font-size: 9pt; color: var(--muted); margin: 3mm 0 0;">Engineering conclusion: triage capacity is best spent on the failure clusters in §03, not on refresh-duration optimization.</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">4 / 6</span>
+    <span class="doc-confidential">Internal · Data Platform Engineering</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 5 · ROOT-CAUSE GAP ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Refresh Reliability Diagnostic</span></div>
+    <div class="doc-meta">SBM Offshore · snapshot 2026-05-28</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">05</span>Root-cause capture</h2>
+      <span class="doc-fit gap">✗ Gap</span>
+    </div>
+
+    <div class="drift-block" style="border-left: 2mm solid var(--rose);">
+      <div class="d-formula" style="color: var(--navy); font-weight: 700;">LP knows WHICH datasets fail and HOW OFTEN — but not WHY.</div>
+      <div class="d-result" style="margin-top:2mm;">The real reliability table (<code>refreshables</code>) carries status + counts + durations, but <strong>no error-message field</strong>. The table that would (<code>refresh_events.error_message</code>) is a dev fixture (104 rows, all "credentials expired (dev fixture)", 17 models) — not production.</div>
+    </div>
+
+    <h3 style="margin-top:5mm;">What's captured vs missing <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">field audit</span></h3>
+    <table>
+      <thead><tr><th>Signal</th><th>Source</th><th>State</th></tr></thead>
+      <tbody>
+        <tr><td>Which dataset failed</td><td><code>refreshables.last_refresh_status</code></td><td><span class="band green">✓ LIVE</span></td></tr>
+        <tr><td>How often / how many runs</td><td><code>refreshables.refresh_count</code></td><td><span class="band green">✓ LIVE</span></td></tr>
+        <tr><td>When (last start/end)</td><td><code>refreshables.last_refresh_*</code></td><td><span class="band green">✓ LIVE</span></td></tr>
+        <tr><td>Duration</td><td><code>average/median_duration_ms</code></td><td><span class="band green">✓ LIVE</span></td></tr>
+        <tr><td><strong>Why it failed (error)</strong></td><td>— (no field on refreshables)</td><td><span class="band red">✗ GAP</span></td></tr>
+        <tr><td><strong>Per-run history</strong></td><td><code>refresh_events</code> (dev fixture only)</td><td><span class="band red">✗ GAP</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:5mm;">Remediation <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">LP-product backlog candidate</span></h3>
+    <p style="font-size: 9.5pt; color: var(--ink-soft); margin: 0;">The Fabric Refreshables API returns a <code>serviceExceptionJson</code> / error payload on failed refreshes. Capturing it onto <code>refreshables</code> (or populating <code>refresh_events</code> from real data) would turn this diagnostic from "667 datasets are failing" into "667 datasets are failing because of <em>these 3 error classes</em>" — the difference between a symptom and a work order.</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">5 / 6</span>
+    <span class="doc-confidential">Internal · Data Platform Engineering</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 6 · DECISIONS + ASSESSMENT ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Refresh Reliability Diagnostic</span></div>
+    <div class="doc-meta">SBM Offshore · snapshot 2026-05-28</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">06</span>Decisions &amp; assessment</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+
+    <table class="decisions-reg">
+      <thead><tr><th></th><th>Action · template + resolved slots</th><th>Owner</th><th>Due</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="dr-num">1</td>
+          <td>
+            <div class="dr-rule">R_REFRESH_TOTAL_FAIL</div>
+            <div class="dr-rule-meta">severity: HIGH · the 100%-fail clusters</div>
+            <div class="dr-action-template">Triage credentials/gateway on <span class="slot">{clusters}</span></div>
+            <div class="dr-slot-list">
+              <span class="slot-k">clusters:</span>SBM Command Center R2R family · Operations — Financial (BPC + Reconciliation)<br/>
+              <span class="slot-k">hypothesis:</span>OnDemand 37% &gt; Scheduled → persistent source/credential fault, not scheduler
+            </div>
+            <div class="dr-impact">▸ clears the largest single block of failed runs (≥ 200 runs/cycle)</div>
+          </td>
+          <td class="dr-owner"><span class="role">role: ENGINEER</span>data platform</td>
+          <td class="dr-due"><span class="computed">today + 5d</span>2026-06-02</td>
+        </tr>
+        <tr class="alt">
+          <td class="dr-num">2</td>
+          <td>
+            <div class="dr-rule">R_NO_ERROR_CAPTURE</div>
+            <div class="dr-rule-meta">severity: MEDIUM · GAP · LP-product</div>
+            <div class="dr-action-template">Capture <span class="slot">{field}</span> from Refreshables API</div>
+            <div class="dr-slot-list">
+              <span class="slot-k">field:</span>serviceExceptionJson / error → refreshables (new column) or refresh_events from real data
+            </div>
+            <div class="dr-impact">▸ turns "667 failing" into "failing for these 3 reasons" — backlog candidate</div>
+          </td>
+          <td class="dr-owner"><span class="role">role: LP-PRODUCT</span>collector team</td>
+          <td class="dr-due"><span class="computed">backlog</span>Tier</td>
+        </tr>
+        <tr>
+          <td class="dr-num">3</td>
+          <td>
+            <div class="dr-rule">R_UAT_NOISE</div>
+            <div class="dr-rule-meta">severity: LOW · scope hygiene</div>
+            <div class="dr-action-template">Confirm whether <span class="slot">{ws}</span> failures are in-scope</div>
+            <div class="dr-slot-list">
+              <span class="slot-k">ws:</span>Document Control [UAT] (100% fail) — UAT env may be expected-broken
+            </div>
+            <div class="dr-impact">▸ excludes non-prod noise from the SLA denominator</div>
+          </td>
+          <td class="dr-owner"><span class="role">role: OWNER</span>BI governance</td>
+          <td class="dr-due"><span class="computed">today + 10d</span>2026-06-07</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tmpl-rec" style="margin-top:4mm;">
+      <h4>Templated recommendation · 5 slots</h4>
+      <div class="tmpl-string"><span class="slot">{verdict}</span>: <span class="slot">{fail_rate}</span> of refreshes fail across <span class="slot">{datasets}</span> datasets — a <em>failure</em> problem, not latency (slowest <span class="slot">{slowest}</span>). Start with the <span class="slot">{clusters}</span> 100%-fail clusters; root-cause is blind until error capture lands.</div>
+      <div class="tmpl-resolved">
+        <span class="k">verdict =</span><span class="v">Stabilize</span>
+        <span class="k">fail_rate =</span><span class="v">32.7%</span>
+        <span class="k">datasets =</span><span class="v">2,061</span>
+        <span class="k">slowest =</span><span class="v">12s</span>
+        <span class="k">clusters =</span><span class="v">2</span>
+      </div>
+      <div class="tmpl-output">"Stabilize: 32.7% of refreshes fail across 2,061 datasets — a failure problem, not latency (slowest 12s). Start with the 2 100%-fail clusters; root-cause is blind until error capture lands."</div>
+    </div>
+
+    <p style="font-family: var(--mono); font-size: 8pt; color: var(--muted); margin-top: 5mm;">Generated 2026-05-28 · LP rule-set v3 · source refreshables (real); refresh_events excluded (dev fixture) · figures verified read-only against production DB (env a4bd4bda…) · INTERNAL · Reader: Data Platform Engineering</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">6 / 6</span>
+    <span class="doc-confidential">Internal · Data Platform Engineering</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

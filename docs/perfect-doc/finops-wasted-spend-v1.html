@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Wasted-Spend Analysis — SBM Offshore · LayerPulse [INTERNAL]</title>
+<link rel="stylesheet" href="../../public/review/perfect-doc/doc.css"/>
+</head>
+<body>
+
+<!-- ══════ INTERNAL ARTIFACT — real tenant data. Not for public/review/. ══════ -->
+<div style="max-width: 210mm; margin: 0 auto 6mm; padding: 4mm 6mm; background: #7f1d1d; color: #fff; font-family: ui-monospace, monospace; font-size: 9pt; line-height: 1.5; border-radius: 4px;">
+  <strong style="color:#FFBF3C;">INTERNAL · real production data.</strong>
+  Real tenant (SBM Offshore, env <code>a4bd4bda…</code>). Cost = <code>cost_observations_v2</code> × <code>item_metadata</code> (99.7% join); adoption = <code>activity_events</code> 30d. Window totals are at monthly-rate grain (cost_amount = cu_share × monthly_cost); $/mo = share × $10K run-rate. The headline guards against a measurement artifact — see §03/§04. Ground reference: <code>docs/research/2026-05-28-production-db-content-map.md</code>.
+</div>
+
+<div class="doc-shell">
+
+<!-- ═══════════════════════ PAGE 1 · COVER ═══════════════════════ -->
+<div class="doc-page">
+  <div class="cover-v2-band">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse · Wasted-Spend Analysis</div>
+    <h1>SBM Offshore</h1>
+    <p class="doc-sub">Cost × adoption · ~$10K/mo capacity run-rate · 992 costed items · 2026-05-28</p>
+  </div>
+
+  <div class="doc-body">
+
+    <div class="kpi-cover-grid">
+      <div class="kpi-cover-card">
+        <div class="l">Run-rate</div>
+        <div class="v">$10K<span class="unit">/mo</span></div>
+        <div class="t warn">2 capacities</div>
+        <div class="b">990 items costed <span class="band-inline">→ LIVE</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">User-facing waste</div>
+        <div class="v">&lt;0.2<span class="unit">%</span></div>
+        <div class="t up">~$18/mo</div>
+        <div class="b">datasets+reports <span class="band-inline">→ GREEN</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">Dataflow blind spot</div>
+        <div class="v">$1.25<span class="unit">K/mo</span></div>
+        <div class="t warn">142 ETL flows</div>
+        <div class="b">no observable consumer <span class="band-inline">→ AMBER</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">Top cost workspace</div>
+        <div class="v">15<span class="unit">%</span></div>
+        <div class="t warn">SC Operations</div>
+        <div class="b">~$1,460/mo <span class="band-inline">→ INFO</span></div>
+      </div>
+    </div>
+
+    <div class="verdict-block-v2">
+      <div class="v-headline">
+        <div class="v-label">Spend verdict</div>
+        <div class="v-value">INVESTIGATE</div>
+      </div>
+      <div class="v-trace">
+        <div style="margin-bottom: 2mm; color: var(--muted); font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700;">Rule R_VERDICT_INVESTIGATE · 3-axis evaluation</div>
+        <div class="t-line"><span class="check">✓</span> <span class="axis">user_facing_waste</span> = <span style="color: var(--emerald);">GREEN</span>  <span class="arrow">→</span>  &lt;0.2% — user estate is well-utilized</div>
+        <div class="t-line"><span class="cross">⚠</span> <span class="axis">dataflow_orphans</span> = <span style="color: var(--amber);">UNKNOWN</span>  <span class="arrow">→</span>  $1.25K/mo on 142 flows, no consumer signal</div>
+        <div class="t-line"><span class="cross">⚠</span> <span class="axis">lineage_available</span> = <span style="color: var(--amber);">GAP</span>  <span class="arrow">→</span>  can't confirm orphan vs feeding-active</div>
+        <div class="t-result">result: no confirmable waste today; the actionable $ is gated behind a lineage gap (§04)</div>
+      </div>
+    </div>
+
+    <h3 style="font-family: var(--sans); font-size: 11pt; color: var(--navy); margin: 6mm 0 2mm; letter-spacing: -0.005em;">3 findings · ranked</h3>
+
+    <div class="risk-cover">
+      <span class="band low">GOOD</span>
+      <div>
+        <div class="r-rule-id">R_USER_SPEND_UTILIZED</div>
+        <div class="r-predicate">cost(datasets+reports with 0 activity) ÷ total_cost &lt; 0.01</div>
+        <div class="r-evidence"><span class="arrow">▸</span> only <strong>~$89/window (~$18/mo)</strong> of user-facing item cost is on unused items — the naive "retire dormant models" lever recovers almost nothing here</div>
+      </div>
+    </div>
+
+    <div class="risk-cover">
+      <span class="band med">AMBER</span>
+      <div>
+        <div class="r-rule-id">R_DATAFLOW_NO_CONSUMER</div>
+        <div class="r-predicate">cost(dataflows with 0 downstream-activity signal) flagged for review</div>
+        <div class="r-evidence"><span class="arrow">▸</span> <strong>142 dataflows = $1.25K/mo (12.5%)</strong> with no observable consumer · top: VQR Microsite, FACT_WORK_ORDER_HISTORY, FACT_OBT_ETL</div>
+      </div>
+    </div>
+
+    <div class="risk-cover">
+      <span class="band high">GAP</span>
+      <div>
+        <div class="r-rule-id">R_NO_LINEAGE</div>
+        <div class="r-predicate">exists(dataflow → dataset/report edge) == false</div>
+        <div class="r-evidence"><span class="arrow">▸</span> dataflows emit no view events by design — "orphan vs feeding-an-active-model" is undecidable without lineage LP doesn't yet capture (§04)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">1 / 6</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 2 · COST CONCENTRATION ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Wasted-Spend Analysis</span></div>
+    <div class="doc-meta">SBM Offshore · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">02</span>Where the money goes</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+    <p class="lead" style="font-style: normal; color: var(--ink-soft); font-size: 10pt;">$10K/mo across 2 capacities, attributed to ~990 items and rolled up to workspace via <code>item_metadata</code> (99.7%). Before hunting waste, see the concentration.</p>
+
+    <h3>Top workspaces by spend <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">share × $10K run-rate</span></h3>
+    <table>
+      <thead><tr><th>Workspace</th><th class="num">Items</th><th class="num">Share</th><th class="num">~$/mo</th></tr></thead>
+      <tbody>
+        <tr><td><code>SC Operations</code></td><td class="num">28</td><td class="num">14.6%</td><td class="num">$1,460</td></tr>
+        <tr><td><code>INTEGRA IM CAPA</code></td><td class="num">11</td><td class="num">5.6%</td><td class="num">$561</td></tr>
+        <tr><td><code>Operations - Management</code></td><td class="num">15</td><td class="num">5.3%</td><td class="num">$527</td></tr>
+        <tr><td><code>SBMConnect Analytics</code></td><td class="num">1</td><td class="num">4.6%</td><td class="num">$464</td></tr>
+        <tr><td><code>Operations - Monitoring</code></td><td class="num">57</td><td class="num">4.3%</td><td class="num">$434</td></tr>
+        <tr><td><code>COO Cost control department</code></td><td class="num">17</td><td class="num">4.2%</td><td class="num">$420</td></tr>
+        <tr><td><code>SBM Command Center</code></td><td class="num">30</td><td class="num">3.7%</td><td class="num">$368</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size: 9pt; color: var(--muted); margin: 1mm 0 0;">Note <code>SBMConnect Analytics</code>: <strong>1 item = 4.6% of the entire bill ($464/mo)</strong>. A single heavy model is the most concentrated spend in the estate — a prime optimization target if its adoption doesn't justify it (it is active; see §03).</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">2 / 6</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 3 · COST vs ADOPTION ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Wasted-Spend Analysis</span></div>
+    <div class="doc-meta">SBM Offshore · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">03</span>Cost vs adoption</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+    <p class="lead" style="font-style: normal; color: var(--ink-soft); font-size: 10pt;">Cross every costed item against 30-day activity (item_id / dataset_id / report_id). The naive waste lever — "things that cost money but nobody uses" — and what it actually finds.</p>
+
+    <h3>Costed items by activity <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">rule · COST_VS_ACTIVITY</span></h3>
+    <table>
+      <thead><tr><th>Cohort</th><th class="num">Items</th><th class="num">Share of cost</th><th>Read</th></tr></thead>
+      <tbody>
+        <tr><td>Active in 30d</td><td class="num">840</td><td class="num">87.2%</td><td><span class="band green">EARNING</span></td></tr>
+        <tr><td>No 30d activity</td><td class="num">152</td><td class="num">12.8%</td><td><span class="band amber">SUSPECT</span></td></tr>
+        <tr><td><strong>Total</strong></td><td class="num"><strong>992</strong></td><td class="num"><strong>100%</strong></td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:5mm;">But split the "suspect" 12.8% by item kind <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">the honesty check</span></h3>
+    <table>
+      <thead><tr><th>Kind</th><th class="num">Items</th><th class="num">~$/mo</th><th>Is "no activity" valid waste signal?</th></tr></thead>
+      <tbody>
+        <tr><td><code>Dataflow</code></td><td class="num">142</td><td class="num">$1,250</td><td><span class="band amber">NO — ETL emits no view events</span></td></tr>
+        <tr><td><code>Dataset</code></td><td class="num">4</td><td class="num">$15</td><td><span class="band green">yes</span></td></tr>
+        <tr><td><code>Report / Paginated</code></td><td class="num">3</td><td class="num">$3</td><td><span class="band green">yes</span></td></tr>
+        <tr><td><code>Activator / other</code></td><td class="num">3</td><td class="num">$11</td><td><span class="band green">yes</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout success">
+      <div></div>
+      <div class="callout-body"><strong>Finding (positive + honest):</strong> genuine user-facing waste is <strong>~$18/mo</strong> (datasets + reports nobody opened). SBM's user-facing BI spend is <strong>well-utilized</strong> — the "retire dormant models to save money" lever recovers almost nothing here. <strong>98% of the apparent "waste" is Dataflows</strong>, where "no view event" is expected, not wasteful. That moves the real question to §04.</div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">3 / 6</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 4 · DATAFLOW BLIND SPOT ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Wasted-Spend Analysis</span></div>
+    <div class="doc-meta">SBM Offshore · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">04</span>The dataflow blind spot</h2>
+      <span class="doc-fit gap">✗ Gap</span>
+    </div>
+    <p class="lead" style="font-style: normal; color: var(--ink-soft); font-size: 10pt;">142 dataflows consume <strong>$1.25K/mo</strong> with no observable consumer. Some are genuinely orphaned (feeding nothing used); some feed active models. <strong>We can't tell which without lineage.</strong></p>
+
+    <h3>Top dataflows · no downstream activity <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">cost desc</span></h3>
+    <table>
+      <thead><tr><th>Dataflow</th><th>Workspace</th><th class="num">~$/mo</th></tr></thead>
+      <tbody>
+        <tr><td><code>VQR Microsite</code></td><td>SCM2 - Transactional</td><td class="num">$180</td></tr>
+        <tr><td><code>FACT_WORK_ORDER_HISTORY</code></td><td>Operations - eReporting</td><td class="num">$134</td></tr>
+        <tr><td><code>FACT_OBT_ETL</code></td><td>Operations - eReporting</td><td class="num">$125</td></tr>
+        <tr><td><code>OperationalPerfResponsibility_NEW</code></td><td>Operations - Management</td><td class="num">$92</td></tr>
+        <tr><td><code>AI_CONTROL_TOWER_LOGIC</code></td><td>Operations - Assets Integrity</td><td class="num">$75</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:4mm;">By workspace <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">dataflow $ with no consumer signal</span></h3>
+    <table>
+      <thead><tr><th>Workspace</th><th class="num">Flows</th><th class="num">~$/mo</th></tr></thead>
+      <tbody>
+        <tr><td><code>Operations - eReporting</code></td><td class="num">21</td><td class="num">$310</td></tr>
+        <tr><td><code>SCM2 - Transactional</code></td><td class="num">7</td><td class="num">$226</td></tr>
+        <tr><td><code>Operations - Management</code></td><td class="num">11</td><td class="num">$176</td></tr>
+        <tr><td><code>Operations - Assets Integrity</code></td><td class="num">15</td><td class="num">$121</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <div></div>
+      <div class="callout-body"><strong>Why this is a ✗ Gap, not a verdict:</strong> a dataflow with zero view events may still be the upstream of a heavily-used dataset. To call it orphaned you need the <code>dataflow → dataset → report</code> edge. LP parses some upstream sources (<code>data_sources</code>, M-code) but does not yet build the consumer graph. <strong>Resolving this turns $1.25K/mo of "maybe-waste" into a confirmed retire-list.</strong> → LP-product backlog candidate (§05).</div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">4 / 6</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 5 · DECISIONS ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Wasted-Spend Analysis</span></div>
+    <div class="doc-meta">SBM Offshore · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">05</span>Decisions register</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+
+    <table class="decisions-reg">
+      <thead><tr><th></th><th>Action · template + resolved slots</th><th>Owner</th><th>Due</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="dr-num">1</td>
+          <td>
+            <div class="dr-rule">R_NO_LINEAGE</div>
+            <div class="dr-rule-meta">severity: HIGH · GAP · LP-product · unlocks the real $</div>
+            <div class="dr-action-template">Build <span class="slot">{edge}</span> consumer graph</div>
+            <div class="dr-slot-list">
+              <span class="slot-k">edge:</span>dataflow → dataset → report (from M-code / data_sources already parsed)<br/>
+              <span class="slot-k">payoff:</span>confirms which of the 142 flows ($1.25K/mo) feed nothing used
+            </div>
+            <div class="dr-impact">▸ converts "maybe-waste" into a retire-list — the highest-leverage FinOps unlock</div>
+          </td>
+          <td class="dr-owner"><span class="role">role: LP-PRODUCT</span>lineage team</td>
+          <td class="dr-due"><span class="computed">backlog</span>Tier</td>
+        </tr>
+        <tr class="alt">
+          <td class="dr-num">2</td>
+          <td>
+            <div class="dr-rule">R_DATAFLOW_REVIEW</div>
+            <div class="dr-rule-meta">severity: MEDIUM · interim, manual</div>
+            <div class="dr-action-template">Manually confirm orphan status of <span class="slot">{targets}</span></div>
+            <div class="dr-slot-list">
+              <span class="slot-k">targets:</span>top 5 flows by cost (VQR Microsite, FACT_WORK_ORDER_HISTORY, FACT_OBT_ETL…)<br/>
+              <span class="slot-k">scope:</span>~$606/mo across the top 5
+            </div>
+            <div class="dr-impact">▸ recovers confirmed-orphan spend without waiting for lineage tooling</div>
+          </td>
+          <td class="dr-owner"><span class="role">role: ENGINEER</span>data platform</td>
+          <td class="dr-due"><span class="computed">today + 14d</span>2026-06-11</td>
+        </tr>
+        <tr>
+          <td class="dr-num">3</td>
+          <td>
+            <div class="dr-rule">R_COST_CONCENTRATION</div>
+            <div class="dr-rule-meta">severity: LOW · informational</div>
+            <div class="dr-action-template">Review single-item concentration <span class="slot">{item}</span></div>
+            <div class="dr-slot-list">
+              <span class="slot-k">item:</span>SBMConnect Analytics — 1 model = 4.6% of bill ($464/mo)
+            </div>
+            <div class="dr-impact">▸ active + earning; flag only if adoption drops</div>
+          </td>
+          <td class="dr-owner"><span class="role">role: OWNER</span>workspace owner</td>
+          <td class="dr-due"><span class="computed">monitor</span>—</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" style="text-align: right;">SUMMARY · confirmable waste today:</td>
+          <td colspan="2">~$18/mo (user-facing) · ~$1.25K/mo gated behind lineage (decision 1)</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">5 / 6</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 6 · FINAL ASSESSMENT ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Wasted-Spend Analysis</span></div>
+    <div class="doc-meta">SBM Offshore · Q2 2026</div>
+  </div>
+
+  <div class="doc-body" style="margin-bottom: 0;">
+    <div class="heading-row">
+      <h2><span class="h2-num">06</span>Final assessment</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+  </div>
+
+  <div class="final-assessment">
+    <table class="dim-assess">
+      <thead><tr><th>Dimension</th><th class="dim-rule" style="text-align: right;">Rule</th><th style="text-align: right;">Verdict</th></tr></thead>
+      <tbody>
+        <tr><td class="dim-name">User-facing utilization</td><td class="dim-rule">USER_SPEND</td><td class="dim-verdict">STRONG</td></tr>
+        <tr><td class="dim-name">Cost attribution depth</td><td class="dim-rule">COST_ATTR</td><td class="dim-verdict">GOOD</td></tr>
+        <tr><td class="dim-name">Dataflow accountability</td><td class="dim-rule">DATAFLOW</td><td class="dim-verdict">UNKNOWN</td></tr>
+        <tr><td class="dim-name">Lineage coverage</td><td class="dim-rule">LINEAGE</td><td class="dim-verdict">GAP</td></tr>
+        <tr><td class="dim-name">Capacity-SKU view</td><td class="dim-rule">CAP_LINK</td><td class="dim-verdict">GAP</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-body" style="margin-top: 4mm;">
+    <div class="tmpl-rec">
+      <h4>Templated recommendation · 5 slots</h4>
+      <div class="tmpl-string"><span class="slot">{verdict}</span>. User-facing spend is well-utilized (<span class="slot">{user_waste}</span> recoverable), so the lever isn't retiring reports — it's the <span class="slot">{flow_count}</span> dataflows costing <span class="slot">{flow_cost}</span> with no visible consumer. That spend stays "maybe-waste" until <span class="slot">{unlock}</span> ships.</div>
+      <div class="tmpl-resolved">
+        <span class="k">verdict =</span><span class="v">Investigate, don't cut</span>
+        <span class="k">user_waste =</span><span class="v">~$18/mo</span>
+        <span class="k">flow_count =</span><span class="v">142</span>
+        <span class="k">flow_cost =</span><span class="v">$1.25K/mo</span>
+        <span class="k">unlock =</span><span class="v">dataflow lineage</span>
+      </div>
+      <div class="tmpl-output">"Investigate, don't cut. User-facing spend is well-utilized (~$18/mo recoverable), so the lever isn't retiring reports — it's the 142 dataflows costing $1.25K/mo with no visible consumer. That spend stays 'maybe-waste' until dataflow lineage ships."</div>
+    </div>
+
+    <p style="font-family: var(--mono); font-size: 8pt; color: var(--muted); margin-top: 5mm;">Generated 2026-05-28 · LP rule-set v3 · cost_observations_v2 × item_metadata × activity_events · figures verified read-only against production DB (env a4bd4bda…) · INTERNAL · waste headline guarded against the dataflow measurement artifact · Reader: FinOps</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">6 / 6</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

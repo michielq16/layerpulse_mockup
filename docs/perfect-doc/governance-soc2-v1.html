@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>SOC 2 Access & Export Evidence Pack — SBM Offshore · LayerPulse [INTERNAL]</title>
+<link rel="stylesheet" href="../../public/review/perfect-doc/doc.css"/>
+</head>
+<body>
+
+<!-- ══════ INTERNAL ARTIFACT — real tenant data, individual PII masked. Not for public/review/. ══════ -->
+<div style="max-width: 210mm; margin: 0 auto 6mm; padding: 4mm 6mm; background: #7f1d1d; color: #fff; font-family: ui-monospace, monospace; font-size: 9pt; line-height: 1.5; border-radius: 4px;">
+  <strong style="color:#FFBF3C;">INTERNAL · real production data.</strong>
+  Real tenant (SBM Offshore, env <code>a4bd4bda…</code>), figures verified read-only from the LayerPulse DB as-of 2026-05-28.
+  Individual UPNs + IPs in §03/§04 are <strong>masked</strong> (real aggregates, masked individuals) — SOC2-sample hygiene. System pipeline ops (ExportDataflow, ExportActivityEvents) are excluded from user-export counts. Ground reference: <code>docs/research/2026-05-28-production-db-content-map.md</code>.
+</div>
+
+<div class="doc-shell">
+
+<!-- ═══════════════════════ PAGE 1 · COVER ═══════════════════════ -->
+<div class="doc-page">
+  <div class="cover-v2-band">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse · SOC 2 Access &amp; Export Evidence</div>
+    <h1>SBM Offshore</h1>
+    <p class="doc-sub">Trust Services Criteria CC6.x · evidence window 2026-04-19 → 05-28 · ~30d rolling</p>
+  </div>
+
+  <div class="doc-body">
+
+    <div class="kpi-cover-grid">
+      <div class="kpi-cover-card">
+        <div class="l">Events audited</div>
+        <div class="v">1.00<span class="unit">M</span></div>
+        <div class="t up">complete window</div>
+        <div class="b">activity_events · 30d <span class="band-inline">→ GREEN</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">Export / share ops</div>
+        <div class="v">8,035</div>
+        <div class="t warn">884 distinct users</div>
+        <div class="b">user-initiated only <span class="band-inline">→ LOGGED</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">Distinct source IPs</div>
+        <div class="v">5,301</div>
+        <div class="t warn">692 on exports</div>
+        <div class="b">ClientIP coverage 84% <span class="band-inline">→ AMBER</span></div>
+      </div>
+      <div class="kpi-cover-card">
+        <div class="l">Off-hours exports</div>
+        <div class="v">24.7<span class="unit">%</span></div>
+        <div class="t warn">1,984 of 8,035</div>
+        <div class="b">UTC 18:00–06:00 <span class="band-inline">→ REVIEW</span></div>
+      </div>
+    </div>
+
+    <div class="verdict-block-v2">
+      <div class="v-headline">
+        <div class="v-label">Evidence verdict</div>
+        <div class="v-value keep">EVIDENCE-READY</div>
+      </div>
+      <div class="v-trace">
+        <div style="margin-bottom: 2mm; color: var(--muted); font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700;">Rule R_SOC2_EVIDENCE · control-coverage evaluation</div>
+        <div class="t-line"><span class="check">✓</span> <span class="axis">CC6.7 export-log</span> = <span style="color: var(--emerald);">COVERED</span>  <span class="arrow">→</span>  8,035 ops w/ user+IP+target</div>
+        <div class="t-line"><span class="check">✓</span> <span class="axis">CC6.6 access-pattern</span> = <span style="color: var(--emerald);">COVERED</span>  <span class="arrow">→</span>  hour-of-day + IP fan-out</div>
+        <div class="t-line"><span class="check">✓</span> <span class="axis">CC6.8 config-evidence</span> = <span style="color: var(--emerald);">COVERED</span>  <span class="arrow">→</span>  166 switches, point-in-time</div>
+        <div class="t-line"><span class="cross">⚠</span> <span class="axis">CC6.1 RLS-eval</span> = <span style="color: var(--amber);">GAP</span>  <span class="arrow">→</span>  not yet collected (see §06)</div>
+        <div class="t-result">result: 3 of 4 controls covered · evidence pack exportable · 1 gap flagged, not hidden</div>
+      </div>
+    </div>
+
+    <h3 style="font-family: var(--sans); font-size: 11pt; color: var(--navy); margin: 6mm 0 2mm; letter-spacing: -0.005em;">3 findings · ranked by rule severity</h3>
+
+    <div class="risk-cover">
+      <span class="band med">MEDIUM</span>
+      <div>
+        <div class="r-rule-id">R_EXPORT_OFFHOURS</div>
+        <div class="r-predicate">count(user_exports where hour ∉ [06,18) UTC) ÷ count(user_exports) ≥ 0.20</div>
+        <div class="r-evidence"><span class="arrow">▸</span> actual: <strong>24.7%</strong> (1,984 of 8,035) · caveat: SBM operates globally — UTC off-hours ≠ local off-hours; needs per-user timezone to confirm anomaly</div>
+      </div>
+    </div>
+
+    <div class="risk-cover">
+      <span class="band med">MEDIUM</span>
+      <div>
+        <div class="r-rule-id">R_EXPORT_SETTINGS_BROAD</div>
+        <div class="r-predicate">count(export_settings where enabled && not scoped_to_SG) ≥ 1</div>
+        <div class="r-evidence"><span class="arrow">▸</span> hits: <strong>ExportReport, ExportToExcel/Csv/Image, AllowGuestUserToAccessSharedContent</strong> all ON + scopable but unscoped</div>
+      </div>
+    </div>
+
+    <div class="risk-cover">
+      <span class="band high">GAP</span>
+      <div>
+        <div class="r-rule-id">R_RLS_NOT_EVALUATED</div>
+        <div class="r-predicate">exists(rls_evaluation_rows for env) == false</div>
+        <div class="r-evidence"><span class="arrow">▸</span> the RLS leg of the SOC2 trifecta has no collected evidence yet — flagged as a control gap, not asserted as pass</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">1 / 7</span>
+    <span class="doc-confidential">Internal · Compliance + Security</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 2 · SCOPE & METHODOLOGY ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">SOC 2 Access &amp; Export Evidence</span></div>
+    <div class="doc-meta">SBM Offshore · CC6.x · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">02</span>Scope &amp; methodology</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+
+    <h3>Evidence window <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">computed</span></h3>
+    <div class="formula"><span class="f-rule">window</span> = [ min(timestamp) , max(timestamp) ] = [ 2026-04-19 , 2026-05-28 ] <span class="f-band">→ ~30d (matches Microsoft Activity Events 30-day retention)</span></div>
+    <p style="font-size: 9pt; color: var(--muted); margin: 1mm 0 0;">All timestamps UTC. Source: Fabric Admin <code>/admin/activityevents</code> (1-hour windows) → <code>activity_events</code> (1,004,859 rows in window).</p>
+
+    <h3 style="margin-top:5mm;">Audit substrate <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">field provenance</span></h3>
+    <p style="font-size: 9pt; color: var(--muted); margin: 0 0 1mm;">The defensible fields live in the <code>details</code> JSONB (the top-level <code>status</code> column mirrors <code>operation</code> and is NOT a success flag).</p>
+    <table>
+      <thead><tr><th>Field</th><th>Source path</th><th class="num">Coverage</th><th>Control use</th></tr></thead>
+      <tbody>
+        <tr><td>Actor UPN</td><td><code>details.UserId</code></td><td class="num">~100%</td><td>who</td></tr>
+        <tr><td>Source IP</td><td><code>details.ClientIP</code></td><td class="num">84%</td><td>where-from</td></tr>
+        <tr><td>User agent</td><td><code>details.UserAgent</code></td><td class="num">60%</td><td>device</td></tr>
+        <tr><td>True success</td><td><code>details.IsSuccess</code></td><td class="num">~100%</td><td>outcome</td></tr>
+        <tr><td>Target object</td><td><code>item_name</code> / <code>details.ReportName</code></td><td class="num">96%</td><td>what</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:5mm;">Controls in scope <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">TSC mapping</span></h3>
+    <div class="scorecard-v2">
+      <div class="sc-row"><div class="sc-label">CC6.7 · Data export / transmission</div><div class="sc-bar"><div class="sc-fill green" style="width: 100%;"></div></div><div class="sc-val">§03</div><div class="sc-band"><span class="band green">COVERED</span></div></div>
+      <div class="sc-row"><div class="sc-label">CC6.6 · Access from outside boundary</div><div class="sc-bar"><div class="sc-fill green" style="width: 100%;"></div></div><div class="sc-val">§04</div><div class="sc-band"><span class="band green">COVERED</span></div></div>
+      <div class="sc-row"><div class="sc-label">CC6.8 · Config / unauthorized change</div><div class="sc-bar"><div class="sc-fill green" style="width: 100%;"></div></div><div class="sc-val">§05</div><div class="sc-band"><span class="band green">COVERED</span></div></div>
+      <div class="sc-row"><div class="sc-label">CC6.1 · Logical access (RLS)</div><div class="sc-bar"><div class="sc-fill" style="width: 100%; background: repeating-linear-gradient(45deg, var(--line), var(--line) 3px, transparent 3px, transparent 6px);"></div></div><div class="sc-val">§06</div><div class="sc-band"><span class="band amber">GAP</span></div></div>
+    </div>
+    <p style="font-size: 8.5pt; color: var(--muted); margin: 2mm 0 0;">Out of scope: change-management (CC8), availability (A1), processing integrity (PI1). This pack covers the access/export trifecta only.</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">2 / 7</span>
+    <span class="doc-confidential">Internal · Compliance + Security</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 3 · EXPORT & DOWNLOAD LOG ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">SOC 2 Access &amp; Export Evidence</span></div>
+    <div class="doc-meta">SBM Offshore · CC6.7 · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">03</span>Data export &amp; download log <span style="font-family: var(--mono); font-size: 9pt; color: var(--muted);">CC6.7</span></h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+
+    <h3>Export / share operations · 30d <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">user-initiated only</span></h3>
+    <table>
+      <thead><tr><th>Operation</th><th class="num">Count</th><th>Data leaves boundary?</th></tr></thead>
+      <tbody>
+        <tr><td><code>ExportReport</code></td><td class="num">5,649</td><td><span class="band amber">YES — file</span></td></tr>
+        <tr><td><code>ExportArtifactDownload</code></td><td class="num">584</td><td><span class="band amber">YES — file</span></td></tr>
+        <tr><td><code>ItemDefinitionExported</code></td><td class="num">462</td><td><span class="band amber">YES — definition</span></td></tr>
+        <tr><td><code>ShareReport</code></td><td class="num">400</td><td><span class="band amber">grant</span></td></tr>
+        <tr><td><code>DownloadReport</code></td><td class="num">319</td><td><span class="band amber">YES — file</span></td></tr>
+        <tr><td><code>ShareDataset</code></td><td class="num">19</td><td><span class="band amber">grant</span></td></tr>
+        <tr><td><strong>Total user export/share</strong></td><td class="num"><strong>8,035</strong></td><td>884 users · 692 IPs</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size: 8.5pt; color: var(--muted); margin: 1mm 0 0;">Excludes system ops <code>ExportDataflow</code> (44,688) and <code>ExportActivityEvents</code> (19,251) — pipeline/automation, not user data-egress.</p>
+
+    <h3 style="margin-top:5mm;">Forensic detail · most recent <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">UPN + IP masked</span></h3>
+    <table>
+      <thead><tr><th>Timestamp (UTC)</th><th>Operation</th><th>Actor (masked)</th><th>Source IP</th><th>Target</th></tr></thead>
+      <tbody>
+        <tr><td><code>2026-05-28 00:09</code></td><td>ExportReport</td><td>y****.l****@ext.sbmoffshore.com</td><td><code>118.189.×.×</code></td><td>Construction Quality Dashboard</td></tr>
+        <tr><td><code>2026-05-27 22:39</code></td><td>ExportReport</td><td>s****.p****@sbmoffshore.com</td><td><code>189.206.×.×</code></td><td>The JCR Dashboard</td></tr>
+        <tr><td><code>2026-05-27 21:29</code></td><td>ExportReport</td><td>g****.s****@sbmoffshore.com</td><td><code>187.16.×.×</code></td><td>SPIE Scorecard - SBM View</td></tr>
+        <tr><td><code>2026-05-27 20:37</code></td><td>ExportReport</td><td>a****.s****@sbmoffshore.com</td><td><code>187.16.×.×</code></td><td>Supply Chain Backlog Report</td></tr>
+        <tr><td><code>2026-05-27 20:01</code></td><td>ExportReport</td><td>p****.o****@sbmoffshore.com</td><td><code>187.16.×.×</code></td><td>e-Bulletin Mgmt Dashboard</td></tr>
+        <tr><td><code>2026-05-27 19:55</code></td><td>ShareReport</td><td>m****.p****@sbmoffshore.com</td><td><code>155.190.×.×</code></td><td>BPS-DC - Report Shutdown</td></tr>
+        <tr><td><code>2026-05-27 19:49</code></td><td>ExportReport</td><td>s****.s****@sbmoffshore.com</td><td><code>179.210.×.×</code></td><td>e-Bulletin Mgmt Dashboard</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size: 8.5pt; color: var(--muted); margin: 1mm 0 0;">Each row reproducible from <code>activity_events</code> by (timestamp, operation, customer_env_id). Full unmasked log is exportable to the auditor via the evidence-pack ZIP (access-controlled).</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">3 / 7</span>
+    <span class="doc-confidential">Internal · Compliance + Security</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 4 · OFF-HOURS & ANOMALOUS ACCESS ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">SOC 2 Access &amp; Export Evidence</span></div>
+    <div class="doc-meta">SBM Offshore · CC6.6 · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">04</span>Off-hours &amp; access patterns <span style="font-family: var(--mono); font-size: 9pt; color: var(--muted);">CC6.6</span></h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+
+    <h3>Off-hours export split <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">rule · R_EXPORT_OFFHOURS</span></h3>
+    <p style="font-size: 9pt; color: var(--muted); margin: 0 0 1mm;">business := 06:00–18:00 UTC · off-hours := remainder · user export/share ops only</p>
+    <table>
+      <thead><tr><th>Bucket</th><th class="num">Ops</th><th class="num">Share</th><th>Band</th></tr></thead>
+      <tbody>
+        <tr><td>Business hours (06–18 UTC)</td><td class="num">6,051</td><td class="num">75.3%</td><td><span class="band green">EXPECTED</span></td></tr>
+        <tr><td><strong>Off-hours (18–06 UTC)</strong></td><td class="num">1,984</td><td class="num">24.7%</td><td><span class="band amber">REVIEW</span></td></tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <div></div>
+      <div class="callout-body"><strong>Honest caveat (rule annotation):</strong> SBM Offshore operates across Guyana, Brazil, Asia and EU. A 24.7% off-hours-UTC rate is consistent with a global workforce in non-UTC timezones, not necessarily anomalous access. Confirming a true anomaly needs per-user home-timezone — currently a ✗ Gap. The figure is presented as <em>review-worthy</em>, not as a violation.</div>
+    </div>
+
+    <h3 style="margin-top:5mm;">IP fan-out <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">computed</span></h3>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-l">Distinct IPs (all access)</div><div class="kpi-v">5,301</div><div class="kpi-trend">over 1.0M events</div></div>
+      <div class="kpi"><div class="kpi-l">Distinct IPs (exports)</div><div class="kpi-v">692</div><div class="kpi-trend">on 8,035 ops</div></div>
+      <div class="kpi"><div class="kpi-l">Export users</div><div class="kpi-v">884</div><div class="kpi-trend">distinct UPNs</div></div>
+      <div class="kpi alert"><div class="kpi-l">IP coverage</div><div class="kpi-v">84<span class="unit">%</span></div><div class="kpi-trend warn">16% null ClientIP</div></div>
+    </div>
+    <p style="font-size: 9.5pt; color: var(--ink-soft); margin: 3mm 0 0;">Next analytical step (deterministic, available on this data): per-user distinct-IP count to surface impossible-travel / shared-credential candidates — a sub-rule of R_ACCESS_ANOMALY. Renders as a ranked table once enabled.</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">4 / 7</span>
+    <span class="doc-confidential">Internal · Compliance + Security</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 5 · TENANT CONFIG EVIDENCE ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">SOC 2 Access &amp; Export Evidence</span></div>
+    <div class="doc-meta">SBM Offshore · CC6.8 · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">05</span>Tenant configuration evidence <span style="font-family: var(--mono); font-size: 9pt; color: var(--muted);">CC6.8</span></h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+    <p style="font-size: 9pt; color: var(--muted); margin: 0 0 1mm;">Point-in-time snapshot · 166 tenant switches captured for this env · each carries a <code>fetched_at</code> provenance stamp.</p>
+
+    <h3>Export &amp; sharing posture <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">rule · R_EXPORT_SETTINGS_BROAD</span></h3>
+    <table>
+      <thead><tr><th>Setting</th><th>Enabled</th><th>Scopable to SG</th><th>Posture</th></tr></thead>
+      <tbody>
+        <tr><td><code>ExportReport</code></td><td>on</td><td>yes (unscoped)</td><td><span class="band amber">REVIEW</span></td></tr>
+        <tr><td><code>ExportToExcelSetting</code></td><td>on</td><td>yes (unscoped)</td><td><span class="band amber">REVIEW</span></td></tr>
+        <tr><td><code>ExportToCsv / ToImage / ToMHTML</code></td><td>on</td><td>yes</td><td><span class="band amber">REVIEW</span></td></tr>
+        <tr><td><code>AllowCVToExportDataToFileTenant</code></td><td>off</td><td>yes</td><td><span class="band green">OK</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:4mm;">External / guest exposure <span style="font-family: var(--mono); font-size: 9pt; color: var(--gold); font-weight: 600;">source · tenant_settings</span></h3>
+    <table>
+      <thead><tr><th>Setting</th><th>Enabled</th><th>Posture</th></tr></thead>
+      <tbody>
+        <tr><td><code>AllowGuestUserToAccessSharedContent</code></td><td>on (scopable)</td><td><span class="band amber">REVIEW</span></td></tr>
+        <tr><td><code>AllowGuestLookup</code></td><td>on (scopable)</td><td><span class="band amber">REVIEW</span></td></tr>
+        <tr><td><code>ElevatedGuestsTenant</code></td><td>off</td><td><span class="band green">OK</span></td></tr>
+        <tr><td><code>EmailSubscriptionsToExternalUsers</code></td><td>off</td><td><span class="band green">OK</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="drift-block" style="margin-top:4mm;">
+      <div class="d-formula">scoping coverage = count(settings where enabled_security_groups ≠ NULL) = <strong style="color: var(--navy);">19 of 166</strong></div>
+      <div class="d-result">rule: settings restricted to named AAD groups are directly auditable <span class="band amber" style="margin-left: 6px;">11% scoped</span></div>
+    </div>
+    <p style="font-size: 8.5pt; color: var(--muted); margin: 2mm 0 0;">Multi-env config-drift comparison is a ⚠ Partial: only this env carries the full 166-switch snapshot; the other 4 environments hold 5 settings each.</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">5 / 7</span>
+    <span class="doc-confidential">Internal · Compliance + Security</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 6 · CONTROL COVERAGE & GAPS ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">SOC 2 Access &amp; Export Evidence</span></div>
+    <div class="doc-meta">SBM Offshore · coverage · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">06</span>Control coverage &amp; gaps</h2>
+      <span class="doc-fit partial">⚠ Partial</span>
+    </div>
+    <p style="font-size: 9.5pt; color: var(--ink-soft); margin: 0 0 3mm;">What this pack can attest today vs. what needs new collection. Gaps are surfaced, never asserted as pass.</p>
+
+    <table class="decisions-reg">
+      <thead><tr><th></th><th>Control · evidence status</th><th>Source</th><th>State</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="dr-num">1</td>
+          <td>
+            <div class="dr-rule">CC6.7 — Export / download log</div>
+            <div class="dr-rule-meta">8,035 user export/share ops · UPN + IP + target + IsSuccess</div>
+          </td>
+          <td class="dr-owner">activity_events.details</td>
+          <td class="dr-due"><span class="band green">✓ COVERED</span></td>
+        </tr>
+        <tr class="alt">
+          <td class="dr-num">2</td>
+          <td>
+            <div class="dr-rule">CC6.6 — Access pattern / off-hours</div>
+            <div class="dr-rule-meta">hour-of-day split + 692 export IPs + fan-out ready</div>
+          </td>
+          <td class="dr-owner">activity_events</td>
+          <td class="dr-due"><span class="band green">✓ COVERED</span></td>
+        </tr>
+        <tr>
+          <td class="dr-num">3</td>
+          <td>
+            <div class="dr-rule">CC6.8 — Tenant config evidence</div>
+            <div class="dr-rule-meta">166 switches, point-in-time, 19 SG-scoped</div>
+          </td>
+          <td class="dr-owner">tenant_settings</td>
+          <td class="dr-due"><span class="band green">✓ COVERED</span></td>
+        </tr>
+        <tr class="alt">
+          <td class="dr-num">4</td>
+          <td>
+            <div class="dr-rule">CC6.1 — RLS evaluation</div>
+            <div class="dr-rule-meta">no per-model RLS-role evaluation collected for this env</div>
+          </td>
+          <td class="dr-owner">— (collector gap)</td>
+          <td class="dr-due"><span class="band amber">⚠ GAP</span></td>
+        </tr>
+        <tr>
+          <td class="dr-num">5</td>
+          <td>
+            <div class="dr-rule">Asset ownership attestation</div>
+            <div class="dr-rule-meta">ownership_tags has 4 seed rows; audit_log details empty</div>
+          </td>
+          <td class="dr-owner">ownership_tags</td>
+          <td class="dr-due"><span class="band red">✗ GAP</span></td>
+        </tr>
+        <tr class="alt">
+          <td class="dr-num">6</td>
+          <td>
+            <div class="dr-rule">Accepted-risk register</div>
+            <div class="dr-rule-meta">governance_finding_overrides: 0 rows</div>
+          </td>
+          <td class="dr-owner">governance_finding_overrides</td>
+          <td class="dr-due"><span class="band red">✗ GAP</span></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" style="text-align: right;">SUMMARY · evidence coverage:</td>
+          <td colspan="2">3 COVERED · 1 partial-gap (RLS) · 2 schema-ready gaps (ownership, risk register)</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">6 / 7</span>
+    <span class="doc-confidential">Internal · Compliance + Security</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 7 · FINAL ASSESSMENT ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">SOC 2 Access &amp; Export Evidence</span></div>
+    <div class="doc-meta">SBM Offshore · attestation · Q2 2026</div>
+  </div>
+
+  <div class="doc-body" style="margin-bottom: 0;">
+    <div class="heading-row">
+      <h2><span class="h2-num">07</span>Final assessment</h2>
+      <span class="doc-fit ok">✓ Live</span>
+    </div>
+  </div>
+
+  <div class="final-assessment">
+    <table class="dim-assess">
+      <thead><tr><th>Criterion</th><th class="dim-rule" style="text-align: right;">Rule</th><th style="text-align: right;">Verdict</th></tr></thead>
+      <tbody>
+        <tr><td class="dim-name">Export traceability</td><td class="dim-rule">CC6.7_LOG</td><td class="dim-verdict">STRONG</td></tr>
+        <tr><td class="dim-name">Access monitoring</td><td class="dim-rule">CC6.6_PATTERN</td><td class="dim-verdict">STRONG</td></tr>
+        <tr><td class="dim-name">Config evidence</td><td class="dim-rule">CC6.8_SNAPSHOT</td><td class="dim-verdict">GOOD</td></tr>
+        <tr><td class="dim-name">Export-setting posture</td><td class="dim-rule">SETTINGS_BROAD</td><td class="dim-verdict">REVIEW</td></tr>
+        <tr><td class="dim-name">Logical access (RLS)</td><td class="dim-rule">CC6.1_RLS</td><td class="dim-verdict">GAP</td></tr>
+        <tr><td class="dim-name">Ownership attestation</td><td class="dim-rule">OWNERSHIP</td><td class="dim-verdict">GAP</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="doc-body" style="margin-top: 4mm;">
+    <div class="tmpl-rec">
+      <h4>Templated attestation · 6 slots</h4>
+      <div class="tmpl-string">Over the <span class="slot">{window_days}</span>-day window, <span class="slot">{export_ops}</span> user export/share operations by <span class="slot">{users}</span> users from <span class="slot">{ips}</span> source IPs were fully logged with actor, IP and target; <span class="slot">{covered}</span> of 4 access controls are evidenced, with <span class="slot">{gap}</span> flagged as a collection gap.</div>
+
+      <div class="tmpl-resolved">
+        <span class="k">window_days =</span><span class="v">30</span>
+        <span class="k">export_ops =</span><span class="v">8,035</span>
+        <span class="k">users =</span><span class="v">884</span>
+        <span class="k">ips =</span><span class="v">692</span>
+        <span class="k">covered =</span><span class="v">3</span>
+        <span class="k">gap =</span><span class="v">RLS evaluation</span>
+      </div>
+
+      <div class="tmpl-output">"Over the 30-day window, 8,035 user export/share operations by 884 users from 692 source IPs were fully logged with actor, IP and target; 3 of 4 access controls are evidenced, with RLS evaluation flagged as a collection gap."</div>
+    </div>
+
+    <p style="font-family: var(--mono); font-size: 8pt; color: var(--muted); margin-top: 6mm;">Generated 2026-05-28 · LP rule-set v3 · figures verified read-only against production DB (env a4bd4bda…) · INTERNAL — real tenant, individual PII masked · system pipeline ops excluded · Reader: Compliance + Security</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · SBM Offshore</span>
+    <span class="doc-pgnum">7 / 7</span>
+    <span class="doc-confidential">Internal · Compliance + Security</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
