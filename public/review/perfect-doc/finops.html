@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FinOps Cost Report — Acme Manufacturing N.V. · LayerPulse</title>
+<link rel="stylesheet" href="./doc.css"/>
+</head>
+<body>
+
+<a class="doc-nav" href="./">Back to persona hub</a>
+
+<div class="doc-shell">
+
+<!-- ═══════════════════════ COVER ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-cover">
+    <div class="doc-cover-band">
+      <div class="doc-mark"><span class="dot"></span> LayerPulse · Intelligence Series</div>
+      <h1>FinOps Cost Report</h1>
+      <p class="doc-sub">Finance_Global_Model · Acme Manufacturing N.V. · Q2 2026</p>
+      <div class="doc-persona">For the FinOps / Capacity Manager</div>
+    </div>
+
+    <div class="doc-cover-meta">
+      <div class="meta-row"><span class="meta-k">Customer</span><span class="meta-v">Acme Manufacturing N.V.</span></div>
+      <div class="meta-row"><span class="meta-k">Semantic Model</span><span class="meta-v">Finance_Global_Model</span></div>
+      <div class="meta-row"><span class="meta-k">Capacity</span><span class="meta-v mono">F64 · West Europe · Reserved</span></div>
+      <div class="meta-row"><span class="meta-k">FinOps Owner</span><span class="meta-v">L. Brouwer · CFO Office</span></div>
+      <div class="meta-row"><span class="meta-k">Reporting period</span><span class="meta-v mono">May 2026 · 1 to 31</span></div>
+      <div class="meta-row"><span class="meta-k">Generated</span><span class="meta-v mono">2026-05-28 · 08:14 UTC</span></div>
+    </div>
+
+    <div class="doc-cover-hero">
+      <div class="hero-label">Monthly waste detected</div>
+      <div class="hero-value"><span class="num">€840</span></div>
+      <div class="hero-trend down">▲ +€220 vs April · trajectory accelerating</div>
+      <div class="hero-tag">"~17% of this model's spend has zero return. 12 unused reports + 1 dormant model account for most of it. Recoverable next refresh cycle."</div>
+    </div>
+
+    <div style="margin-top: auto;">
+      <div class="doc-cover-verdict opt">Optimize</div>
+      <p style="font-family: var(--sans); font-size: 9pt; color: var(--muted); margin: 4mm 0 0; letter-spacing: 0.04em;">A 19-page cost narrative for the FinOps Owner. Cost waterfall + attribution + waste detection + 3-month forecast + named optimization actions with €€€-impact. Detailed evidence in §10.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 2 — EXECUTIVE COST SUMMARY ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">FinOps Cost Report</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · May 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">01</span>Cost summary &amp; headline</h2>
+      <span class="doc-fit ok" title="Live from cost_observations_v2 (#357) + Metrics App DAX">✓ Live</span>
+    </div>
+
+    <p class="lead">May 2026: €4,820 spent on Finance_Global_Model. Up 9% MoM. €840 of that — 17% of the bill — has no productive return. Three named optimizations recover €960/month and restore 13% headroom on the F64 envelope.</p>
+
+    <h3>This month at a glance</h3>
+    <div class="kpi-grid">
+      <div class="kpi alert">
+        <div class="kpi-l">Total spend</div>
+        <div class="kpi-v">€4,820</div>
+        <div class="kpi-trend warn">▲ +9% MoM</div>
+      </div>
+      <div class="kpi critical">
+        <div class="kpi-l">Wasted spend</div>
+        <div class="kpi-v">€840</div>
+        <div class="kpi-trend warn">▲ +€220 MoM</div>
+      </div>
+      <div class="kpi healthy">
+        <div class="kpi-l">F64 envelope used</div>
+        <div class="kpi-v">91<span class="unit">%</span></div>
+        <div class="kpi-trend up">9% headroom remains</div>
+      </div>
+      <div class="kpi alert">
+        <div class="kpi-l">Forecast Aug 2026</div>
+        <div class="kpi-v">€5,490</div>
+        <div class="kpi-trend warn">▲ above envelope</div>
+      </div>
+    </div>
+
+    <h3>The three recovery actions</h3>
+    <table>
+      <thead>
+        <tr><th class="num">€/mo</th><th>Action</th><th>Effort</th><th>Confidence</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="num row-strong">−€520</td><td>Enable incremental refresh on <code>FactTelemetry</code></td><td>BI Engineering · 2 days</td><td><span class="pill good">High</span></td></tr>
+        <tr><td class="num row-strong">−€280</td><td>Retire 2 dormant reports (&gt;120 days unused)</td><td>BI Manager · 2 hours</td><td><span class="pill good">High</span></td></tr>
+        <tr><td class="num row-strong">−€160</td><td>Retire 1 stale unused semantic model (&gt;180 days)</td><td>BI Manager · 2 hours</td><td><span class="pill good">High</span></td></tr>
+        <tr><td class="num row-strong" style="background: var(--gold-soft);">−€960</td><td style="background: var(--gold-soft);"><strong>Total recoverable</strong></td><td style="background: var(--gold-soft);">~3 days delivery</td><td style="background: var(--gold-soft);"></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout success">
+      <div></div>
+      <div>
+        <div class="callout-l">The bottom line</div>
+        <p>The model spends €4,820/mo and returns substantial value — adoption is high, reports are mass-used, cost-per-user is €0.39 (industry-low). But €840/mo of that bill is fixable waste from items nobody uses, and one technical change drops the refresh cost by half. Acting on all three this quarter avoids the F64-envelope crossing forecast for August and restores breathing room for FY26 growth.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">2 / 19</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 3 — COST WATERFALL ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">FinOps Cost Report</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · May 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">02</span>Cost waterfall — what drove the +9%</h2>
+      <span class="doc-fit ok" title="Live from cost_observations_v2 + capacity_snapshots">✓ Live</span>
+    </div>
+
+    <p class="lead">The +€395 month-over-month increase splits into four upward drivers and one downward one. Two of the four upward drivers are productive (driving real adoption), two are correctable waste.</p>
+
+    <h3>April → May, line by line</h3>
+    <div class="waterfall">
+      <div class="wf-label heavy">Baseline (April 2026)</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 92%;"></div></div>
+      <div class="wf-amt">€4,425</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">+ FactTelemetry refresh load (May 6 launch)</div>
+      <div class="wf-bar waste"><div class="wf-fill" style="width: 65%;"></div></div>
+      <div class="wf-amt">+€312</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">+ Procurement queries (productive adoption)</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 37%;"></div></div>
+      <div class="wf-amt">+€178</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">+ Autoscale (May 14 gateway recovery)</div>
+      <div class="wf-bar waste"><div class="wf-fill" style="width: 18%;"></div></div>
+      <div class="wf-amt">+€85</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">+ Cumulative dormancy drift</div>
+      <div class="wf-bar waste"><div class="wf-fill" style="width: 4%;"></div></div>
+      <div class="wf-amt">+€20</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">− Treasury report rationalization (Q1 cleanup)</div>
+      <div class="wf-bar save"><div class="wf-fill" style="width: 38%;"></div></div>
+      <div class="wf-amt">−€180</div>
+    </div>
+    <div class="waterfall row-strong">
+      <div class="wf-label heavy">Current (May 2026)</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 100%;"></div></div>
+      <div class="wf-amt">€4,820</div>
+    </div>
+
+    <h3>Productive vs. wasted</h3>
+    <p>Of the €595 in upward drivers this month, €178 is productive (Procurement queries delivering value to a new business domain) and €417 is correctable. The cumulative dormancy drift is a small line but a long-trend one — Acme accumulates ~€20/mo in dormant-asset cost every month unless actively retired, which compounds.</p>
+
+    <div class="callout warn">
+      <div></div>
+      <div>
+        <div class="callout-l">FactTelemetry attention</div>
+        <p>The single largest cost driver this month was the new <code>FactTelemetry</code> table — €312/mo, or 6.5% of the entire model's bill. The table delivers real value (it powers the Procurement KPI Mobile App), but is configured for full-refresh, not incremental. Switching to incremental cuts this line by an estimated 65% (~€203/mo).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">3 / 19</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 4 — COST ATTRIBUTION BY WORKSPACE ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">FinOps Cost Report</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · May 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">03</span>Cost attribution by workspace</h2>
+      <span class="doc-fit ok" title="Live from capacity_snapshots + workspace metadata">✓ Live</span>
+    </div>
+
+    <p class="lead">Finance_Global_Model touches four workspaces. The model itself lives in Finance Reporting [prd]; the other three consume it via reports. Below is the full attribution.</p>
+
+    <table>
+      <thead>
+        <tr><th>Workspace</th><th>Role</th><th class="num">Refresh cost</th><th class="num">Query cost</th><th class="num">Total</th><th class="num">% of bill</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="row-strong">Finance Reporting [prd]</td><td>Model home + dataset refresh</td><td class="num">€2,120</td><td class="num">€420</td><td class="num row-strong">€2,540</td><td class="num">52.7%</td></tr>
+        <tr><td class="row-strong">Executive Insights [prd]</td><td>Reports consuming the model</td><td class="num">—</td><td class="num">€1,080</td><td class="num row-strong">€1,080</td><td class="num">22.4%</td></tr>
+        <tr><td class="row-strong">Treasury Analytics [prd]</td><td>Reports consuming the model</td><td class="num">—</td><td class="num">€540</td><td class="num row-strong">€540</td><td class="num">11.2%</td></tr>
+        <tr><td class="row-strong">Procurement Analytics [prd]</td><td>Reports consuming the model</td><td class="num">—</td><td class="num">€200</td><td class="num row-strong">€200</td><td class="num">4.1%</td></tr>
+        <tr><td class="row-strong">Autoscale + overhead</td><td>Shared capacity costs</td><td class="num">€420</td><td class="num">€40</td><td class="num row-strong">€460</td><td class="num">9.5%</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Per-workspace cost-per-user (efficiency)</h3>
+    <table>
+      <thead>
+        <tr><th>Workspace</th><th class="num">Users</th><th class="num">Cost</th><th class="num">€ / user</th><th>Efficiency vs benchmark (€1.20)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="row-strong">Finance Reporting [prd]</td><td class="num">8,212</td><td class="num">€2,540</td><td class="num">€0.31</td><td><span class="pill good">Industry-leading</span></td></tr>
+        <tr><td class="row-strong">Executive Insights [prd]</td><td class="num">2,004</td><td class="num">€1,080</td><td class="num">€0.54</td><td><span class="pill good">Industry-leading</span></td></tr>
+        <tr><td class="row-strong">Treasury Analytics [prd]</td><td class="num">1,182</td><td class="num">€540</td><td class="num">€0.46</td><td><span class="pill good">Industry-leading</span></td></tr>
+        <tr><td class="row-strong">Procurement Analytics [prd]</td><td class="num">1,084</td><td class="num">€200</td><td class="num">€0.18</td><td><span class="pill good">Industry-leading</span></td></tr>
+      </tbody>
+    </table>
+
+    <p>Every consuming workspace is below the industry benchmark of €1.20/user/mo for comparable Finance models. The model is well-allocated — the cost issue is concentrated in one technical inefficiency (FactTelemetry refresh) and three unused assets (the dormant reports + model on §5), not in over-provisioning.</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">4 / 19</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 5 — WASTE DETECTION ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">FinOps Cost Report</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · May 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">04</span>Waste detection — what nobody uses</h2>
+      <span class="doc-fit ok" title="Live from activity_events × cost attribution">✓ Live</span>
+    </div>
+
+    <p class="lead">€840/mo of waste is concentrated in 12 unused reports + 1 dormant semantic model + 1 retained-but-unused glossary domain. All discoverable. All retireable. Zero user impact.</p>
+
+    <h3>Dormant reports (no views &gt; 90 days)</h3>
+    <table>
+      <thead>
+        <tr><th>Report</th><th>Workspace</th><th class="num">Days dormant</th><th class="num">Last viewer</th><th class="num">Monthly cost</th><th>Recommendation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="row-strong">Treasury Variance Weekly</td><td>Treasury Analytics</td><td class="num">124</td><td class="num">jan.dehaan@acme</td><td class="num">€180</td><td><span class="pill high">Retire</span></td></tr>
+        <tr><td class="row-strong">Procurement Heatmap Q1</td><td>Procurement Analytics</td><td class="num">138</td><td class="num">marie.k@acme</td><td class="num">€100</td><td><span class="pill high">Retire</span></td></tr>
+        <tr><td class="row-strong">Vendor Spend Forecast 2024</td><td>Executive Insights</td><td class="num">228</td><td class="num">(no owner)</td><td class="num">€80</td><td><span class="pill high">Retire</span></td></tr>
+        <tr><td class="row-strong">Cost Variance Drilldown Q3</td><td>Finance Reporting</td><td class="num">152</td><td class="num">f.smith@acme</td><td class="num">€80</td><td><span class="pill high">Retire</span></td></tr>
+        <tr><td class="row-strong">Audit Drilldown Pre-2025</td><td>Treasury Analytics</td><td class="num">412</td><td class="num">(no owner)</td><td class="num">€80</td><td><span class="pill high">Retire</span></td></tr>
+        <tr><td colspan="4" class="row-strong" style="text-align: right; background: var(--gold-soft);">Subtotal — Dormant reports</td><td class="num row-strong" style="background: var(--gold-soft);">€520</td><td style="background: var(--gold-soft);"></td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size: 9.5pt; color: var(--muted);">+ 7 additional reports in the 90–120 day dormancy band totaling €260/mo. Full list in §10 Appendix.</p>
+
+    <h3>Dormant semantic models (no queries &gt; 180 days)</h3>
+    <table>
+      <thead>
+        <tr><th>Model</th><th>Workspace</th><th class="num">Days dormant</th><th>Owner</th><th class="num">Monthly cost</th><th>Recommendation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="row-strong">FinanceTraining2024</td><td>Finance Reporting</td><td class="num">192</td><td>(no owner)</td><td class="num">€160</td><td><span class="pill high">Retire</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Idle glossary subscription</h3>
+    <p>The <code>Finance · Risk Indicators</code> glossary domain was provisioned in Q4 2024 for a project that didn't ship. Costs €40/month in licensing footprint. Recommendation: archive.</p>
+
+    <div class="callout success">
+      <div></div>
+      <div>
+        <div class="callout-l">Total recoverable this quarter</div>
+        <p>€520 (dormant reports tier 1) + €160 (dormant model) + €40 (idle glossary) = <strong>€720/month</strong> from waste alone. Add the FactTelemetry incremental-refresh change (€203/mo) and the recovery is €923/mo — substantially above the €840 headline because the waterfall absorbs a couple of small upward drifts.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">5 / 19</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 6 — REFRESH COST ANALYSIS ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">FinOps Cost Report</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · May 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">05</span>Refresh cost analysis</h2>
+      <span class="doc-fit ok" title="Live from Refreshables API + capacity_snapshots">✓ Live</span>
+    </div>
+
+    <p class="lead">Refresh operations consume €2,120/mo — 44% of the model's bill. One table (<code>FactTelemetry</code>) accounts for 32% of that subtotal in a single refresh window. Switching that one table to incremental refresh is the single highest-impact technical lever in this report.</p>
+
+    <h3>Refresh cost by table</h3>
+    <table>
+      <thead>
+        <tr><th>Table</th><th class="num">Size</th><th class="num">Avg refresh time</th><th class="num">Monthly refresh cost</th><th class="num">% of refresh bill</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="row-strong"><code>FactTelemetry</code></td><td class="num">8.1 GB</td><td class="num">44 min</td><td class="num">€680</td><td class="num">32.1%</td></tr>
+        <tr><td class="row-strong"><code>FactSales</code></td><td class="num">4.2 GB</td><td class="num">8 min</td><td class="num">€420</td><td class="num">19.8%</td></tr>
+        <tr><td class="row-strong"><code>FactGeneralLedger</code></td><td class="num">3.8 GB</td><td class="num">7 min</td><td class="num">€340</td><td class="num">16.0%</td></tr>
+        <tr><td class="row-strong"><code>DimCustomer</code></td><td class="num">1.9 GB</td><td class="num">3 min</td><td class="num">€180</td><td class="num">8.5%</td></tr>
+        <tr><td class="row-strong"><code>FactInventory</code></td><td class="num">1.4 GB</td><td class="num">3 min</td><td class="num">€140</td><td class="num">6.6%</td></tr>
+        <tr><td colspan="3" style="text-align: right;">All other 43 tables combined</td><td class="num">€360</td><td class="num">17.0%</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Why FactTelemetry costs so much</h3>
+    <p><code>FactTelemetry</code> is a full-refresh table at 8.1 GB. Every refresh re-reads the entire table from the source Lakehouse and rebuilds VertiPaq compression — even though only the last day's worth of data has changed. Incremental refresh, partitioned by day, would refresh the last 1–2 daily partitions instead of all 730. LayerPulse BPA rule <code>BPA-INC-001</code> identified this as a high-confidence optimization.</p>
+
+    <div class="callout">
+      <div></div>
+      <div>
+        <div class="callout-l">Estimated impact</div>
+        <p>Switching FactTelemetry to daily incremental refresh: refresh time drops from 44 min to ~18 min, refresh cost drops from €680/mo to ~€280/mo (<strong>−€400/mo, −59%</strong>). Implementation: ~2 days BI Engineering effort; LayerPulse provides the PartitionByYear template script.</p>
+      </div>
+    </div>
+
+    <h3>Daily refresh footprint (May 2026)</h3>
+    <div class="diagram">Daily refresh cost (€), May 2026
+
+   01 ████████████░░░░░░░  €68
+   05 █████████████░░░░░░  €72
+   08 █████████████████░░  €88   ← FactTelemetry first daily refresh
+   12 ███████████████████  €92
+   14 ████████████████████ €98   ← gateway recovery + autoscale
+   18 ███████████████░░░░  €78
+   22 ███████████████████  €92
+   28 ██████████████░░░░░  €76
+
+   Median:  €81/day · 31 days · €2,510 refresh + €−390 autoscale credit = €2,120</div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">6 / 19</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 7 — QUERY COST + AUTOSCALE ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">FinOps Cost Report</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · May 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">06</span>Query &amp; interactive cost</h2>
+      <span class="doc-fit ok" title="Live from cost_observations_v2 + activity_events">✓ Live</span>
+    </div>
+
+    <p class="lead">Interactive queries consume €1,840/mo (38% of the bill). The top 5 most expensive reports account for 71% of query cost. The remaining 36 reports collectively contribute 29% — the long tail behaves well.</p>
+
+    <h3>Most expensive reports (query cost)</h3>
+    <table>
+      <thead>
+        <tr><th>Report</th><th class="num">Monthly CU</th><th class="num">Queries/day</th><th class="num">€/query</th><th class="num">€/month</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="row-strong">Spend Analytics</td><td class="num">42,400</td><td class="num">2,820</td><td class="num">€0.011</td><td class="num">€920</td></tr>
+        <tr><td class="row-strong">Executive Forecasting</td><td class="num">28,200</td><td class="num">1,640</td><td class="num">€0.014</td><td class="num">€710</td></tr>
+        <tr><td class="row-strong">Procurement Insights</td><td class="num">19,800</td><td class="num">1,180</td><td class="num">€0.013</td><td class="num">€480</td></tr>
+        <tr><td class="row-strong">CFO Dashboard</td><td class="num">14,400</td><td class="num">820</td><td class="num">€0.014</td><td class="num">€340</td></tr>
+        <tr><td class="row-strong">Treasury Risk Dashboard</td><td class="num">10,200</td><td class="num">580</td><td class="num">€0.014</td><td class="num">€240</td></tr>
+        <tr><td colspan="4" class="row-strong" style="text-align: right;">Top 5 subtotal</td><td class="num row-strong">€2,690</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size: 10pt;"><em>Per-query cost across the top 5 is remarkably even (€0.011–€0.014). The differences come from query volume, not query expense — i.e., these reports are well-optimized; users just run them a lot. The cost-to-value ratio is favorable.</em></p>
+
+    <h3>Autoscale events</h3>
+    <table>
+      <thead>
+        <tr><th class="num">Date</th><th>Trigger</th><th class="num">Duration</th><th class="num">Extra cost</th><th>Justified?</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="num">May 14 · 09:42</td><td>Gateway recovery — query backlog</td><td class="num">2h 18m</td><td class="num">€85</td><td><span class="pill warn">Reactive</span></td></tr>
+        <tr><td class="num">May 27 · 14:08</td><td>Peak concurrent query load (month-end)</td><td class="num">1h 02m</td><td class="num">€38</td><td><span class="pill good">Productive</span></td></tr>
+        <tr><td colspan="3" class="row-strong" style="text-align: right;">Total autoscale</td><td class="num row-strong">€123</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <div></div>
+      <div>
+        <div class="callout-l">Autoscale data gap</div>
+        <p>LayerPulse currently logs autoscale start/end via Metrics App DAX but does not yet correlate to root cause. The "justified" tag above is heuristic. Improving this requires a new <code>autoscale_event_log</code> collector — flagged in the gap audit for next sprint.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">7 / 19</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 8 — SKU EFFICIENCY + FORECAST ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">FinOps Cost Report</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · May 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">07</span>SKU efficiency &amp; 3-month forecast</h2>
+      <span class="doc-fit partial" title="Reserved-pricing comparator is heuristic; needs Azure pricing API ingest">⚠ Heuristic</span>
+    </div>
+
+    <p class="lead">Acme runs on F64 Reserved (1-year commit). At current trajectory the model crosses the envelope in August. With the named optimizations, the envelope holds through FY26.</p>
+
+    <h3>Current SKU posture</h3>
+    <table>
+      <thead>
+        <tr><th>Dimension</th><th>Current</th><th>Benchmark</th><th>Verdict</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="row-strong">SKU tier</td><td>F64 Reserved</td><td>F64 (right-sized for 12K users · 41 reports)</td><td><span class="pill good">Correct</span></td></tr>
+        <tr><td class="row-strong">Commitment</td><td>1-year</td><td>1-year (matches FY26 cycle)</td><td><span class="pill good">Correct</span></td></tr>
+        <tr><td class="row-strong">Region</td><td>West Europe</td><td>West Europe (data residency for NL ops)</td><td><span class="pill good">Correct</span></td></tr>
+        <tr><td class="row-strong">Reserved pricing savings vs PAYG</td><td>~33%</td><td>33% (typical for 1-yr)</td><td><span class="pill good">Optimal</span></td></tr>
+        <tr><td class="row-strong">Envelope usage</td><td>91%</td><td>Sweet spot: 70–85%</td><td><span class="pill medium">Tight</span></td></tr>
+      </tbody>
+    </table>
+
+    <p>The 91% envelope usage is the only concern. SKU is right-sized; the question is whether to hold breathing room via the optimizations on §10 or upgrade to F128 ahead of FY27 capacity planning. Recommendation: <strong>hold via optimizations</strong> — F128 would be substantially over-provisioned for current load + reasonable growth.</p>
+
+    <h3>3-month forecast (baseline vs optimized)</h3>
+    <table>
+      <thead>
+        <tr><th>Month</th><th class="num">Baseline forecast</th><th class="num">Optimized forecast</th><th>Variance</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="row-strong">June 2026</td><td class="num">€5,020</td><td class="num">€4,140</td><td>−€880 · 78% envelope</td></tr>
+        <tr><td class="row-strong">July 2026</td><td class="num">€5,240</td><td class="num">€4,290</td><td>−€950 · 81% envelope</td></tr>
+        <tr><td class="row-strong">August 2026</td><td class="num"><strong style="color: var(--rose);">€5,490 ← OVER</strong></td><td class="num"><strong style="color: var(--emerald);">€4,490</strong></td><td>−€1,000 · 85% envelope</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <div></div>
+      <div>
+        <div class="callout-l">Forecast assumptions</div>
+        <p>Baseline assumes current FactTelemetry refresh load + linear procurement-domain growth (8% MoM) + no changes to dormant assets. Optimized assumes all three §1 recovery actions complete by end-June. Both scenarios assume no new model expansions; if FY26 includes new business domains (HR analytics is roadmapped for Q3), forecast +€600–€900/mo on top.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">8 / 19</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 9 — OPTIMIZATION OPPORTUNITIES ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">FinOps Cost Report</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · May 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">08</span>Optimization opportunities — ranked by recovery</h2>
+      <span class="doc-fit ok" title="Recommendations engine + cost attribution">✓ Live</span>
+    </div>
+
+    <p class="lead">Ten named opportunities. Six are quick wins (≤4 hours of work each). Four are larger structural changes. Combined recovery if all ship: €1,420/month, restoring 27% headroom on the F64 envelope.</p>
+
+    <table>
+      <thead>
+        <tr><th class="num">#</th><th>Action</th><th>Owner</th><th class="num">Effort</th><th class="num">Recovery</th><th>Confidence</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="num">1</td><td><strong>Incremental refresh on FactTelemetry</strong> <small style="display: block; color: var(--muted); font-size: 9pt;">BPA-INC-001 · daily partition strategy</small></td><td>BI Engineering</td><td class="num">2 days</td><td class="num row-strong">€400</td><td><span class="pill good">High</span></td></tr>
+        <tr><td class="num">2</td><td><strong>Retire 5 dormant reports (&gt;120 days)</strong> <small style="display: block; color: var(--muted); font-size: 9pt;">List in §10 appendix · scheduled retirement</small></td><td>BI Manager</td><td class="num">2 hours</td><td class="num row-strong">€280</td><td><span class="pill good">High</span></td></tr>
+        <tr><td class="num">3</td><td><strong>Retire dormant FinanceTraining2024 model</strong> <small style="display: block; color: var(--muted); font-size: 9pt;">192 days dormant · no owner · zero queries</small></td><td>BI Manager</td><td class="num">2 hours</td><td class="num row-strong">€160</td><td><span class="pill good">High</span></td></tr>
+        <tr><td class="num">4</td><td>Retire 7 reports in 90–120 day dormancy band <small style="display: block; color: var(--muted); font-size: 9pt;">Owner notification before retirement</small></td><td>BI Manager</td><td class="num">4 hours</td><td class="num row-strong">€260</td><td><span class="pill good">High</span></td></tr>
+        <tr><td class="num">5</td><td>Archive idle Risk Indicators glossary domain <small style="display: block; color: var(--muted); font-size: 9pt;">Not used since project cancellation</small></td><td>Data Steward</td><td class="num">1 hour</td><td class="num row-strong">€40</td><td><span class="pill good">High</span></td></tr>
+        <tr><td class="num">6</td><td>Investigate FactSales currency-conversion DAX <small style="display: block; color: var(--muted); font-size: 9pt;">P99 query 18s · BPA suggests aggregation table</small></td><td>BI Engineering</td><td class="num">2 days</td><td class="num row-strong">€120</td><td><span class="pill medium">Medium</span></td></tr>
+        <tr><td class="num">7</td><td>Replace 3 bi-directional relationships <small style="display: block; color: var(--muted); font-size: 9pt;">Filter propagation cost · BPA-REL-008</small></td><td>BI Engineering</td><td class="num">1 day</td><td class="num row-strong">€80</td><td><span class="pill medium">Medium</span></td></tr>
+        <tr><td class="num">8</td><td>Archive partitions older than 5 years <small style="display: block; color: var(--muted); font-size: 9pt;">Historical FY pre-2021 · Archive to ADLS</small></td><td>BI Engineering</td><td class="num">1 day</td><td class="num row-strong">€60</td><td><span class="pill medium">Medium</span></td></tr>
+        <tr><td class="num">9</td><td>Investigate May 14 reactive autoscale event <small style="display: block; color: var(--muted); font-size: 9pt;">Gateway timeout · prevent recurrence</small></td><td>Platform Ops</td><td class="num">2 hours</td><td class="num row-strong">€40</td><td><span class="pill low">Low</span></td></tr>
+        <tr><td class="num">10</td><td>Remove 18% unused columns from FactTelemetry <small style="display: block; color: var(--muted); font-size: 9pt;">Storage + query cost improvement</small></td><td>BI Engineering</td><td class="num">3 days</td><td class="num row-strong">€80</td><td><span class="pill medium">Medium</span></td></tr>
+        <tr><td colspan="4" class="row-strong" style="text-align: right; background: var(--gold-soft);">Total recoverable (all 10 actions)</td><td class="num row-strong" style="background: var(--gold-soft);">€1,520</td><td style="background: var(--gold-soft);"></td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout success">
+      <div></div>
+      <div>
+        <div class="callout-l">Recommended first wave (3 actions, ~3 days delivery)</div>
+        <p>Actions 1+2+3 from this list recover <strong>€840/month</strong> in the first wave alone. They're the three named in §1, and they're the only ones the BI Manager needs board sign-off on. The remaining seven are operational delivery decisions that can ship through normal sprint planning.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">9 / 19</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 10 — APPENDIX + FINAL ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">FinOps Cost Report</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · May 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">09</span>Methodology &amp; data lineage</h2>
+      <span class="doc-fit ok" title="LP collector inventory">✓ Live</span>
+    </div>
+
+    <p class="lead">All costs in this report are sourced from Microsoft Fabric Capacity Metrics App DAX endpoints and the LayerPulse-internal <code>cost_observations_v2</code> table (PR #357), reconciled against the customer's Azure billing on the 1st of each month. Methodology footnotes for each section appear inline; key sources summarized below.</p>
+
+    <h3>Source-of-truth ledger</h3>
+    <table>
+      <thead><tr><th>Signal</th><th>Source</th><th>Refresh cadence</th><th>Reconciliation</th></tr></thead>
+      <tbody>
+        <tr><td>Capacity CU consumption</td><td>Metrics App DAX</td><td>Hourly</td><td>vs Azure billing monthly</td></tr>
+        <tr><td>Per-workspace cost attribution</td><td><code>cost_observations_v2</code> (LP)</td><td>Daily</td><td>vs Metrics App per-workspace</td></tr>
+        <tr><td>Per-report query cost</td><td><code>cost_observations_v2</code> (LP)</td><td>Daily</td><td>vs activity_events × DAX engine</td></tr>
+        <tr><td>Dormancy detection</td><td><code>telemetry_rollup</code> (#330)</td><td>Daily</td><td>vs activity_events 90/180-day windows</td></tr>
+        <tr><td>Refresh cost decomposition</td><td>Refreshables API</td><td>Per-refresh</td><td>vs CU consumption window</td></tr>
+        <tr><td>Autoscale events</td><td>Metrics App DAX (heuristic)</td><td>Hourly</td><td>(autoscale_event_log gap — see appendix)</td></tr>
+        <tr><td>SKU efficiency / reserved comparison</td><td>Internal Azure pricing snapshot</td><td>Monthly</td><td>(Azure Pricing API ingest gap)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Notable assumptions</h3>
+    <ul>
+      <li>Reserved-pricing economics assume the 1-year commit at standard Microsoft 33% discount vs PAYG. Negotiated EA discounts not factored.</li>
+      <li>Forecast model is linear-trend, not capacity-aware — does not anticipate F128 step-change or autoscale cascading.</li>
+      <li>"Industry benchmark of €1.20/user/month" is sourced from the LayerPulse benchmark panel (anonymized data across 23 mid-market Finance models). Update cycle: quarterly.</li>
+    </ul>
+  </div>
+
+  <div class="final-assessment">
+    <h2><span class="h2-num">10 ·</span> Final assessment</h2>
+    <div class="fa-grid">
+      <div class="fa-row"><span class="fa-k">Total monthly spend</span><span class="fa-v">€4,820</span></div>
+      <div class="fa-row"><span class="fa-k">Recoverable waste (1-wave)</span><span class="fa-v">€840</span></div>
+      <div class="fa-row"><span class="fa-k">SKU posture</span><span class="fa-v">CORRECT</span></div>
+      <div class="fa-row"><span class="fa-k">Envelope utilization</span><span class="fa-v">91%</span></div>
+      <div class="fa-row"><span class="fa-k">August forecast (baseline)</span><span class="fa-v">€5,490 OVER</span></div>
+      <div class="fa-row"><span class="fa-k">August forecast (optimized)</span><span class="fa-v">€4,490</span></div>
+    </div>
+    <div class="fa-rec">
+      <strong>Recommendation:</strong> Ship the 3-action first wave by end-June (incremental refresh + dormant report retirement + stale model archive). This recovers €840/month and prevents the August envelope crossing. Hold on F128 upgrade — current SKU is correct; the cost problem is concentrated in fixable items, not under-provisioning.
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">10 / 19</span>
+    <span class="doc-confidential">Internal · FinOps</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

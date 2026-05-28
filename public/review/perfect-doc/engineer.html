@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Engineering Operating Manual — Acme Manufacturing N.V. · LayerPulse</title>
+<link rel="stylesheet" href="./doc.css"/>
+</head>
+<body>
+
+<a class="doc-nav" href="./">Back to persona hub</a>
+
+<div class="doc-shell">
+
+<!-- ═══════════════════════ COVER ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-cover">
+    <div class="doc-cover-band">
+      <div class="doc-mark"><span class="dot"></span> LayerPulse · Intelligence Series</div>
+      <h1>Engineering Operating Manual</h1>
+      <p class="doc-sub">Finance_Global_Model · Acme Manufacturing N.V. · Q2 2026</p>
+      <div class="doc-persona">For the BI / Semantic Model Engineer</div>
+    </div>
+
+    <div class="doc-cover-meta">
+      <div class="meta-row"><span class="meta-k">Semantic Model</span><span class="meta-v">Finance_Global_Model</span></div>
+      <div class="meta-row"><span class="meta-k">Tabular SKU</span><span class="meta-v mono">F64 · Premium · West Europe</span></div>
+      <div class="meta-row"><span class="meta-k">Engineer Owner</span><span class="meta-v">R. de Vries · BI Engineering</span></div>
+      <div class="meta-row"><span class="meta-k">Last successful refresh</span><span class="meta-v mono">2026-05-28 · 03:47 UTC</span></div>
+      <div class="meta-row"><span class="meta-k">Model size · in-memory</span><span class="meta-v mono">18.2 GB · VertiPaq</span></div>
+      <div class="meta-row"><span class="meta-k">Generated</span><span class="meta-v mono">2026-05-28 · 08:14 UTC</span></div>
+    </div>
+
+    <div class="doc-cover-hero">
+      <div class="hero-label">Optimization opportunities ranked by impact × ease</div>
+      <div class="hero-value" style="font-size: 38pt;"><span class="num">5</span><span class="small"> high-confidence · 12 medium · 8 low</span></div>
+      <div class="hero-trend warn">▶ Top 3 actions recover ~42% of refresh time + 17% storage</div>
+      <div class="hero-tag">"The model is fundamentally sound. Three changes (incremental refresh on FactTelemetry, currency-conversion aggregation, bi-directional relationship cleanup) deliver outsized returns. The rest is technical-debt grooming on a ~6-month horizon."</div>
+    </div>
+
+    <div style="margin-top: auto;">
+      <div class="doc-cover-verdict opt">Optimize</div>
+      <p style="font-family: var(--sans); font-size: 9pt; color: var(--muted); margin: 4mm 0 0; letter-spacing: 0.04em;">A 28-page operating manual for the Semantic Model Engineer. Every recommendation is shaped like a sprint ticket: action · expected gain · effort · why · referenced rule. Drop directly into Jira / Azure Boards.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 2 — TOP 5 OPTIMIZATIONS ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Engineering Operating Manual</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">01</span>Top 5 optimization opportunities</h2>
+      <span class="doc-fit ok" title="Live from BPA engine (T1.19) + telemetry rollup">✓ Live</span>
+    </div>
+
+    <p class="lead">Ranked by impact × ease. Each carries a referenced BPA rule, an expected gain quantified against actual measured telemetry, and a sprint-shaped effort estimate. Pull these into your next sprint planning verbatim.</p>
+
+    <h3>The headline 5</h3>
+    <table>
+      <thead><tr><th class="num">#</th><th>Action</th><th>Rule</th><th>Effort</th><th class="num">Refresh impact</th><th class="num">Cost impact</th><th>Confidence</th></tr></thead>
+      <tbody>
+        <tr><td class="num row-strong">1</td><td><strong>Incremental refresh on <code>FactTelemetry</code></strong><br/><small style="color: var(--muted);">Daily partition strategy; bind to <code>EventDate</code></small></td><td><code>BPA-INC-001</code></td><td>2d</td><td class="num row-strong" style="color: var(--emerald);">−59%</td><td class="num row-strong" style="color: var(--emerald);">−€400/mo</td><td><span class="pill good">High</span></td></tr>
+        <tr><td class="num row-strong">2</td><td><strong>Currency-conversion measure refactor</strong><br/><small style="color: var(--muted);">3 measures use row-by-row CALCULATE chains; replace with aggregation table</small></td><td><code>BPA-DAX-018</code></td><td>2d</td><td class="num row-strong" style="color: var(--emerald);">−12%</td><td class="num row-strong" style="color: var(--emerald);">−€120/mo</td><td><span class="pill medium">Medium</span></td></tr>
+        <tr><td class="num row-strong">3</td><td><strong>Replace 3 bi-directional relationships</strong><br/><small style="color: var(--muted);">Filter propagation cost in DimGLAccount, DimCurrency, DimCostCenter</small></td><td><code>BPA-REL-008</code></td><td>1d</td><td class="num row-strong" style="color: var(--emerald);">−8%</td><td class="num row-strong" style="color: var(--emerald);">−€80/mo</td><td><span class="pill medium">Medium</span></td></tr>
+        <tr><td class="num row-strong">4</td><td><strong>Remove 18% unused columns from <code>FactTelemetry</code></strong><br/><small style="color: var(--muted);">14 columns, 1.4 GB compressed, 0 dependencies in dependent reports</small></td><td><code>BPA-COL-003</code></td><td>3d</td><td class="num row-strong" style="color: var(--emerald);">−3%</td><td class="num row-strong" style="color: var(--emerald);">−€80/mo</td><td><span class="pill medium">Medium</span></td></tr>
+        <tr><td class="num row-strong">5</td><td><strong>Archive partitions older than 5 years</strong><br/><small style="color: var(--muted);">FactSales · FactGeneralLedger pre-2021 to ADLS Gen2 archive</small></td><td><code>BPA-PART-014</code></td><td>1d</td><td class="num row-strong" style="color: var(--emerald);">−2%</td><td class="num row-strong" style="color: var(--emerald);">−€60/mo</td><td><span class="pill medium">Medium</span></td></tr>
+        <tr><td colspan="3" class="row-strong" style="text-align: right; background: var(--gold-soft);">Total — Top 5</td><td class="num row-strong" style="background: var(--gold-soft);">9d</td><td class="num row-strong" style="background: var(--gold-soft); color: var(--emerald);">−84%</td><td class="num row-strong" style="background: var(--gold-soft); color: var(--emerald);">−€740/mo</td><td style="background: var(--gold-soft);"></td></tr>
+      </tbody>
+    </table>
+
+    <h3>The 12 medium-priority actions</h3>
+    <p>Optimization opportunities with smaller individual gains but accumulating to meaningful improvement. Detailed in §11 Optimization Register; summarized here:</p>
+    <ul style="columns: 2; column-gap: 8mm; font-size: 10pt;">
+      <li>Optimize 6 unused-relationship paths</li>
+      <li>Replace 4 calculated columns with measures</li>
+      <li>Reduce DimCustomer cardinality (email-hash)</li>
+      <li>Add summarization to 8 DAX measures (ROLLUP)</li>
+      <li>Convert 3 inactive relationships to USERELATIONSHIP-only</li>
+      <li>Remove 2 unused calc-groups (legacy)</li>
+      <li>Add aggregation tables for top-3 queries</li>
+      <li>Optimize DimDate role hierarchy (3-level)</li>
+      <li>Refactor 5 RANKX measures (top-N)</li>
+      <li>Clean up 14 unused Power Query parameters</li>
+      <li>Add hidden flag to internal-helper measures</li>
+      <li>Migrate 2 measures from row-context to filter-context</li>
+    </ul>
+
+    <h3>The 8 low-priority actions</h3>
+    <p>Backlog grooming items. Useful when capacity allows, none urgent. Full list in §11 appendix.</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">2 / 28</span>
+    <span class="doc-confidential">Internal · BI Engineering</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 3 — ARCHITECTURE ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Engineering Operating Manual</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">02</span>Architecture overview</h2>
+      <span class="doc-fit ok" title="Live from Scanner getInfo + getDefinition (TMDL)">✓ Live</span>
+    </div>
+
+    <p class="lead">A standard medallion-architecture model: SAP/Coupa/Workday → Bronze Lakehouse → Silver curated → Gold business views → Finance_Global_Model semantic layer → 41 consuming reports + Excel Live + Mobile. The model itself follows a star schema with a central DimDate role.</p>
+
+    <h3>End-to-end data architecture</h3>
+    <div class="diagram">┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+│  SAP S/4HANA    │  │  Coupa          │  │  Workday HRIS   │
+│  Finance · GL   │  │  Procurement    │  │  HR · Comp      │
+└────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+         │                    │                    │
+         │  Daily incremental │ Daily              │ Daily
+         ▼                    ▼                    ▼
+┌──────────────────────────────────────────────────────────┐
+│            BRONZE LAKEHOUSE · raw extracts                │
+│  finance_bronze_v · 23 tables · ~32 GB · partitioned/date │
+└─────────────────────────┬─────────────────────────────────┘
+                          │  PySpark notebooks (silver_curated.py)
+                          ▼
+┌──────────────────────────────────────────────────────────┐
+│            SILVER · curated + joined + cleansed           │
+│  finance_silver_v · 41 tables · ~24 GB · SCD2 dimensions  │
+└─────────────────────────┬─────────────────────────────────┘
+                          │  SQL views (business_semantics.sql)
+                          ▼
+┌──────────────────────────────────────────────────────────┐
+│         GOLD · business semantics + aggregations          │
+│  finance_gold_v · 48 views · materialized + indexed       │
+└─────────────────────────┬─────────────────────────────────┘
+                          │  Import mode · daily refresh
+                          ▼
+┌──────────────────────────────────────────────────────────┐
+│              Finance_Global_Model · F64 capacity          │
+│  48 tables · 412 measures · 86 relationships · 18.2 GB    │
+└─────────────────────────┬─────────────────────────────────┘
+                          │
+              ┌───────────┼───────────┐
+              ▼           ▼           ▼
+        41 reports   Excel Live  Mobile App</div>
+
+    <h3>Model statistics</h3>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-l">Tables</div><div class="kpi-v">48</div></div>
+      <div class="kpi"><div class="kpi-l">Columns (total)</div><div class="kpi-v">1,842</div></div>
+      <div class="kpi"><div class="kpi-l">Measures</div><div class="kpi-v">412</div></div>
+      <div class="kpi"><div class="kpi-l">Relationships</div><div class="kpi-v">86</div></div>
+      <div class="kpi"><div class="kpi-l">Calc groups</div><div class="kpi-v">4</div></div>
+      <div class="kpi"><div class="kpi-l">Partitions</div><div class="kpi-v">122</div></div>
+      <div class="kpi"><div class="kpi-l">Hierarchies</div><div class="kpi-v">18</div></div>
+      <div class="kpi"><div class="kpi-l">Translations</div><div class="kpi-v">2 (en, nl)</div></div>
+    </div>
+
+    <h3>Architecture observations</h3>
+    <ul>
+      <li><strong>Star schema discipline:</strong> 46/48 tables follow strict dimension/fact roles. Two tables (<code>FactBudgetActual</code>, <code>FactForecast</code>) are bridge tables — they break the strict star but the design is intentional and well-documented.</li>
+      <li><strong>DimDate role hierarchy:</strong> single conformed <code>DimDate</code> referenced by 14 fact tables. The role hierarchy uses USERELATIONSHIP for fiscal-vs-calendar alternates — a clean pattern.</li>
+      <li><strong>SCD2 dimensions:</strong> 8 dimensions track historical changes (DimCustomer, DimVendor, DimEmployee, DimGLAccount, etc.). Pattern is consistent: surrogate key + ValidFrom/ValidTo columns + Current_Flag.</li>
+      <li><strong>Calc groups:</strong> 4 calc groups (Time Intelligence, Currency Conversion, Granularity Hierarchy, Comparison). The Currency Conversion calc group is the source of the §06 DAX optimization.</li>
+    </ul>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">3 / 28</span>
+    <span class="doc-confidential">Internal · BI Engineering</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 4 — TABLE DIAGNOSTICS ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Engineering Operating Manual</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">03</span>Table diagnostics</h2>
+      <span class="doc-fit ok" title="Live from VertiPaq DMV (DISCOVER_STORAGE_TABLE_COLUMN_SEGMENTS)">✓ Live</span>
+    </div>
+
+    <p class="lead">Per-table breakdown of in-memory footprint, unused columns, refresh time, and BPA quality score. Sorted by quality risk (HIGH first). Reading top-to-bottom is the right order for sprint planning.</p>
+
+    <h3>Top 15 tables by size (descending)</h3>
+    <table>
+      <thead><tr><th>Table</th><th class="num">Rows</th><th class="num">Size (GB)</th><th class="num">Unused cols</th><th class="num">Refresh (min)</th><th>Quality</th><th>Risk</th></tr></thead>
+      <tbody>
+        <tr><td><code>FactTelemetry</code></td><td class="num">142M</td><td class="num">8.1</td><td class="num"><strong style="color: var(--rose);">61% (14)</strong></td><td class="num"><strong style="color: var(--rose);">44</strong></td><td><span class="pill poor">POOR</span></td><td><span class="pill high">HIGH</span></td></tr>
+        <tr><td><code>FactSales</code></td><td class="num">88M</td><td class="num">4.2</td><td class="num">4% (3)</td><td class="num">8</td><td><span class="pill good">GOOD</span></td><td><span class="pill low">LOW</span></td></tr>
+        <tr><td><code>FactGeneralLedger</code></td><td class="num">61M</td><td class="num">3.8</td><td class="num">7% (5)</td><td class="num">7</td><td><span class="pill good">GOOD</span></td><td><span class="pill low">LOW</span></td></tr>
+        <tr><td><code>DimCustomer</code></td><td class="num">2.4M</td><td class="num">1.9</td><td class="num">33% (12)</td><td class="num">3</td><td><span class="pill warn">MEDIUM</span></td><td><span class="pill medium">MEDIUM</span></td></tr>
+        <tr><td><code>FactInventory</code></td><td class="num">22M</td><td class="num">1.4</td><td class="num">11% (6)</td><td class="num">3</td><td><span class="pill good">GOOD</span></td><td><span class="pill low">LOW</span></td></tr>
+        <tr><td><code>FactProcurement</code></td><td class="num">18M</td><td class="num">1.1</td><td class="num">28% (9)</td><td class="num">2</td><td><span class="pill warn">MEDIUM</span></td><td><span class="pill medium">MEDIUM</span></td></tr>
+        <tr><td><code>FactBudgetActual</code></td><td class="num">3.1M</td><td class="num">0.9</td><td class="num">8% (3)</td><td class="num">2</td><td><span class="pill good">GOOD</span></td><td><span class="pill low">LOW</span></td></tr>
+        <tr><td><code>DimVendor</code></td><td class="num">88K</td><td class="num">0.6</td><td class="num">18% (5)</td><td class="num">1</td><td><span class="pill good">GOOD</span></td><td><span class="pill low">LOW</span></td></tr>
+        <tr><td><code>FactCustomerTransaction</code></td><td class="num">8M</td><td class="num">0.5</td><td class="num">14% (4)</td><td class="num">1</td><td><span class="pill good">GOOD</span></td><td><span class="pill low">LOW</span></td></tr>
+        <tr><td><code>DimGLAccount</code></td><td class="num">12K</td><td class="num">0.3</td><td class="num">9% (2)</td><td class="num">&lt;1</td><td><span class="pill good">GOOD</span></td><td><span class="pill low">LOW</span></td></tr>
+        <tr><td colspan="7" style="text-align: center; padding: 3mm; font-style: italic; color: var(--muted);">+ 38 smaller tables (all GOOD/LOW; full register in appendix)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>FactTelemetry — the problem table</h3>
+    <p>FactTelemetry is the single largest table (8.1 GB, 142M rows) and carries the worst diagnostics. Three problems stack:</p>
+    <ul>
+      <li><strong>61% column waste (14 of 23 columns unused).</strong> The original ingestion captured everything Scanner returned; nobody pruned. Verified via cross-reference with all 41 dependent reports + Excel Live queries — these 14 columns have zero dependencies.</li>
+      <li><strong>Full-refresh strategy.</strong> No incremental partitioning. Each refresh re-reads all 142M rows from the Lakehouse and rebuilds VertiPaq compression. 44 minutes per refresh.</li>
+      <li><strong>High-cardinality columns.</strong> <code>CustomerEmail</code> column (1.8M distinct values) accounts for 18% of the table's compressed memory and is unused in reports. This is the single biggest column-level optimization in the model.</li>
+    </ul>
+
+    <div class="callout warn">
+      <div></div>
+      <div>
+        <div class="callout-l">Sprint allocation suggestion</div>
+        <p>Allocate one sprint to FactTelemetry alone: implement incremental refresh + remove the 14 unused columns + hash the high-cardinality email. Expected outcome: 8.1 GB → ~5.5 GB compressed, refresh time 44 min → ~16 min, refresh cost €680 → ~€220/mo. Risk: minimal (no consumer-facing impact); rollback is a TMDL revert.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">4 / 28</span>
+    <span class="doc-confidential">Internal · BI Engineering</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 5 — COLUMN DIAGNOSTICS ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Engineering Operating Manual</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">04</span>Column diagnostics — top memory consumers</h2>
+      <span class="doc-fit ok" title="Live from VertiPaq DMV per-column segment data">✓ Live</span>
+    </div>
+
+    <p class="lead">15 columns account for 64% of the model's 18.2 GB compressed footprint. Three of them are unused in any dependent report. Removing those three reclaims 2.1 GB (12%) — the second-biggest single-action storage gain after incremental refresh.</p>
+
+    <h3>Top 15 columns by compressed memory</h3>
+    <table>
+      <thead><tr><th>Column</th><th>Table</th><th class="num">Cardinality</th><th class="num">Memory (MB)</th><th class="num">% of model</th><th>Used in reports?</th></tr></thead>
+      <tbody>
+        <tr><td><code>CustomerEmail</code></td><td>FactTelemetry</td><td class="num">1.84M</td><td class="num">1,420</td><td class="num">7.8%</td><td><span class="pill high">UNUSED</span></td></tr>
+        <tr><td><code>SessionGUID</code></td><td>FactTelemetry</td><td class="num">8.2M</td><td class="num">1,180</td><td class="num">6.5%</td><td><span class="pill high">UNUSED</span></td></tr>
+        <tr><td><code>TransactionID</code></td><td>FactSales</td><td class="num">88M</td><td class="num">1,100</td><td class="num">6.0%</td><td>Yes · 8 reports</td></tr>
+        <tr><td><code>JournalEntryID</code></td><td>FactGeneralLedger</td><td class="num">61M</td><td class="num">780</td><td class="num">4.3%</td><td>Yes · 4 reports</td></tr>
+        <tr><td><code>RawPayload</code></td><td>FactTelemetry</td><td class="num">142M</td><td class="num">540</td><td class="num">3.0%</td><td><span class="pill high">UNUSED</span></td></tr>
+        <tr><td><code>CustomerName</code></td><td>DimCustomer</td><td class="num">2.4M</td><td class="num">420</td><td class="num">2.3%</td><td>Yes · 32 reports</td></tr>
+        <tr><td><code>VendorName</code></td><td>DimVendor</td><td class="num">88K</td><td class="num">340</td><td class="num">1.9%</td><td>Yes · 18 reports</td></tr>
+        <tr><td><code>EventTimestamp</code></td><td>FactTelemetry</td><td class="num">142M</td><td class="num">320</td><td class="num">1.8%</td><td>Yes · 6 reports</td></tr>
+        <tr><td><code>ProductDescription</code></td><td>DimProduct</td><td class="num">240K</td><td class="num">280</td><td class="num">1.5%</td><td>Yes · 24 reports</td></tr>
+        <tr><td><code>Amount</code></td><td>FactSales</td><td class="num">88M</td><td class="num">240</td><td class="num">1.3%</td><td>Yes · all reports</td></tr>
+        <tr><td colspan="6" style="text-align: center; padding: 3mm; font-style: italic; color: var(--muted);">+ 5 more in top-15; remaining 1,827 columns share the other 36% of memory</td></tr>
+      </tbody>
+    </table>
+
+    <h3>The three columns to remove</h3>
+    <p>Three unused columns dominate the gain:</p>
+    <pre class="dax"><span class="kw">// 1. CustomerEmail — FactTelemetry</span>
+<span class="kw">// Why unused:</span> CustomerEmail is sourced from the SAP telemetry feed
+<span class="kw">// but the marketing pipeline that needed it was decommissioned in Q4 2024.
+// Verified: zero dependencies in dependent reports + Excel Live + KPI app.</span>
+
+<span class="kw">// 2. SessionGUID — FactTelemetry</span>
+<span class="kw">// Why unused:</span> SessionGUID was used by an event-stream debugging dashboard
+<span class="kw">// that was retired with the move to Sentry-based observability.</span>
+
+<span class="kw">// 3. RawPayload — FactTelemetry</span>
+<span class="kw">// Why unused:</span> RawPayload is the unstructured JSON blob from the ingestion
+<span class="kw">// pipeline. Useful in the bronze layer; should never have been promoted to gold.</span>
+
+<span class="kw">// Together:</span> 1,420 + 1,180 + 540 = 3,140 MB = 17% of model memory.</pre>
+
+    <h3>Cardinality vs business value matrix</h3>
+    <p>A useful heuristic for the next column-pruning pass:</p>
+    <div class="diagram">                              VALUE TO REPORTS
+                       LOW                          HIGH
+                ┌─────────────────────┬─────────────────────┐
+            LOW │  Safe to remove     │  Keep                │
+                │  (delete in next    │  (low memory cost,   │
+  CARDINALITY   │  sprint)            │  high report value)  │
+                ├─────────────────────┼─────────────────────┤
+                │  → CustomerEmail    │  → CustomerName      │
+            HIGH│  → SessionGUID      │  → VendorName        │
+                │  → RawPayload       │  → ProductDesc       │
+                │  ← REMOVE THESE     │  ← KEEP THESE        │
+                └─────────────────────┴─────────────────────┘</div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">5 / 28</span>
+    <span class="doc-confidential">Internal · BI Engineering</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 6 — RELATIONSHIPS + DAX ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Engineering Operating Manual</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">05</span>Relationship analysis</h2>
+      <span class="doc-fit ok" title="Live from Scanner relationships + USERELATIONSHIP usage">✓ Live</span>
+    </div>
+
+    <p class="lead">86 total relationships across the 48-table model. 73 are clean; 13 carry one of four diagnostic flags. Most concerning: 3 bi-directional relationships causing filter-propagation cost on every Procurement query.</p>
+
+    <h3>Relationship inventory</h3>
+    <table>
+      <thead><tr><th>Issue category</th><th class="num">Count</th><th>Detail</th><th>Recommendation</th></tr></thead>
+      <tbody>
+        <tr><td class="row-strong">Bi-directional</td><td class="num">3</td><td>DimGLAccount ↔ FactGL; DimCurrency ↔ FactSales; DimCostCenter ↔ FactBudget</td><td>Replace with single-direction + USERELATIONSHIP if needed (<code>BPA-REL-008</code>)</td></tr>
+        <tr><td class="row-strong">Inactive (never USERELATIONSHIP-invoked)</td><td class="num">3</td><td>DimDate · DimCustomer · DimVendor (legacy alternate keys)</td><td>Remove (BPA-REL-002)</td></tr>
+        <tr><td class="row-strong">Ambiguous path</td><td class="num">2</td><td>FactSales ↔ DimCustomer (2 paths via DimRegion); FactGL ↔ DimDate (3 paths)</td><td>Disambiguate via single primary; rest inactive</td></tr>
+        <tr><td class="row-strong">Many-to-many (no bridge)</td><td class="num">0</td><td>—</td><td>Clean</td></tr>
+        <tr><td class="row-strong">Missing referential integrity</td><td class="num">5</td><td>Snapshot tables with orphan keys (~0.3% per table)</td><td>Investigate sources; acceptable if &lt;1%</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Why bi-directional is expensive here</h3>
+    <p>The three bi-directional relationships chain across FactProcurement queries: every measure that touches Procurement spend traverses the DimCurrency filter, which propagates back through FactSales (used by the same measure for context). The DAX engine evaluates this chain on every query — adding ~120ms per query × ~1,180 queries/day × 30 days = 71 minutes/month of preventable compute. Cost: ~€80/mo. Behavior: identical with single-direction (verified in sandbox).</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">6 / 28</span>
+    <span class="doc-confidential">Internal · BI Engineering</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 7 — DAX MEASURE OPTIMIZATION ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Engineering Operating Manual</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">06</span>DAX measure optimization</h2>
+      <span class="doc-fit partial" title="BPA-rule violations live; per-measure query-cost ranking heuristic until query-trace ingestion">⚠ Partial</span>
+    </div>
+
+    <p class="lead">412 measures in the model. 384 pass all BPA rules. 28 carry one or more flags; 8 of those drive the most expensive queries. The single biggest DAX optimization is the currency-conversion chain.</p>
+
+    <h3>Top 5 most expensive measures (by inferred query cost)</h3>
+    <table>
+      <thead><tr><th>Measure</th><th>Calc complexity</th><th>Dependent reports</th><th class="num">Avg cost</th><th>Optimization</th></tr></thead>
+      <tbody>
+        <tr><td><code>[Total Margin YTD Converted]</code></td><td>3-level CALCULATE chain · CurrencyConversion calc-group</td><td class="num">12</td><td class="num"><strong>HIGH</strong></td><td>Aggregation table</td></tr>
+        <tr><td><code>[Forecast Variance EUR]</code></td><td>Dynamic currency conversion per row</td><td class="num">8</td><td class="num"><strong>VERY HIGH</strong></td><td>Pre-convert in Silver layer</td></tr>
+        <tr><td><code>[Procurement Spend YTD]</code></td><td>RANKX over 88M vendors · with CALCULATE filter</td><td class="num">6</td><td class="num"><strong>HIGH</strong></td><td>Top-N aggregation table</td></tr>
+        <tr><td><code>[Vendor Concentration Index]</code></td><td>SUMX over FactProcurement × 88K vendors</td><td class="num">4</td><td class="num"><strong>HIGH</strong></td><td>Aggregation table</td></tr>
+        <tr><td><code>[Treasury Position Forecast 90d]</code></td><td>5-quarter window · OFFSET DAX</td><td class="num">3</td><td class="num"><strong>HIGH</strong></td><td>Materialize in Gold view</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Currency conversion — the root pattern</h3>
+    <p>Three measures (Total Margin YTD Converted, Forecast Variance EUR, Procurement Spend YTD Converted) all use the same anti-pattern: CALCULATE chained inside SUMX with per-row currency lookup via the CurrencyConversion calc-group. The current implementation:</p>
+
+    <pre class="dax"><span class="kw">// Current implementation — Total Margin YTD Converted</span>
+[Total Margin YTD Converted] :=
+<span class="fn">VAR</span> CurrentDate = <span class="fn">MAX</span>(<span class="ref">DimDate[Date]</span>)
+<span class="fn">VAR</span> ConvertedSales =
+    <span class="fn">SUMX</span>(
+        <span class="fn">FILTER</span>(<span class="ref">FactSales</span>, <span class="ref">FactSales[Date]</span> &lt;= CurrentDate),
+        <span class="ref">FactSales[Amount]</span> * <span class="fn">RELATED</span>(<span class="ref">DimCurrency[RateToEUR]</span>)
+    )
+<span class="fn">VAR</span> ConvertedCOGS = <span class="fn">SUMX</span>(...similar pattern...)
+<span class="fn">RETURN</span>
+    ConvertedSales - ConvertedCOGS</pre>
+
+    <p>Cost: per-row currency lookup × ~<span class="num">88M</span> rows × per-query × ~<span class="num">820</span> queries/day. Avg P95 query latency: <strong>18.2s</strong>.</p>
+
+    <h3>Recommended optimization</h3>
+    <p>Pre-convert in the Silver layer so the semantic model never sees source-currency amounts. Add a <code>silver.fact_sales_converted</code> view that materializes <code>amount_eur</code> via a join to <code>dim_currency</code> at ingest time. The measure simplifies to a plain <code>SUM</code>.</p>
+
+    <pre class="dax"><span class="kw">// Optimized implementation</span>
+[Total Margin YTD Converted] :=
+<span class="fn">CALCULATE</span>(
+    <span class="fn">SUM</span>(<span class="ref">FactSales[AmountEUR]</span>) - <span class="fn">SUM</span>(<span class="ref">FactSales[COGSEUR]</span>),
+    <span class="fn">DATESYTD</span>(<span class="ref">DimDate[Date]</span>)
+)
+
+<span class="kw">// Expected:</span> P95 query latency 18.2s → 1.8s (90% reduction)
+<span class="kw">// Cost impact:</span> ~€120/month savings (currency-conversion chain is gone)</pre>
+
+    <div class="callout">
+      <div></div>
+      <div>
+        <div class="callout-l">Rollout strategy</div>
+        <p>Pre-convert at Silver is a non-trivial change (requires Lakehouse pipeline modification + business-logic verification). Recommended: ship in a feature branch, A/B verify against current measure for one week, then cutover. Estimated effort: 3 days BI Engineering + 2 days Data Engineering coordination.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">7 / 28</span>
+    <span class="doc-confidential">Internal · BI Engineering</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 8 — REFRESH + CAPACITY + FINAL ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Engineering Operating Manual</span></div>
+    <div class="doc-meta">Acme · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">07</span>Refresh pipeline &amp; capacity</h2>
+      <span class="doc-fit ok" title="Live from Refreshables API + capacity_snapshots">✓ Live</span>
+    </div>
+
+    <p class="lead">Daily refresh runs at 03:30 UTC. Median 33 minutes; longest in May was 71 minutes (gateway recovery). Two refreshes failed in the period; both downstream gateway issues, not model-quality. The big lever — incremental refresh on FactTelemetry — would bring the median to ~16 minutes.</p>
+
+    <h3>Refresh duration breakdown (May 2026 median)</h3>
+    <div class="waterfall">
+      <div class="wf-label heavy">FactTelemetry</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 100%;"></div></div>
+      <div class="wf-amt">44 min</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">FactSales</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 18%;"></div></div>
+      <div class="wf-amt">8 min</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">FactGeneralLedger</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 16%;"></div></div>
+      <div class="wf-amt">7 min</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">DimCustomer (SCD2)</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 7%;"></div></div>
+      <div class="wf-amt">3 min</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">All other 44 tables</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 18%;"></div></div>
+      <div class="wf-amt">8 min</div>
+    </div>
+    <div class="waterfall row-strong">
+      <div class="wf-label heavy">Sequential total (median)</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 100%;"></div></div>
+      <div class="wf-amt">~70 min</div>
+    </div>
+
+    <p style="font-size: 10pt; color: var(--ink-soft);"><em>Note: refresh runs partially in parallel; sequential total ≠ wall-clock. Median wall-clock is 33 min thanks to F64's 8-thread parallelism. FactTelemetry is the critical path because it runs alone for the first 44 minutes (no parallelism possible during single-table full-refresh).</em></p>
+
+    <h3>Refresh reliability</h3>
+    <table>
+      <thead><tr><th>Metric</th><th>Value</th><th>Target</th></tr></thead>
+      <tbody>
+        <tr><td>Success rate (30d)</td><td><strong style="color: var(--emerald);">98.2%</strong></td><td>99.6%</td></tr>
+        <tr><td>Median refresh duration</td><td>33 min</td><td>&lt; 40 min</td></tr>
+        <tr><td>P95 refresh duration</td><td>52 min</td><td>&lt; 60 min</td></tr>
+        <tr><td>Max refresh duration</td><td>71 min (May 14)</td><td>&lt; 90 min</td></tr>
+        <tr><td>Failed refreshes</td><td>2</td><td>&lt; 3</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Failure timeline</h3>
+    <table>
+      <thead><tr><th class="num">Date</th><th>Root cause</th><th>Recovery</th></tr></thead>
+      <tbody>
+        <tr><td class="num">2026-05-14</td><td>Gateway timeout · transient SAP source slowness</td><td>Auto-retry succeeded after 12 min</td></tr>
+        <tr><td class="num">2026-05-18</td><td>SQL source deadlock on Coupa staging table</td><td>Manual retry after Coupa team unblocked source</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Deployment drift</h3>
+    <p>Production is 2 releases behind DEV. The pending releases are scheduled for the next UAT-to-PRD window (June 6). The DEV-vs-PRD diff is limited to (a) a new measure for the Procurement domain (<code>[Catalog Compliance %]</code>) and (b) a calc-group hide flag for legacy measures. Both ship cleanly in the next deployment window; no risk markers.</p>
+  </div>
+
+  <div class="final-assessment">
+    <h2><span class="h2-num">08 ·</span> Final assessment</h2>
+    <div class="fa-grid">
+      <div class="fa-row"><span class="fa-k">Architecture quality</span><span class="fa-v">GOOD</span></div>
+      <div class="fa-row"><span class="fa-k">Performance quality</span><span class="fa-v">MEDIUM</span></div>
+      <div class="fa-row"><span class="fa-k">Refresh efficiency</span><span class="fa-v">POOR</span></div>
+      <div class="fa-row"><span class="fa-k">DAX maintainability</span><span class="fa-v">GOOD</span></div>
+      <div class="fa-row"><span class="fa-k">Relationship hygiene</span><span class="fa-v">MEDIUM</span></div>
+      <div class="fa-row"><span class="fa-k">Documentation discipline</span><span class="fa-v">MEDIUM</span></div>
+    </div>
+    <div class="fa-rec">
+      <strong>Recommendation:</strong> Ship the Top 5 optimizations from §01 in the next two sprints. <strong>Sprint 1:</strong> FactTelemetry (incremental refresh + column pruning) — single biggest win. <strong>Sprint 2:</strong> currency conversion refactor + bi-directional relationship cleanup. The remaining 20 medium/low items are technical-debt grooming on a 6-month horizon; pull when capacity allows.
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">8 / 28</span>
+    <span class="doc-confidential">Internal · BI Engineering</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

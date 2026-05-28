@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BI Portfolio Briefing — Acme Manufacturing N.V. · LayerPulse</title>
+<link rel="stylesheet" href="./doc.css"/>
+</head>
+<body>
+
+<a class="doc-nav" href="./">Back to persona hub</a>
+
+<div class="doc-shell">
+
+<!-- ═══════════════════════ COVER PAGE ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-cover">
+    <div class="doc-cover-band">
+      <div class="doc-mark"><span class="dot"></span> LayerPulse · Intelligence Series</div>
+      <h1>BI Portfolio Briefing</h1>
+      <p class="doc-sub">Finance_Global_Model · Acme Manufacturing N.V. · Q2 2026</p>
+      <div class="doc-persona">For the BI / Analytics Manager</div>
+    </div>
+
+    <div class="doc-cover-meta">
+      <div class="meta-row"><span class="meta-k">Customer</span><span class="meta-v">Acme Manufacturing N.V.</span></div>
+      <div class="meta-row"><span class="meta-k">Semantic Model</span><span class="meta-v">Finance_Global_Model</span></div>
+      <div class="meta-row"><span class="meta-k">Workspace</span><span class="meta-v">Finance Reporting [prd]</span></div>
+      <div class="meta-row"><span class="meta-k">Owner</span><span class="meta-v">Finance BI Team · M. Hendriks</span></div>
+      <div class="meta-row"><span class="meta-k">Capacity</span><span class="meta-v mono">F64 · West Europe · Reserved</span></div>
+      <div class="meta-row"><span class="meta-k">Generated</span><span class="meta-v mono">2026-05-28 · 08:14 UTC</span></div>
+    </div>
+
+    <div class="doc-cover-hero">
+      <div class="hero-label">Portfolio Health Score</div>
+      <div class="hero-value"><span class="num">82</span><span class="small"> / 100</span></div>
+      <div class="hero-trend">▲ +4 this month · stable trajectory</div>
+      <div class="hero-tag">"Healthy and earning its capacity. Two governance gaps and one cost trajectory worth a board mention next month."</div>
+    </div>
+
+    <div style="margin-top: auto;">
+      <div class="doc-cover-verdict opt">Optimize</div>
+      <p style="font-family: var(--sans); font-size: 9pt; color: var(--muted); margin: 4mm 0 0; letter-spacing: 0.04em;">A 7-page executive briefing for the BI Portfolio Owner. Read top-to-bottom in under 15 minutes. Detailed evidence in the appendix.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 2 — EXECUTIVE SUMMARY ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Portfolio Briefing</span></div>
+    <div class="doc-meta">Acme Manufacturing · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">01</span>Executive summary</h2>
+      <span class="doc-fit ok" title="All inputs live from LP collectors">✓ Live</span>
+    </div>
+
+    <p class="lead">Your most-adopted Finance model is in good shape. Adoption is up 14% on the back of the Procurement Analytics onboarding. The board-level signal: two governance gaps need closing before the next audit window, and the cost trajectory has bent upward enough to mention proactively rather than be asked.</p>
+
+    <h3>Business health snapshot</h3>
+    <div class="kpi-grid">
+      <div class="kpi healthy">
+        <div class="kpi-l">Active users</div>
+        <div class="kpi-v">12,482</div>
+        <div class="kpi-trend up">▲ +14% MoM</div>
+      </div>
+      <div class="kpi healthy">
+        <div class="kpi-l">Reports using model</div>
+        <div class="kpi-v">41</div>
+        <div class="kpi-trend up">▲ +3 this quarter</div>
+      </div>
+      <div class="kpi alert">
+        <div class="kpi-l">Refresh SLA</div>
+        <div class="kpi-v">98.2<span class="unit">%</span></div>
+        <div class="kpi-trend down">▼ −1.4 pts vs target</div>
+      </div>
+      <div class="kpi alert">
+        <div class="kpi-l">Monthly cost</div>
+        <div class="kpi-v">€4,820</div>
+        <div class="kpi-trend warn">▲ +9% MoM</div>
+      </div>
+    </div>
+
+    <h3>The headline narrative</h3>
+    <p>The Finance Global Model continues to be Acme's most adopted analytical asset — usage rose 14% this month, driven primarily by the onboarding of the Procurement Analytics domain. The team's investment is showing through: report load times stayed within target, refresh failure rate remained below 2%, and no critical incidents reached executive-level escalation.</p>
+
+    <p>Two structural risks emerged, however, that warrant board awareness rather than just operational follow-up. First, refresh duration increased <strong>18% after the FactTelemetry table was added in May</strong> — the model is becoming large enough to merit incremental refresh attention. Second, an <strong>internal governance review</strong> flagged that 18 measures lack documentation and that HR-related tables in this model are missing sensitivity labels. Neither blocks audit-readiness today; both will if not addressed within the next two refresh cycles.</p>
+
+    <div class="callout">
+      <div></div>
+      <div>
+        <div class="callout-l">Recommended board signal</div>
+        <p>The Finance Global Model is a heavily-used, healthy enterprise asset. Two governance items and one cost trajectory require active management this quarter. Decisions on the final page (§6) are scoped, named, and ready for approval.</p>
+      </div>
+    </div>
+
+    <h3>Three risks to surface</h3>
+    <div class="kpi-grid three">
+      <div class="kpi critical">
+        <div class="kpi-l">Risk #1 · Governance</div>
+        <div class="kpi-v" style="font-size: 13pt; line-height: 1.3; font-weight: 700;">Sensitivity labels missing on HR tables</div>
+        <div class="kpi-trend warn" style="margin-top: 2mm;">Audit cycle: 162 days</div>
+      </div>
+      <div class="kpi alert">
+        <div class="kpi-l">Risk #2 · Cost</div>
+        <div class="kpi-v" style="font-size: 13pt; line-height: 1.3; font-weight: 700;">Refresh runtime +18% after May change</div>
+        <div class="kpi-trend warn" style="margin-top: 2mm;">CU trajectory: ~F64 in Q4</div>
+      </div>
+      <div class="kpi alert">
+        <div class="kpi-l">Risk #3 · Adoption</div>
+        <div class="kpi-v" style="font-size: 13pt; line-height: 1.3; font-weight: 700;">2 reports dormant > 120 days</div>
+        <div class="kpi-trend down" style="margin-top: 2mm;">Loss: ~€440 / month</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">2 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 3 — RISKS DEEP ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Portfolio Briefing</span></div>
+    <div class="doc-meta">Acme Manufacturing · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">02</span>The three risks · in detail</h2>
+      <span class="doc-fit partial" title="Sensitivity labels via Scanner; cost trajectory via T1.16 rollup; adoption via activity_events">⚠ Mostly live</span>
+    </div>
+
+    <p class="lead">Each risk has been pre-scoped to a single owner and a single decision. The board does not need to debate the diagnosis — only approve the action and confirm the timeline. Detailed evidence behind each item lives in the appendix.</p>
+
+    <h3>Risk 1 · Sensitivity labels missing on HR-related tables</h3>
+    <p>The internal compliance posture report identified that the <code>DimEmployee</code> and <code>FactCompensation</code> tables are joined into the Finance Global Model but carry no sensitivity labels — neither in Scanner metadata nor in the Purview catalog. Both contain salary data. Under the company's ISO 27001 compliance program, undeclared sensitive data joined to a broadly-shared asset would be flagged at the next audit.</p>
+
+    <div class="callout warn">
+      <div></div>
+      <div>
+        <div class="callout-l">Why the board should care</div>
+        <p>The next compliance audit window opens <strong>2026-10-18</strong> (162 days away). Sensitivity classification is a 2-week effort if scheduled now; a 3-month panic if scheduled when the audit letter arrives. The risk is operational schedule slippage, not data exposure (RLS evaluation passes — see §8).</p>
+      </div>
+    </div>
+
+    <h3>Risk 2 · Refresh runtime +18% after May change</h3>
+    <p>The model's median refresh duration rose from 28 min to 33 min after the <code>FactTelemetry</code> table was added in PR &#35;347. While the model is well within the F64 capacity headroom today, the trajectory — if unaddressed — projects a 45-minute median refresh by end-Q3 and approaches the 60-minute window beyond which capacity scaling becomes a contracted-cost discussion.</p>
+
+    <div class="callout">
+      <div></div>
+      <div>
+        <div class="callout-l">The technical lever</div>
+        <p>Enabling incremental refresh on <code>FactTelemetry</code> would reduce refresh time by an estimated 42% (per LayerPulse's BPA engine, rule <code>BPA-INC-001</code>). This is a delivery-team task — see Decision 2 below.</p>
+      </div>
+    </div>
+
+    <h3>Risk 3 · Two reports dormant for &gt;120 days</h3>
+    <p>The <em>Treasury Variance Weekly</em> and <em>Procurement Heatmap Q1</em> reports have not been viewed in 124 and 138 days respectively, but continue to trigger refresh and storage costs. Combined dormant cost: ~€440/month. Both were built for one-time business reviews that ended.</p>
+
+    <h3>What is NOT a risk (worth noting)</h3>
+    <ul>
+      <li>Refresh failure rate (1.8%) is well within the 2% SLA threshold; the May spike was isolated to a single gateway timeout incident.</li>
+      <li>Model ownership is fully assigned (Maria Hendriks, Finance BI Team), unlike 3 of Acme's other 14 enterprise models. Ownership is a leading indicator of recovery time during incidents; this model is in a good position.</li>
+      <li>RLS evaluation passes — no role-based access leakage detected across the 41 dependent reports.</li>
+    </ul>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">3 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 4 — ADOPTION & BUSINESS IMPACT ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Portfolio Briefing</span></div>
+    <div class="doc-meta">Acme Manufacturing · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">03</span>Adoption &amp; business impact</h2>
+      <span class="doc-fit ok" title="Live from activity_events + workspace_health_scores">✓ Live</span>
+    </div>
+
+    <p class="lead">The model now supports four business domains and 41 distinct reports, with monthly query volume crossing the 8 million mark. Adoption is healthy and concentrated in the right places — the executive consumers are heaviest users, which is the textbook signal a high-investment model should produce.</p>
+
+    <h3>Who is using the model</h3>
+    <table>
+      <thead>
+        <tr><th>Business unit</th><th class="num">Active users</th><th class="num">Queries / day</th><th>Trend</th><th>Health</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="row-strong">Finance &amp; Reporting</td><td class="num">8,212</td><td class="num">420K</td><td>▲ +12%</td><td><span class="pill healthy">Healthy</span></td></tr>
+        <tr><td class="row-strong">Executive Insights</td><td class="num">2,004</td><td class="num">180K</td><td>▲ +28%</td><td><span class="pill healthy">Healthy</span></td></tr>
+        <tr><td class="row-strong">Treasury Analytics</td><td class="num">1,182</td><td class="num">94K</td><td>▼ −6%</td><td><span class="pill medium">Attention</span></td></tr>
+        <tr><td class="row-strong">Procurement Analytics</td><td class="num">1,084</td><td class="num">68K</td><td>▲ NEW</td><td><span class="pill info">Onboarding</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Most-used reports</h3>
+    <table>
+      <thead>
+        <tr><th>Report</th><th class="num">Active users</th><th class="num">Avg load time</th><th>Trend</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="row-strong">CFO Dashboard</td><td class="num">2,920</td><td class="num">4.1s</td><td>▲ +9%</td><td><span class="pill good">Good</span></td></tr>
+        <tr><td class="row-strong">Spend Analytics</td><td class="num">1,822</td><td class="num">8.4s</td><td>▲ +18%</td><td><span class="pill warn">Slow</span></td></tr>
+        <tr><td class="row-strong">Treasury Risk Dashboard</td><td class="num">1,204</td><td class="num">3.2s</td><td>▼ −4%</td><td><span class="pill good">Good</span></td></tr>
+        <tr><td class="row-strong">Board Reporting Pack</td><td class="num">42</td><td class="num">2.1s</td><td>▶ steady</td><td><span class="pill good">Good</span></td></tr>
+        <tr><td class="row-strong">Procurement KPI Mobile App</td><td class="num">680</td><td class="num">1.8s</td><td>▲ NEW</td><td><span class="pill info">Onboarding</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Adoption-to-cost ratio</h3>
+    <p>Cost per active user this month: <strong>€0.39</strong> — well below industry benchmark of €1.20 for comparable enterprise Finance models. The model is earning its capacity allocation by every reasonable metric. The 9% MoM cost rise is concerning only because it accelerates against a flat-headcount user base; the cost trajectory is not yet outpacing value delivery.</p>
+
+    <div class="callout success">
+      <div></div>
+      <div>
+        <div class="callout-l">What this confirms</div>
+        <p>The Finance Global Model is a strong investment. Adoption is rising in the right places (executive layer, new business domains), cost-per-user is industry-low, and the report mix is balanced between mass-reach (CFO Dashboard) and specialist analysis (Treasury, Procurement). The model deserves continued investment, not the optimization-skeptic framing.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">4 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 5 — COST TRAJECTORY ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Portfolio Briefing</span></div>
+    <div class="doc-meta">Acme Manufacturing · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">04</span>Cost trajectory</h2>
+      <span class="doc-fit partial" title="Capacity costs live; SKU-efficiency calc heuristic until reserved-pricing API ingest">⚠ Heuristic</span>
+    </div>
+
+    <p class="lead">Monthly cost is €4,820 — up 9% MoM, primarily driven by the FactTelemetry refresh load. The trajectory is manageable today; the question for the board is whether to absorb it in the FY26 capacity envelope or capture it through the optimizations on the final page.</p>
+
+    <h3>What drove the increase</h3>
+    <div class="waterfall">
+      <div class="wf-label heavy">Baseline (April 2026)</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 70%;"></div></div>
+      <div class="wf-amt">€4,425</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">+ FactTelemetry refresh load</div>
+      <div class="wf-bar waste"><div class="wf-fill" style="width: 32%;"></div></div>
+      <div class="wf-amt">+€312</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">+ Procurement domain queries (new adoption)</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 18%;"></div></div>
+      <div class="wf-amt">+€178</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">+ Autoscale event (May 14, gateway recovery)</div>
+      <div class="wf-bar waste"><div class="wf-fill" style="width: 9%;"></div></div>
+      <div class="wf-amt">+€85</div>
+    </div>
+    <div class="waterfall">
+      <div class="wf-label">− Treasury report rationalization (Q1 cleanup)</div>
+      <div class="wf-bar save"><div class="wf-fill" style="width: 18%;"></div></div>
+      <div class="wf-amt">−€180</div>
+    </div>
+    <div class="waterfall row-strong">
+      <div class="wf-label heavy">Current (May 2026)</div>
+      <div class="wf-bar"><div class="wf-fill" style="width: 76%;"></div></div>
+      <div class="wf-amt">€4,820</div>
+    </div>
+
+    <h3>Forecast (3-month, baseline scenario)</h3>
+    <table>
+      <thead>
+        <tr><th>Month</th><th class="num">Forecast cost</th><th class="num">vs F64 budget</th><th>Drivers</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="row-strong">June 2026</td><td class="num">€5,020</td><td class="num">94% of envelope</td><td>FactTelemetry full month</td></tr>
+        <tr><td class="row-strong">July 2026</td><td class="num">€5,240</td><td class="num">98% of envelope</td><td>+ Procurement scale-up</td></tr>
+        <tr><td class="row-strong">August 2026</td><td class="num">€5,490</td><td class="num"><strong style="color: var(--rose);">103% — overage</strong></td><td>Forecast crosses F64 envelope</td></tr>
+      </tbody>
+    </table>
+
+    <p>If the optimization decisions on §6 ship as proposed (incremental refresh + dormant report retirement), the trajectory bends back: August would land at <strong>€4,580</strong> (87% of envelope), restoring 13% headroom for further adoption.</p>
+
+    <div class="callout">
+      <div></div>
+      <div>
+        <div class="callout-l">Capacity context</div>
+        <p>F64 envelope is contracted at €5,300/month all-in. Crossing the envelope triggers autoscale and contractual review; staying within it preserves reserved-pricing economics. The board signal: take the €840/month optimization win, don't absorb the trajectory.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">5 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 6 — GOVERNANCE & RELIABILITY ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Portfolio Briefing</span></div>
+    <div class="doc-meta">Acme Manufacturing · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">05</span>Governance &amp; reliability posture</h2>
+      <span class="doc-fit partial" title="Most signals live; business_unit tag manual + missing for some workspaces">⚠ Partial</span>
+    </div>
+
+    <p class="lead">The model is in good operational and governance shape with two named gaps. The pattern is exactly what a well-managed enterprise model should look like: documented, owned, recoverable, with a small, named, scheduled remediation backlog rather than a fire-fighting one.</p>
+
+    <h3>Governance scorecard</h3>
+    <div class="score-block"><div class="sb-label">Ownership assigned</div><div class="sb-track"><div class="sb-fill good" style="width: 100%;"></div></div><div class="sb-val">100%</div></div>
+    <div class="score-block"><div class="sb-label">Measure documentation</div><div class="sb-track"><div class="sb-fill" style="width: 82%;"></div></div><div class="sb-val">82%</div></div>
+    <div class="score-block"><div class="sb-label">Sensitivity labels</div><div class="sb-track"><div class="sb-fill warn" style="width: 68%;"></div></div><div class="sb-val">68%</div></div>
+    <div class="score-block"><div class="sb-label">Certified datasets</div><div class="sb-track"><div class="sb-fill" style="width: 61%;"></div></div><div class="sb-val">61%</div></div>
+    <div class="score-block"><div class="sb-label">Naming-convention compliance</div><div class="sb-track"><div class="sb-fill good" style="width: 94%;"></div></div><div class="sb-val">94%</div></div>
+
+    <h3>Reliability snapshot</h3>
+    <div class="kpi-grid">
+      <div class="kpi healthy">
+        <div class="kpi-l">Refresh success rate</div>
+        <div class="kpi-v">98.2<span class="unit">%</span></div>
+        <div class="kpi-trend warn">vs 99.6% target</div>
+      </div>
+      <div class="kpi alert">
+        <div class="kpi-l">Median refresh time</div>
+        <div class="kpi-v">33<span class="unit">min</span></div>
+        <div class="kpi-trend down">▲ +18% MoM</div>
+      </div>
+      <div class="kpi healthy">
+        <div class="kpi-l">Failed refreshes (30d)</div>
+        <div class="kpi-v">2</div>
+        <div class="kpi-trend up">▼ vs 5 last month</div>
+      </div>
+      <div class="kpi healthy">
+        <div class="kpi-l">Longest single refresh</div>
+        <div class="kpi-v">71<span class="unit">min</span></div>
+        <div class="kpi-trend warn">May 14 incident</div>
+      </div>
+    </div>
+
+    <h3>What's behind those failures</h3>
+    <p>The two failed refreshes this period were both downstream gateway events — one a transient timeout (recovered on retry) and one a SQL source deadlock that was patched on the same day. Neither is a model-quality issue; both surfaced through standing-subscription alerts before any consumer-facing report was affected. The customer's gateway team has the root-cause analysis on file.</p>
+
+    <h3>Deployment drift</h3>
+    <p>Production is currently <strong>2 releases behind DEV</strong>. The pending releases are scheduled for the next UAT-to-PRD window (June 6). No material risk; tracking only because deployment drift &gt;3 releases is a leading indicator of incident clustering — current state is well under the threshold.</p>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">6 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ PAGE 7 — DECISIONS + FINAL ASSESSMENT ═══════════════════════ -->
+<div class="doc-page">
+  <div class="doc-head">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">BI Portfolio Briefing</span></div>
+    <div class="doc-meta">Acme Manufacturing · Finance_Global_Model · Q2 2026</div>
+  </div>
+
+  <div class="doc-body">
+    <div class="heading-row">
+      <h2><span class="h2-num">06</span>Decisions for next month</h2>
+      <span class="doc-fit ok" title="Owners + dates from /ownership + scheduled-recommendation engine">✓ Live</span>
+    </div>
+
+    <p class="lead">Four scoped, owned, dated decisions. Each one closes a named risk, has an estimated impact, and a single owner accountable. The board's role is approve / defer / decline; the delivery is already lined up.</p>
+
+    <div class="decisions">
+      <h3>Recommendations &amp; sign-off</h3>
+      <div class="decision-row" style="border-bottom: 0.4mm solid var(--gold); padding-bottom: 3mm; margin-bottom: 2mm;">
+        <div class="d-num" style="font-size: 8pt; color: var(--muted);">#</div>
+        <div class="d-action" style="font-size: 8.5pt; color: var(--muted); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">Action</div>
+        <div class="d-owner" style="font-size: 8.5pt; color: var(--muted); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">Owner</div>
+        <div class="d-by" style="font-size: 8.5pt; color: var(--muted); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">By</div>
+      </div>
+      <div class="decision-row">
+        <div class="d-num">1</div>
+        <div class="d-action">Apply sensitivity labels to HR-related tables<small>Closes Risk #1 · removes the 162-day audit-window concern</small></div>
+        <div class="d-owner">Data Steward<br/>(K. Janssens)</div>
+        <div class="d-by">2026-06-21</div>
+      </div>
+      <div class="decision-row">
+        <div class="d-num">2</div>
+        <div class="d-action">Enable incremental refresh on FactTelemetry<small>Closes Risk #2 · −42% refresh time · ~−€520/mo cost relief</small></div>
+        <div class="d-owner">BI Engineering<br/>(R. de Vries)</div>
+        <div class="d-by">2026-06-14</div>
+      </div>
+      <div class="decision-row">
+        <div class="d-num">3</div>
+        <div class="d-action">Retire 2 dormant reports + 1 stale model<small>Closes Risk #3 · ~−€440/mo cost relief · zero user impact</small></div>
+        <div class="d-owner">BI Manager<br/>(M. Hendriks)</div>
+        <div class="d-by">2026-06-07</div>
+      </div>
+      <div class="decision-row">
+        <div class="d-num">4</div>
+        <div class="d-action">Schedule next BI portfolio review<small>Same format, same cadence · pre-board readiness</small></div>
+        <div class="d-owner">BI Manager<br/>(M. Hendriks)</div>
+        <div class="d-by">2026-06-25</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="final-assessment">
+    <h2><span class="h2-num">07 ·</span> Final assessment</h2>
+    <div class="fa-grid">
+      <div class="fa-row"><span class="fa-k">Business value</span><span class="fa-v">HIGH</span></div>
+      <div class="fa-row"><span class="fa-k">Operational risk</span><span class="fa-v">MEDIUM</span></div>
+      <div class="fa-row"><span class="fa-k">Governance maturity</span><span class="fa-v">GOOD</span></div>
+      <div class="fa-row"><span class="fa-k">Performance quality</span><span class="fa-v">GOOD</span></div>
+      <div class="fa-row"><span class="fa-k">Cost efficiency</span><span class="fa-v">MEDIUM</span></div>
+      <div class="fa-row"><span class="fa-k">Adoption trajectory</span><span class="fa-v">STRONG</span></div>
+    </div>
+    <div class="fa-rec">
+      <strong>Recommendation:</strong> Continue optimization program. The Finance Global Model is healthy and earning its capacity; the four decisions on this page close every named risk and recover ~€960/month, restoring 13% headroom on the F64 envelope through Q3.
+    </div>
+  </div>
+
+  <div class="doc-foot">
+    <span>LayerPulse · Confidential · Acme Manufacturing N.V.</span>
+    <span class="doc-pgnum">7 / 7</span>
+    <span class="doc-confidential">Internal · BI Leadership</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
