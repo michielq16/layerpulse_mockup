@@ -225,6 +225,12 @@ export default function App() {
         setTweaksOpen(false);
         try { window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); } catch (e) {}
       }}/>}
+
+      <a className="lp-review-fab" href="/review/" title="Open PO review hub (screens · PRDs · roadmap)">
+        <span className="lp-review-fab-icon">📋</span>
+        <span className="lp-review-fab-label">Review hub</span>
+        <span className="lp-review-fab-arrow">→</span>
+      </a>
     </div>
   );
 }
