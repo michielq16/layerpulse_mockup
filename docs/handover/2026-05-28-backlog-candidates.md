@@ -43,6 +43,24 @@
 
 ---
 
+## Candidate 4 — Capacity Pulse KPI fidelity (latest-hour artifacts + uncaptured throttling + utilization-scaled cost + SKU label)
+
+- **Pillar:** FinOps (capacity).
+- **Recommended tier:** **Tier 2** — correctness on a *shipped* screen (Capacity Pulse). Sub-items 2 + 3 are higher severity (false "healthy" + overstated cost = trust risk for the Pro→Enterprise sales motion).
+- **Dedup:** no existing row. Capacity Pulse is shipped; these are fidelity bugs, not new scope.
+- **Why it matters:** for SBM `SBM Offshore Power BI - SND`, the page's four headline KPIs contradict its own chart and/or misreport. Grounded against `time_points` (read-only, 2026-05-29): 147 hourly readings, avg **349%** CU, peak **1,043%**, 132/147 over 100%.
+
+Four distinct issues:
+1. **CU% headline reads the latest single hour, not the period.** Shows "0% healthy" — that's the `2026-05-28 02:00` partial/empty hour (`cu_total=0`) — while the chart right above shows avg 349% / peak 1,043%. Fix: headline = period avg or peak (`computeDailyMaxSeries`/avg already exist in `capacity-pulse-helpers.ts`).
+2. **Throttling = 0 and Overage = 0 min because the data is never captured.** `time_points.throttle_state` is **NULL** and `overage_minutes` **NULL** across all 1,135 SND rows. At sustained 349% on a P1, real throttling/overage is near-certain — so "0 / none" reads as false health. Capture both from the Metrics-App DAX (Throttling/Overages timepoint measures).
+3. **Daily cost is utilization-scaled, overstating a fixed bill.** `latestDailyCost = (avg_cu_pct/100) × (monthly_cost / days_in_month)` (`capacity-pulse-helpers.ts:132`). For SND: 197.03% × ($5,000/31) = **$317.79** — but Premium P1 is a **fixed $5,000/mo = $161.29/day**; cost does not scale with utilization. Overstates whenever CU%>100% (≈always here; up to ~10× at peak), contradicts the `cost_observations_v2` share-of-bill model, and is keyed on the latest *partial* day (3 hours incl. a 0). Fix: fixed daily = `monthly_cost / days_in_month`, or relabel explicitly as a utilization-weighted estimate.
+4. **SKU badge wrong.** Page shows **F8**; `capacity_snapshots` says **P1** (8 v-cores, 25 GB). Both have base_cu 8 → likely a CU→F-SKU mislabel.
+
+> **Proposed row:**
+> `| T2.x | **Capacity Pulse KPI fidelity** — (1) CU% headline reads the latest (often empty) hour, not period avg/peak (shows 0% over a 349%-avg week); (2) Throttling/Overage KPIs read 0 because `time_points.throttle_state` + `overage_minutes` are NULL — uncaptured from the Metrics App → false "healthy"; (3) daily cost is utilization-scaled (`avg_cu_pct × monthly/days`) → overstates the fixed Premium bill (P1 $5k/mo = $161/day rendered as $317.79); (4) SKU badge "F8" but capacity is P1. | mockup grounding 2026-05-29 + `time_points` spike | ~2–3d (Metrics-App DAX capture is the bulk) | `compare-vs-rest` vs Metrics-App Throttling/Overages page + cu_pct shape match | capacity-pulse collector + `capacity-pulse-helpers.ts` |`
+
+---
+
 ## Summary for the PO
 
 | # | Candidate | Pillar | Proposed placement | Blocks which persona doc |
@@ -50,5 +68,6 @@
 | 1 | Capacity-identity bridge | FinOps | **New Tier 1 row** (Phase A quick win) | BI Manager §04 capacity-SKU view; FinOps capacity view |
 | 2 | Refresh error capture | Quality | **New Tier 2 row** | Engineer reliability §05 (root cause) |
 | 3 | Dataflow consumer graph | Lineage/FinOps | **Fold into `lineage-explorer-pillar` / Axis-3** (not a new row) | FinOps wasted-spend §04 |
+| 4 | Capacity Pulse KPI fidelity | FinOps | **New Tier 2 row** | Capacity Pulse trust (CU% / throttle / cost / SKU) |
 
 Accept = paste the proposed rows (1, 2) into the relevant Tier tables and append the scope note (3); assign final T-numbers (avoid colliding with the prior gap-audit candidates T2.17/T2.18/T3.13–15 from the 2026-05-28 session log). `/prd` can then author the implementation PRDs.

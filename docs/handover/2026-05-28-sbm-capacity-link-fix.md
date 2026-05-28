@@ -1,145 +1,220 @@
-# Handover — fix SBM capacity attribution: `workspaces.capacity_id` is NULL + 3 disjoint capacity-ID spaces
+# Handover — SBM capacity attribution: the `capacities` dimension is built from the wrong source
 
-**To:** an engineering agent working in the **LayerPulse product repo** (`../layerpulse`, the real Next.js/Drizzle app — *not* the mockup).
-**From:** mockup-designer session, 2026-05-28, during a read-only audit of the production DB (env SBM Production).
-**Type:** data-integrity / collector bug investigation. Likely a supervised schema-or-collector change → must go through `/build-feature` (multi-file, touches collectors + possibly a migration; do **not** commit to main directly).
-**Priority:** unblocks the entire FinOps pillar for the one real production tenant. Today cost cannot be attributed to a workspace, business unit, or report.
-
----
-
-## TL;DR
-
-Cost attribution **is** computed for SBM (3,150 `cost_observations_v2` rows, $5,000/mo × 2 capacities, USD). It resolves to **item** and — confirmed — to **workspace** (via `item_metadata.workspace_name`, **99.7% coverage**: 3,140/3,150 rows). So a **cost-per-workspace rollup already works today**.
-
-The remaining gap is narrower than first thought: cost cannot be attributed to a **capacity SKU / the `capacities` dimension**, because:
-
-1. **`workspaces.capacity_id` is NULL for all 511 SBM workspaces.** The scanner has each workspace's `capacityId` in hand but drops it on insert (`introspection.ts:160`).
-2. **There are three disjoint capacity-ID spaces** that nothing reconciles. Cost lives in one (Metrics-App GUID); the `capacities` dimension lives in another; workspaces (once fixed) would link to a third.
-
-**Scope note:** the per-workspace FinOps rollup is NOT blocked (use `item_metadata`). This task is about restoring **capacity/SKU-level** attribution and a clean `capacities`↔cost join — lower urgency than originally framed, but still the right fix for capacity-level views and data hygiene.
+**To:** an engineering agent in the **LayerPulse product repo** (`../layerpulse`, the real Next.js/Drizzle app — *not* the mockup).
+**From:** mockup-designer session; **corrected + evidenced 2026-05-29** after a read-only prod spike (env SBM Production).
+**Type:** data-integrity / collector + dimension-sourcing bug. Supervised → `/build-feature` (multi-file, migration-likely; never commit to main directly).
+**Status:** ⚠️ **This supersedes the original 2026-05-28 diagnosis.** The original headline ("scanner drops `g.capacityId` — just map it") is a **dead end** — see "Why the original fix is wrong" below. Spike the evidence section against the live Metrics App before writing code.
 
 ---
 
-## Context — what this feature is
+## TL;DR (corrected)
 
-LayerPulse's FinOps pillar attributes Fabric capacity spend down to individual artifacts (share-of-bill). The chain:
+For **SBM Production** (`a4bd4bda-a1cf-45bc-bbc9-728c1b0369c3`, managed by QaaS Consultancy B.V.):
+
+- The customer runs **2 paid Power BI Premium P1 capacities** — `SBM Offshore Power BI - SND` and `SBM Offshore Power BI - PRD` — at **$5,000/mo EACH ($10,000/mo total)**, plus trial + PPU licenses that carry no CU cost.
+- **The cost chain is correct and reconciles to ground truth:** `cost_observations_v2` = exactly **$10,000/day run-rate** across the 2 capacities (verified). Per-workspace rollup works today via `item_metadata.workspace_name`.
+- **The break is the `capacities`/`workspaces` dimension.** It is populated from the **Power BI Admin API**, which — under the enumerating identity — sees **only the trial (3× FTL64) + PPU (PP3) capacities**, and **NOT the two billable P1 capacities at all**. So:
+  1. `workspaces.capacity_id` is **NULL for all 511** workspaces → the Workspaces "Capacity" filter returns **0** (the visible bug).
+  2. The 2 P1 capacities that carry 100% of the cost **don't exist in the `capacities` table** — they live only in the Metrics-App lineage.
+
+**Principle for the fix (operator directive):** the **Fabric Capacity Metrics App is ground truth.** The `capacities` dimension, `workspaces.capacity_id`, and all $/CU figures must be derived from / reconciled against it — not the Admin API, for anything billable.
+
+---
+
+## Ground-truth dataflow (ASCII)
 
 ```
-Capacity Metrics App (DAX) ──► item_metrics_hourly + telemetry_rollup  (per env, capacity, item, hour/day; CU-seconds)
-                                          │
-            capacity_pricing (operator-entered €/$ per capacity) ──► cost-observations-collector.ts
-                                          │
-                                          ▼
-                              cost_observations_v2  (per env, capacity, day, item: cost_amount, cu_share)
+                  ╔═══════════════════════════════════════════════╗
+                  ║   GROUND TRUTH: Fabric Capacity Metrics App    ║
+                  ║   (DAX, scoped to installing admin's caps)     ║
+                  ║   sees ONLY the 2 billable P1 caps: SND, PRD   ║
+                  ╚═══════════════════════════════════════════════╝
+                                      │ space-3 capacity GUIDs (53a6…, a1a0…)
+        ┌─────────────────────────────┼─────────────────────────────┐
+        ▼                             ▼                             ▼
+ capacity_snapshots           item_metadata               item_metrics_hourly
+ GUID + NAME + SKU(P1)        item→workspace→cap GUID       CU-seconds / item / hr
+ = billable catalog ✓        = ws↔cap mapping ✓ (223 ws)
+        │                             │                             │
+        │                             │                             ▼
+        │                             │                    telemetry_rollup ──┐
+        │                             │                + capacity_pricing      │ $5k×2
+        │                             │                  ($10k/mo) ────────────┤
+        │                             │                                        ▼
+        │                             │                          cost_observations_v2
+        │                             │                          cap_id = space-3 GUID
+        │                             │                          $10k/day run-rate ✓
+        └──────── all in SPACE-3, already joinable ───────┐                    │
+                                                          │                    ▼  Cost UI ✓
+   ╔═══════════════════════════════════════════════╗     │
+   ║   Power BI ADMIN API  (different identity)      ║    │
+   ║   sees trial + PPU ONLY — NOT the P1 caps       ║    │
+   ╚═══════════════════════════════════════════════╝     │
+        │ space-1/2 GUIDs (e5a0…, d148…)                  │
+        ▼                                   ▼             │
+ capacities = 3×Trial(FTL64)+1×PPU(PP3)    workspaces=511 │
+ ✗ MISSING both P1 caps                    ✗ cap_id NULL  │
+                                                   │      │
+                                                   ▼      │
+                              Workspaces capacity filter ─┘
+                              joins workspaces.capacity_id = NULL
+                              → SND filter returns 0   ◄── THE BUG
 ```
 
-The Cost Attribution page (`src/components/customer/cost-attribution-content.tsx`) then renders treemaps / top-spenders. For the rollup to mean anything to a customer, each cost row must trace back to a **workspace** (so you can say "Operations — Financial workspace burned $X").
+The billable truth is entirely in the **Metrics-App lineage** (top). The dimension (`capacities`, `workspaces`) is built from the **Admin lineage** (bottom), which cannot see the P1 capacities. The two lineages never connect — the fix is to source the dimension + workspace link from the Metrics-App lineage.
 
-## The symptom (what I observed in the audit)
+---
 
-For env **SBM Production** (`a4bd4bda-a1cf-45bc-bbc9-728c1b0369c3`):
+## Evidence (read-only spike, prod, 2026-05-29)
 
-| Check | Result | Implication |
+**Capacities dimension (Admin API) — missing the billable caps:**
+| display_name | sku | source |
 |---|---|---|
-| `cost_observations_v2` rows | **3,150** (5 days, ~990 items, $5k/mo × 2 caps, USD) | ✅ cost IS computed |
-| `item_metrics_hourly` rows | **362,983** (2026-05-06 → 05-28, hourly) | ✅ rich raw substrate |
-| `capacity_pricing` rows | 4 (2 caps × 2 validity windows, $5,000/mo) | ✅ pricing entered |
-| `capacity_snapshots` | 2 caps | ✅ snapshots present |
-| **`workspaces.capacity_id`** | **NULL × 511 (0 populated)** | ❌ no workspace→capacity link |
-| `capacities` table rows for SBM | 4 (SKUs **FTL64**, **PP3** — trial + PPU) | ⚠ different GUIDs than cost rows |
+| Premium Per User - Reserved | PP3 | Admin |
+| Trial-20260309… | FTL64 | Admin |
+| Trial-20260430T082049… | FTL64 | Admin |
+| Trial-20260430T094246… | FTL64 | Admin |
 
-So the data exists, but the join graph is severed between cost and workspace.
+→ 3 trial + 1 PPU. **Zero P1.** (Note: 3 trial, not 2 — a 3rd was spun up 2026-04-30.)
 
-## Root cause — TWO layers
+**Metrics-App catalog (`capacity_snapshots`) — the billable truth:**
+| capacity_id (space-3) | capacity_name | sku |
+|---|---|---|
+| `53a62df1-…` | SBM Offshore Power BI - SND | P1 |
+| `a1a0bdfd-…` | SBM Offshore Power BI - PRD | P1 |
 
-### Problem A — the scanner drops `capacityId` on workspace insert
+**Cost reconciliation (`cost_observations_v2`):** every day = **$10,000** (2 caps × $5k), USD, even the partial latest day → `cost_amount` is a **monthly run-rate replicated per day**. Single-day reads are correct; **a `SUM(cost_amount)` across days overstates ~30×** (guardrail needed).
 
-`src/lib/fabric/introspection.ts:157-166` upserts workspaces from the Admin Groups API but only maps four fields:
+**The 511 workspaces, classified (join `workspaces.fabric_workspace_id = item_metadata.workspace_id`):**
+| Bucket | Count | Notes |
+|---|---|---|
+| On a billable P1 capacity | **223** | 119 SND + 105 PRD (via `item_metadata`). Should appear under the capacity filter. |
+| No Metrics-App items (Pro/PPU/personal/shared) | **288** | `[DEV]`/`[UAT]` + personal workspaces. No CU, no cost → correctly no dedicated capacity. Needs Pro+PPU licensing backlog for full FinOps. |
+| (discrepancy) | 1 | 224 distinct ws in `item_metadata` vs 223 matched → one Metrics-App workspace has no `workspaces` row. Spike flag. |
 
-```ts
-.insert(workspaces)
-.values(
-  batch.map((g) => ({
-    customerEnvId,
-    clerkOrgId,
-    fabricWorkspaceId: g.id,
-    name: g.name,
-    // capacityId: g.capacityId  ← NOT mapped, even though g.capacityId exists
-  }))
-)
+**`workspaces.capacity_id`:** NULL × 511 (0 populated).
+
+---
+
+## Corrected root cause
+
+**Primary (was framed as "the deeper issue"):** the `capacities` dimension is **sourced from the wrong API**. Admin enumeration (under the current identity) returns trial+PPU; the Metrics App returns the billable P1 caps. They are **disjoint sets of physical capacities**, not the same caps wearing different ID badges. There is nothing to "reconcile" between space-2 and space-3 for the P1 caps — they were **never in space-2**.
+
+**Why the Admin API can't see them:** almost certainly **capacity-admin permission scope** — the Metrics App was installed by an admin with rights to the P1 capacities; the Admin-Groups SP enumeration runs under an identity that only sees trial+PPU. (Cf. existing gotcha: *Metrics App bounded by installing admin's capacity-admin permissions.*)
+
+**Secondary:** the scanner *also* drops `g.capacityId` on workspace insert (`introspection.ts:160`, `customers/route.ts:166`, plus `discoverPerWorkspace()`). Real, but **moot for the P1 caps** — even if mapped, `g.capacityId` is a space-2 GUID and the P1 caps aren't in space-2.
+
+### Why the original "Problem A" fix is wrong
+`workspaces.capacity_id` is `uuid REFERENCES capacities.id` (schema:171) — **not** a free GUID field. You cannot write `g.capacityId` (a Fabric Admin GUID) into it. And the P1 caps aren't in Admin enumeration anyway. The correct link is **`item_metadata` (space-3) → `capacities.id`**, after the dimension is backfilled from `capacity_snapshots`.
+
+---
+
+## API capability (researched 2026-05-29, Microsoft Learn)
+
+**Yes — you can get every workspace + its capacity (GUID + name) tenant-wide, and a capacity has ONE global GUID** (so the "3 disjoint ID spaces" framing was partly an artifact of comparing *different* capacities' GUIDs):
+- **Power BI Admin:** `GET /v1.0/myorg/admin/groups` (*GetGroupsAsAdmin*) → every workspace with a `capacityId` field. `GET /v1.0/myorg/admin/capacities` (*GetCapacitiesAsAdmin*) → every capacity with `id`+`displayName`+`sku`. Join on `capacityId`. ($top≤5000, paginate $skip; 50 req/hr.)
+- **Fabric Admin (newer):** `GET /v1/admin/workspaces` → all workspaces with `capacityId`, filterable `?capacityId=…` (10k/page).
+- Both "As Admin" calls are **tenant-wide** and require **Fabric-admin OR an SP enabled for read-only admin APIs**. The `capacityId` they return is the *same* global GUID the Metrics App uses.
+
+**The actual code gap:** `FabricClient.listCapacities()` calls the **non-admin** `/capacities` (returns only caps the SP can *admin* → trial+PPU). There is **no `adminListCapacities()`**. And `adminListGroups()` (admin, tenant-wide, carries `capacityId`) *is* called but the field is dropped. That's why the dimension is missing the P1 caps.
+
+## The fix — TWO paths; the spike's API probe decides which
+
+**FIX-A (preferred — simplest, if the SP can see the caps via admin):**
+1. **Add `adminListCapacities()` → `/admin/capacities`** (GetCapacitiesAsAdmin) and source the `capacities` dimension from it. Returns ALL tenant caps incl. the P1 pair, at the global GUID that **equals the cost-chain GUID** — so cost joins natively. Add a `billable`/`source` flag so views can split trial/PPU from billable.
+2. **Keep `adminListGroups().capacityId`** (stop dropping it). Resolve `g.capacityId → capacities.id` on workspace insert (it's a `uuid REFERENCES capacities.id` FK, so resolve, don't write the raw GUID). Fixes the filter. Apply to all write paths (`introspection.ts`, `customers/route.ts`, `discoverPerWorkspace()`).
+
+**FIX-B (fallback — only if the SP genuinely can't see the P1 caps even via admin):**
+- Source the billable dimension from `capacity_snapshots` (Metrics App) instead, and link `workspaces.capacity_id` from `item_metadata`. Same end state, different source. Also: grant the SP Fabric-admin / enable the "service principals can use read-only admin APIs" tenant setting so FIX-A becomes possible.
+
+**Both paths also need:**
+3. **288 off-capacity workspaces:** `capacity_id` stays NULL; UI buckets them "Pro / Shared / no dedicated capacity" rather than hiding. Full $-attribution awaits the **Pro + PPU licensing** backlog item.
+4. **Cost-sum guardrail:** assert no read path `SUM`s `cost_amount` across days (it's a monthly run-rate; verified $10k/day). Single-day or documented period model only.
+5. **Reconciliation guardrail:** keep the spike script (below) as a `validate:`-style parity check — our catalog + per-capacity CU/$ must match Metrics-App ground truth.
+
+**Which path? → FIX-A, CONFIRMED (live probe, 2026-05-29).** `GetCapacitiesAsAdmin` returned all 5 caps including both P1 caps at the exact cost GUIDs (`53A62DF1…` SND, `A1A0BDFD…` PRD); `GetGroupsAsAdmin.capacityId` carries them too. The SP already has the rights — LayerPulse just calls the non-admin `/capacities`. No FIX-B, no Metrics-App-sourced dimension, no mapping table.
+
+**⚠ Secondary bug found by the probe:** `adminListGroups()` uses `?$top=5000` with **no `$skip` pagination** — `GetGroupsAsAdmin` returned exactly 5000 (the cap), so any tenant with >5000 workspaces is **silently truncated**. Doesn't bite SBM's 511, but fix it as part of this work — either add `$skip` paging or move to Fabric `GET /v1/admin/workspaces` (continuationToken, 10k/page, filterable by `capacityId`).
+
+---
+
+## Spike-FIRST verification plan (run before any code)
+
+Run the harness below, then **eyeball-match the numbers against the actual Fabric Capacity Metrics App UI** (you have access) — confirm OUR figures == the App's figures before trusting/fixing:
+
+1. ✅ Done: capacities dim vs Metrics-App catalog gap (2 P1 missing).
+2. ✅ Done: 511 workspace classification (223 billable / 288 off-capacity / 1 discrepancy).
+3. ✅ Done: cost = $10k/day run-rate, reconciles to 2 × $5k.
+4. **TODO — CU parity:** per-capacity CU-seconds from `item_metrics_hourly`/`telemetry_rollup` vs the Metrics App's own per-capacity CU for the same window. Must match within rounding.
+5. **TODO — the 1-workspace discrepancy:** which Metrics-App `workspace_id` has no `workspaces` row? (scanner missed it, or a deleted/personal ws.)
+6. **TODO — confirm the permission-scope hypothesis:** run `adminListGroups` / capacity enumeration under the env's SP and confirm it returns only trial+PPU (i.e. the P1 caps are genuinely invisible to that identity).
+
+### Runnable script (one command — covers TODOs 1-6)
+A read-only spike script exists in the product repo: **`scripts/spike-sbm-capacity-reconcile.ts`**. It runs the full DB reconciliation AND the live Admin API probe (§6 — the FIX-A/FIX-B decider), then writes a JSON report to `validation-reports/`.
+```bash
+cd ../layerpulse
+pnpm tsx scripts/spike-sbm-capacity-reconcile.ts            # DB + live Admin API probe (needs ENCRYPTION_KEY + SP creds)
+pnpm tsx scripts/spike-sbm-capacity-reconcile.ts --no-api   # DB-only (no creds; validated 2026-05-29)
+# On Windows, prefix NODE_OPTIONS=--use-system-ca if token acquisition hits a TLS error.
+```
+Full run (2026-05-29, incl. live API probe) confirmed: 2 P1 caps missing from the dimension · $10k/day run-rate · 223 billable / 288 off-capacity · 1-ws discrepancy · **`/admin/capacities` returns both P1 caps at the cost GUIDs → FIX-A** · `GetGroupsAsAdmin` truncated at 5000 (pagination bug).
+
+### Raw SQL harness (if you prefer manual queries)
+```bash
+cd ../layerpulse
+export PGSSLMODE=require
+DBURL=$(grep -E "^DATABASE_URL_DIRECT=" .env.local | sed -E 's/^DATABASE_URL_DIRECT=//; s/^"//; s/"$//')
+PSQL=~/scoop/apps/postgresql/current/bin/psql
+SBM='a4bd4bda-a1cf-45bc-bbc9-728c1b0369c3'
+```
+```sql
+-- catalog gap: dimension vs Metrics-App ground truth
+select 'dimension' src, display_name, sku from capacities where customer_env_id='<SBM>'
+union all
+select 'metrics-app', capacity_name, sku from (select distinct capacity_id, capacity_name, sku from capacity_snapshots where customer_env_id='<SBM>') x;
+
+-- 511 workspace classification
+select case when im.wsid is null then 'off-capacity (Pro/PPU/personal)' else 'billable P1' end bucket, count(*)
+from workspaces w
+left join (select distinct workspace_id::text wsid from item_metadata where customer_env_id='<SBM>') im
+  on im.wsid = w.fabric_workspace_id
+where w.customer_env_id='<SBM>' group by 1;
+
+-- per-capacity workspace + cost (named)
+select cs.capacity_name, count(distinct im.workspace_id) ws
+from item_metadata im join capacity_snapshots cs on cs.capacity_id=im.capacity_id and cs.customer_env_id=im.customer_env_id
+where im.customer_env_id='<SBM>' group by 1;
+
+-- cost run-rate (must be 2×$5k=$10k/day; do NOT sum across days)
+select day, round(sum(cost_amount)::numeric,0) day_cost, count(distinct capacity_id) caps
+from cost_observations_v2 where customer_env_id='<SBM>' group by day order by day;
+
+-- CU parity candidate (compare to Metrics App UI per capacity)
+select capacity_id, round(sum(cu_seconds)::numeric,0) cu_sec
+from telemetry_rollup where customer_env_id='<SBM>' group by 1;
 ```
 
-`g.capacityId` is available — the Admin Groups type carries it (`src/lib/fabric/api.ts:779` and `:810`, `capacityId?: string`). It's simply never written. Also check the **per-workspace fallback path** `discoverPerWorkspace()` (same file) and the other workspace write site `src/app/api/customers/route.ts:166` — fix all insert paths, not just this one.
+---
 
-### Problem B — three disjoint capacity-ID spaces (the deeper issue)
+## Acceptance criteria (corrected)
 
-Even after Problem A, the join to cost still won't close, because there are **three different identifiers** for SBM's capacities and nothing maps between them:
-
-| # | ID space | Where used | SBM values | Source |
-|---|---|---|---|---|
-| 1 | `capacities.id` (LP-internal UUID) | `capacities` PK | `dc0fb904…`, `513089f3…`, `a5611a53…`, `0fae8af4…` | LP-generated |
-| 2 | `capacities.fabric_capacity_id` (Fabric Admin GUID) | Admin API | `e5a04a26…`, `d1487b3e…`, `a7fea0b3…`, `808ed300…` (FTL64 / PP3) | Fabric Admin `groups` |
-| 3 | **Metrics-App capacity GUID** | `cost_observations_v2.capacity_id`, `telemetry_rollup.capacity_id`, `item_metrics_hourly.capacity_id`, `capacity_pricing.capacity_id`, `capacity_snapshots.capacity_id` | **`53a62df1…`, `a1a0bdfd…`** | Capacity Metrics App (DAX) |
-
-The **cost chain is entirely in space 3**. The **`capacities` dimension enumerated 4 trial/PPU capacities in space 1/2** that the Metrics App never reports usage for. The two production capacities that actually carry cost (`53a62df1`, `a1a0bdfd`) **don't exist in the `capacities` table at all**. When the scanner writes `g.capacityId` (a space-2 Fabric GUID) onto a workspace, it still won't match `cost_observations_v2.capacity_id` (space 3).
-
-> Confirmed in `cost-observations-collector.ts:108-151`: cost rows inherit `capacity_id` straight from `telemetry_rollup` (space 3). So workspace↔cost can only join if workspaces carry a space-3 ID, OR a mapping table reconciles space 2 ↔ space 3.
-
-## What "fixed" looks like (acceptance criteria)
-
-1. **A1** — `workspaces.capacity_id` is populated for SBM's 511 workspaces after a scanner run (verify: `select count(*) from workspaces where customer_env_id='a4bd4bda-…' and capacity_id is not null;` → 511, or as many as the Admin API returns a capacity for).
-2. **A2** — the chosen `workspaces.capacity_id` value can be joined to a cost source. Decide and document the canonical capacity identity:
-   - either backfill `capacities` with the space-3 Metrics-App capacities and FK workspaces → `capacities.id`,
-   - or store the Metrics-App capacity GUID on the workspace,
-   - or add an explicit `capacity_id_map(fabric_capacity_id ↔ metrics_app_capacity_id)` reconciliation.
-3. **A3 — ✅ ALREADY MET via `item_metadata`** (confirmed: `cost_observations_v2.item_id::uuid = item_metadata.item_id` joins at 99.7%, `workspace_name` populated). Cost-per-workspace works today. The outstanding criterion is **A3b: cost grouped by capacity SKU** — which needs the id-space reconciliation below.
-4. **A4** — no regression to the working cost chain (cost_observations_v2 still populates on cron).
-
-## Investigation starting points / open questions
-
-- **Why does the Metrics App report capacities `53a62df1`/`a1a0bdfd` while the Admin API enumerated `e5a04a26`/etc (trial/PPU)?** Are the production capacities paused/excluded from the Admin enumeration, or is the Admin scanner filtering to trial SKUs? Start: `src/lib/fabric/api.ts` (`adminListGroups`, capacity enumeration) + `src/lib/fabric/metrics-app/collect.ts` + `dax-queries.ts` (what `CapacityId` the DAX returns).
-- **`item_metadata.item_id → workspace_name` is confirmed sufficient for the per-workspace rollup** (99.7%). Use it for workspace-level cost; the capacity-id reconciliation below is only needed for capacity/SKU-level views.
-- **Cost history depth:** `cost_observations_v2` has only 5 days for SBM while `item_metrics_hourly`/`telemetry_rollup` span ~22 days. Secondary: consider a backfill so cost trend/MoM becomes possible. (`upsertCostObservationsV2` accepts a `fromInclusive` window — a one-off wider backfill run would populate it.)
-- SBM's real capacities are **FTL64 (Fabric Trial)** and **PP3 (Premium-Per-User)** in the `capacities` table — neither is a billable F-SKU. Confirm whether the $5,000/mo `capacity_pricing` figures are real contracted costs or test values, since trial capacities have no CU billing and PPU is per-user, not per-capacity.
+- **A1** — `capacities` contains the 2 billable P1 caps sourced from `capacity_snapshots`, with the space-3 GUID as the join identity to cost.
+- **A2** — `workspaces.capacity_id` populated from `item_metadata` for the 223 billable workspaces; the 288 off-capacity ones remain NULL and are bucketed (not hidden) in the UI.
+- **A3** — Workspaces "Capacity = SND" filter returns 119 (PRD 105). The screenshot bug is gone.
+- **A4** — `validate:capacity-reconcile` passes: our catalog + per-capacity CU/$ match the Metrics App ground truth.
+- **A5** — no `SUM(cost_amount)`-across-days anywhere; no regression to the working cost chain.
 
 ## Key files
-
 | File | Role |
 |---|---|
-| `src/lib/fabric/introspection.ts` (~L157) | **Problem A** — workspace upsert that drops `capacityId`. Also `discoverPerWorkspace()` fallback. |
-| `src/lib/fabric/api.ts` (L779, L810) | Admin Groups type carries `capacityId?` — the source that's available but unused. |
-| `src/app/api/customers/route.ts` (~L166) | Second workspace insert path — fix here too. |
-| `src/lib/cost/cost-observations-collector.ts` | The cost chain (space-3 capacity). Read-only understanding; **don't break it**. |
-| `src/lib/fabric/metrics-app/collect.ts`, `dax-queries.ts` | Where the space-3 Metrics-App capacity GUID originates. |
-| `src/lib/db/schema.ts` | `workspaces`, `capacities`, `cost_observations_v2`, `telemetry_rollup`, `item_metadata`, `capacity_pricing`. |
+| `src/lib/fabric/metrics-app/collect.ts`, `dax-queries.ts` | Ground-truth source (`capacity_snapshots`, `item_metadata`, space-3). |
+| `src/lib/db/schema.ts` | `capacities` (add `metrics_app_capacity_id`/`billable`?), `workspaces.capacity_id` (FK→capacities.id, schema:171), `capacity_snapshots:1051`, `item_metadata:1074`. |
+| `src/lib/fabric/introspection.ts` (~L160), `src/app/api/customers/route.ts` (~L166), `discoverPerWorkspace()` | Dimension/workspace write paths — re-source from Metrics App, NOT Admin `g.capacityId`. |
+| `src/lib/cost/cost-observations-collector.ts` | Cost chain (space-3). Read-only understanding; don't break it. |
+| Workspaces page + capacity filter | Consumes `workspaces.capacity_id`; also needs the "off-capacity" bucket. |
 
-## Read-only verification harness
-
-```bash
-cd ../layerpulse   # the product repo (sibling checkout)
-export PGSSLMODE=require
-export DBURL=$(grep -E "^DATABASE_URL_DIRECT=" .env.local | sed -E 's/^DATABASE_URL_DIRECT=//; s/^"//; s/"$//')
-export SBM='a4bd4bda-a1cf-45bc-bbc9-728c1b0369c3'
-psql "$DBURL" -P pager=off -c "<query>"   # psql at ~/scoop/apps/postgresql/current/bin/psql
-```
-
-Diagnostic queries (all read-only):
-```sql
--- the NULL link
-select capacity_id, count(*) from workspaces where customer_env_id='a4bd4bda-a1cf-45bc-bbc9-728c1b0369c3' group by 1;
--- the three id spaces
-select id, fabric_capacity_id, display_name, sku from capacities where customer_env_id='a4bd4bda-a1cf-45bc-bbc9-728c1b0369c3';
-select distinct capacity_id from cost_observations_v2 where customer_env_id='a4bd4bda-a1cf-45bc-bbc9-728c1b0369c3';
--- the item_metadata bridge (candidate for A3)
-select item_kind, count(*) from item_metadata where customer_env_id='a4bd4bda-a1cf-45bc-bbc9-728c1b0369c3' group by 1;
-```
-
-## Constraints
-
-- **Production DB.** Verify read-only; any write/migration goes through a reviewed migration + the env's normal cron path, never an ad-hoc `UPDATE` against prod. Per the product repo's hard rules: feature branch, `/build-feature`, security/quality gates — schema changes are a supervised surface.
-- **Do not break the working cost chain** (`cost_observations_v2` populates correctly today). The fix is additive — make workspace→cost joinable; don't refactor the collector.
-- The mockup audit that surfaced this is at (mockup repo) `docs/research/2026-05-28-production-db-content-map.md`.
-
-## Out of scope
-
-RLS evaluation, ownership data, billing/subscriptions backfill — separate gaps noted in the content map; not part of this task.
+## Constraints / out of scope
+- **Production DB.** Read-only verify; writes/migrations via reviewed migration + the env's cron path, never ad-hoc `UPDATE`. `/build-feature`, feature branch, gates.
+- **Don't break the working cost chain.** Fix is additive.
+- **Out of scope:** Pro/PPU per-license FinOps (separate backlog — it's what the 288 off-capacity workspaces need); RLS; ownership; billing backfill.
+- Originating audit: (mockup repo) `docs/research/2026-05-28-production-db-content-map.md`.
