@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Semantic Model Dossier — RetailOperations · SBM Offshore · LayerPulse [INTERNAL]</title>
+<link rel="stylesheet" href="../../public/review/perfect-doc/doc.css"/>
+<style>
+  .dossier-kpi6{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm;margin-bottom:5mm}
+  .dax,.mcode{font-family:var(--mono);font-size:7.6pt;line-height:1.5;background:#0d1b2a;color:#d6e7f7;border-radius:4px;padding:3mm 4mm;white-space:pre-wrap;margin:1.5mm 0 0;overflow-wrap:anywhere}
+  .mcode{background:#1a1206;color:#fde3c4}
+  .m-card{border:0.3mm solid var(--line);border-radius:5px;padding:3mm 4mm;margin-bottom:3mm;background:#fff}
+  .m-head{display:flex;align-items:baseline;gap:6px}
+  .m-name{font-family:var(--sans);font-weight:700;font-size:10pt;color:var(--navy)}
+  .m-home{font-family:var(--mono);font-size:7.5pt;color:var(--muted)}
+  .m-desc{font-size:8.6pt;color:#475569;font-style:italic;margin:0.5mm 0 0}
+  .m-meta{font-family:var(--mono);font-size:7.4pt;color:#94a3b8;margin-top:1.5mm}
+  .gloss{background:#ede9fe;color:#7c3aed;font-size:6.6pt;font-weight:700;letter-spacing:.04em;padding:.4mm 1.6mm;border-radius:3px;text-transform:uppercase}
+  .schema-tier{display:grid;grid-template-columns:1fr 1fr;gap:2mm;margin:2mm 0}
+  .schema-box{border:0.3mm solid var(--line);border-radius:4px;padding:2mm 3mm;font-size:8.5pt}
+  .schema-box b{font-family:var(--mono);color:var(--navy)}
+</style>
+</head>
+<body>
+
+<a class="doc-nav" href="./">Back to persona hub</a>
+
+<div style="max-width:210mm;margin:0 auto 6mm;padding:4mm 6mm;background:#7f1d1d;color:#fff;font-family:ui-monospace,monospace;font-size:9pt;line-height:1.5;border-radius:4px">
+  <strong style="color:#FFBF3C">INTERNAL · single-model dossier · real data.</strong>
+  <code style="color:#fca5a5">RetailOperations</code> · workspace <code style="color:#fca5a5">Engineering Data [DEV]</code> · SBM Offshore (env a4bd4bda…) · dataset 0369c81e. All metadata, DAX, M-code, refresh, ownership, glossary verified read-only from the LayerPulse DB as-of 2026-05-28. Measures shown = top 8 of 47. Quality score is BPA-derived (illustrative). Not for public/review/.
+</div>
+
+<div class="doc-shell">
+
+<!-- ═══════════ PAGE 1 · COVER + AT-A-GLANCE ═══════════ -->
+<div class="doc-page">
+  <div class="cover-v2-band">
+    <div class="doc-mark"><span class="dot"></span>LayerPulse · Semantic Model Dossier</div>
+    <h1>RetailOperations</h1>
+    <p class="doc-sub">Engineering Data [DEV] · SBM Offshore · silver · dataset 0369c81e · owner michielq</p>
+  </div>
+  <div class="doc-body">
+    <div class="dossier-kpi6">
+      <div class="kpi-cover-card"><div class="l">Quality (BPA)</div><div class="v">62<span class="unit">/100</span></div><div class="t warn">▼ format + ops</div><div class="b">&lt; 70 → AMBER <span class="band-inline">→ AMBER</span></div></div>
+      <div class="kpi-cover-card"><div class="l">Measures</div><div class="v">47</div><div class="t up">100% w/ DAX + docs</div><div class="b">all described <span class="band-inline">→ GREEN</span></div></div>
+      <div class="kpi-cover-card"><div class="l">Refresh</div><div class="v">0<span class="unit">%</span></div><div class="t down">56 / 56 failed</div><div class="b">stale 89d <span class="band-inline">→ RED</span></div></div>
+      <div class="kpi-cover-card"><div class="l">Adoption (30d)</div><div class="v">2<span class="unit"> users</span></div><div class="t down">94 events</div><div class="b">DEV, unpromoted <span class="band-inline">→ RED</span></div></div>
+      <div class="kpi-cover-card"><div class="l">CU / cost</div><div class="v">~$0</div><div class="t warn">79 CU-s</div><div class="b">negligible <span class="band-inline">→ N/A</span></div></div>
+      <div class="kpi-cover-card"><div class="l">Ownership</div><div class="v">3<span class="unit">/3</span></div><div class="t up">O · SME · Steward</div><div class="b">all assigned <span class="band-inline">→ GREEN</span></div></div>
+    </div>
+
+    <div class="verdict-block-v2">
+      <div class="v-headline"><div class="v-label">Model verdict</div><div class="v-value retire">WELL-BUILT · OPERATIONALLY DEAD</div></div>
+      <div class="v-trace">
+        <div style="margin-bottom:2mm;color:var(--muted);font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;font-weight:700">Rule R_MODEL_VERDICT · 4-axis</div>
+        <div class="t-line"><span class="check">✓</span> <span class="axis">documentation</span> = <span style="color:var(--emerald)">GREEN</span> <span class="arrow">→</span> 47/47 measures described</div>
+        <div class="t-line"><span class="check">✓</span> <span class="axis">modelling</span> = <span style="color:var(--emerald)">GREEN</span> <span class="arrow">→</span> 18 relationships, clean star, all active</div>
+        <div class="t-line"><span class="cross">✗</span> <span class="axis">reliability</span> = <span style="color:var(--rose)">RED</span> <span class="arrow">→</span> 56/56 refreshes failed, stale 89 days</div>
+        <div class="t-line"><span class="cross">✗</span> <span class="axis">adoption</span> = <span style="color:var(--rose)">RED</span> <span class="arrow">→</span> 2 users / 30 days</div>
+        <div class="t-result">result: craftsmanship A · operations F · rule: (reliability RED) &amp;&amp; (adoption RED) ⇒ fix-source-or-retire</div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--sans);font-size:11pt;color:var(--navy);margin:6mm 0 2mm">3 findings · ranked</h3>
+    <div class="risk-cover"><span class="band high">HIGH</span><div>
+      <div class="r-rule-id">R_REFRESH_DEAD</div>
+      <div class="r-predicate">refresh_success_rate == 0 over all snapshots</div>
+      <div class="r-evidence"><span class="arrow">▸</span> 56/56 failed · last attempt 2026-03-01 · root cause in the M-code (§05) — local file path the service can't reach</div>
+    </div></div>
+    <div class="risk-cover"><span class="band med">MEDIUM</span><div>
+      <div class="r-rule-id">R_NO_FORMAT_STRING</div>
+      <div class="r-predicate">count(measures where format_string == NULL) / count(measures) == 1.0</div>
+      <div class="r-evidence"><span class="arrow">▸</span> 47/47 measures have no format string — numbers render raw in every report</div>
+    </div></div>
+    <div class="risk-cover"><span class="band low">LOW</span><div>
+      <div class="r-rule-id">R_LOW_ADOPTION</div>
+      <div class="r-predicate">distinct_users(30d) &lt; 5</div>
+      <div class="r-evidence"><span class="arrow">▸</span> 2 users · a DEV model never promoted to PROD — expected, but flags retire-or-promote</div>
+    </div></div>
+  </div>
+  <div class="doc-foot"><span>LayerPulse · Confidential · RetailOperations</span><span class="doc-pgnum">1 / 8</span><span class="doc-confidential">Internal · Data Engineering</span></div>
+</div>
+
+<!-- ═══════════ PAGE 2 · HEALTH SCORECARD ═══════════ -->
+<div class="doc-page">
+  <div class="doc-head"><div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Semantic Model Dossier</span></div><div class="doc-meta">RetailOperations · Engineering Data [DEV]</div></div>
+  <div class="doc-body">
+    <div class="heading-row"><h2><span class="h2-num">02</span>Health scorecard</h2><span class="doc-fit partial">⚠ score BPA-derived</span></div>
+    <p class="lead" style="font-style:normal;color:var(--ink-soft);font-size:10pt">Two lenses: <b>craftsmanship</b> (how well it's built) is high; <b>operations</b> (does it run + get used) is failing. The composite is dragged down by the operational axes.</p>
+    <div class="scorecard-v2">
+      <div class="sc-row"><div class="sc-label">Documentation</div><div class="sc-bar"><div class="sc-fill green" style="width:100%"></div></div><div class="sc-val">100</div><div class="sc-band"><span class="band green">GREEN</span></div></div>
+      <div class="sc-row"><div class="sc-label">Modelling (relationships)</div><div class="sc-bar"><div class="sc-fill green" style="width:88%"></div></div><div class="sc-val">88</div><div class="sc-band"><span class="band green">GREEN</span></div></div>
+      <div class="sc-row"><div class="sc-label">Measure hygiene (format strings)</div><div class="sc-bar"><div class="sc-fill red" style="width:30%"></div></div><div class="sc-val">30</div><div class="sc-band"><span class="band red">RED</span></div></div>
+      <div class="sc-row"><div class="sc-label">Reliability (refresh)</div><div class="sc-bar"><div class="sc-fill red" style="width:0%"></div></div><div class="sc-val">0</div><div class="sc-band"><span class="band red">RED</span></div></div>
+      <div class="sc-row"><div class="sc-label">Adoption</div><div class="sc-bar"><div class="sc-fill red" style="width:25%"></div></div><div class="sc-val">25</div><div class="sc-band"><span class="band red">RED</span></div></div>
+      <div class="sc-row"><div class="sc-label">Composite (illustrative)</div><div class="sc-bar"><div class="sc-fill amber" style="width:62%"></div></div><div class="sc-val">62</div><div class="sc-band"><span class="band amber">AMBER</span></div></div>
+    </div>
+    <div class="formula" style="margin-top:5mm"><span class="f-rule">composite</span> = doc·0.2 + modelling·0.2 + hygiene·0.15 + reliability·0.25 + adoption·0.2 <span class="f-band">→ BPA engine (T1.19) computes the craft axes; reliability/adoption joined from telemetry. Numeric score illustrative — issues below are the grounded part.</span></div>
+    <div class="callout"><b>Read:</b> this is the inverse of most models in the estate — usually craft is poor (6.7% doc coverage tenant-wide) and ops are fine. RetailOperations is immaculately built and totally broken operationally. The fix is small (repoint the source); the value is locked behind it.</div>
+  </div>
+  <div class="doc-foot"><span>LayerPulse · Confidential · RetailOperations</span><span class="doc-pgnum">2 / 8</span><span class="doc-confidential">Internal · Data Engineering</span></div>
+</div>
+
+<!-- ═══════════ PAGE 3 · MODEL STRUCTURE ═══════════ -->
+<div class="doc-page">
+  <div class="doc-head"><div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Semantic Model Dossier</span></div><div class="doc-meta">RetailOperations · structure</div></div>
+  <div class="doc-body">
+    <div class="heading-row"><h2><span class="h2-num">03</span>Model structure</h2><span class="doc-fit ok">✓ Live</span></div>
+    <p style="font-size:9.5pt;color:var(--ink-soft);margin:0 0 2mm">13 tables · 18 relationships · 149 columns. A clean galaxy schema: 3 fact tables sharing conformed dimensions, all relationships Many-to-One, single-direction, active.</p>
+
+    <div class="schema-tier">
+      <div class="schema-box"><b>Facts (3)</b><br/>FactSales (18 cols · 8 dims) · FactReturns (17 · 6 dims) · FactInventory (13 · 4 dims)</div>
+      <div class="schema-box"><b>Dimensions (9)</b><br/>DimDate · DimProduct · DimStore · DimCustomer · DimEmployee · DimChannel · DimSupplier · DimPromotion · DimPaymentMethod</div>
+    </div>
+    <p style="font-size:8.5pt;color:var(--muted);margin:0 0 3mm"><code>_Measures</code> — hidden measures-only table (47 measures, no source). Conformed dims: DimDate/DimProduct/DimStore shared across all 3 facts.</p>
+
+    <h3>Relationships <span style="font-family:var(--mono);font-size:9pt;color:var(--gold);font-weight:600">18 · all Many-to-One · single · active</span></h3>
+    <table>
+      <thead><tr><th>From</th><th>To</th><th>Card.</th></tr></thead>
+      <tbody>
+        <tr><td><code>FactSales[DateKey]</code></td><td><code>DimDate[DateKey]</code></td><td>M:1</td></tr>
+        <tr><td><code>FactSales[ProductKey]</code></td><td><code>DimProduct[ProductKey]</code></td><td>M:1</td></tr>
+        <tr><td><code>FactSales[StoreKey]</code></td><td><code>DimStore[StoreKey]</code></td><td>M:1</td></tr>
+        <tr><td><code>FactSales[CustomerKey]</code> +4 more</td><td><code>DimCustomer / Channel / Employee / Payment / Promotion</code></td><td>M:1</td></tr>
+        <tr><td><code>FactReturns[*Key]</code> × 6</td><td><code>Date · Store · Product · Customer · Channel · Employee</code></td><td>M:1</td></tr>
+        <tr><td><code>FactInventory[*Key]</code> × 4</td><td><code>Date · Store · Product · Supplier</code></td><td>M:1</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:4mm">Columns by type <span style="font-family:var(--mono);font-size:9pt;color:var(--gold);font-weight:600">149 total</span></h3>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-l">String</div><div class="kpi-v">58</div></div>
+      <div class="kpi"><div class="kpi-l">Int64</div><div class="kpi-v">52</div></div>
+      <div class="kpi"><div class="kpi-l">Double</div><div class="kpi-v">31</div></div>
+      <div class="kpi"><div class="kpi-l">DateTime</div><div class="kpi-v">8</div></div>
+    </div>
+  </div>
+  <div class="doc-foot"><span>LayerPulse · Confidential · RetailOperations</span><span class="doc-pgnum">3 / 8</span><span class="doc-confidential">Internal · Data Engineering</span></div>
+</div>
+
+<!-- ═══════════ PAGE 4 · MEASURES & DAX ═══════════ -->
+<div class="doc-page">
+  <div class="doc-head"><div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Semantic Model Dossier</span></div><div class="doc-meta">RetailOperations · measures &amp; DAX</div></div>
+  <div class="doc-body">
+    <div class="heading-row"><h2><span class="h2-num">04</span>Measures &amp; DAX <span style="font-size:9pt;color:var(--muted);font-weight:400">top 8 of 47</span></h2><span class="doc-fit ok">✓ Live</span></div>
+    <p style="font-size:9pt;color:var(--muted);margin:0 0 3mm">All 47 measures live in the hidden <code>_Measures</code> table · 100% carry a description · 0% carry a format string (§10).</p>
+
+    <div class="m-card">
+      <div class="m-head"><span class="m-name">Aged Inventory Value (90+ days)</span><span class="gloss">🔗 glossary</span></div>
+      <div class="m-desc">Value of inventory that has been in stock for 90 days or more.</div>
+      <pre class="dax">CALCULATE(
+    SUM(FactInventory[InventoryValue]),
+    FactInventory[DaysInStock] > 90
+)</pre>
+      <div class="m-meta">deps: FactInventory[InventoryValue], [DaysInStock] · fmt: ⚠ none</div>
+    </div>
+
+    <div class="m-card">
+      <div class="m-head"><span class="m-name">Composite Store Rank</span></div>
+      <div class="m-desc">Overall store ranking combining profit margin, growth, and productivity.</div>
+      <pre class="dax">VAR MarginRank       = [Store Rank - Profit Margin]
+VAR GrowthRank       = [Store Rank - Sales Growth]
+VAR ProductivityRank = [Store Rank - Productivity]
+VAR CompositeScore   = MarginRank + GrowthRank + ProductivityRank
+RETURN
+    RANKX( ALL(DimStore[StoreName]), CompositeScore, , ASC )</pre>
+      <div class="m-meta">deps: 3 measures · RANKX over DimStore · fmt: ⚠ none</div>
+    </div>
+
+    <div class="m-card">
+      <div class="m-head"><span class="m-name">Employee Productivity Status</span></div>
+      <div class="m-desc">Status indicator for employee productivity levels (Critical/Warning/Good).</div>
+      <pre class="dax">VAR ProductivityRate = [Sales Per Hour]
+RETURN
+    SWITCH( TRUE(),
+        ProductivityRate >= 200, "🟢 EXCELLENT - $" &amp; FORMAT(ProductivityRate,"#,0") &amp; "/hour",
+        ProductivityRate >= 150, "🟡 GOOD - $"      &amp; FORMAT(ProductivityRate,"#,0") &amp; "/hour",
+        ProductivityRate >= 100, "🟠 FAIR - $"      &amp; FORMAT(ProductivityRate,"#,0") &amp; "/hour",
+        "🔴 POOR - $" &amp; FORMAT(ProductivityRate,"#,0") &amp; "/hour (&lt; $100 target)" )</pre>
+      <div class="m-meta">deps: [Sales Per Hour] · SWITCH/TRUE pattern · fmt: ⚠ none (status string)</div>
+    </div>
+
+    <div class="m-card">
+      <div class="m-head"><span class="m-name">Efficiency Trend %</span></div>
+      <div class="m-desc">Year-over-year trend in sales per square foot efficiency.</div>
+      <pre class="dax">VAR CurrentEfficiency = [Sales Per Square Foot]
+VAR PriorEfficiency   = [Sales Per Square Foot LY]
+RETURN
+    DIVIDE(CurrentEfficiency - PriorEfficiency, PriorEfficiency, 0) * 100</pre>
+      <div class="m-meta">time-intelligence · deps: 2 measures · fmt: ⚠ none</div>
+    </div>
+
+    <table style="margin-top:3mm">
+      <thead><tr><th>+ 4 more shown of 47</th><th>DAX (head)</th></tr></thead>
+      <tbody>
+        <tr><td><b>Gross Profit</b></td><td><code>[Total Sales] - [Total Cost]</code></td></tr>
+        <tr><td><b>Cost of Goods Sold</b></td><td><code>[Total Cost]</code></td></tr>
+        <tr><td><b>Excess Inventory %</b></td><td><code>DIVIDE([Aged Inventory Value (90+ days)], [Total Inventory Value], 0) * 100</code></td></tr>
+        <tr><td><b>Health Status Indicator</b></td><td><code>SWITCH(TRUE(), HealthScore >= 85, "🟢 EXCELLENT", …)</code></td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:8.5pt;color:var(--muted);margin-top:2mm">Full 47-measure listing in the live tool. Patterns present: aggregation · ratio (DIVIDE) · ranking (RANKX) · time-intelligence · status (SWITCH/TRUE).</p>
+  </div>
+  <div class="doc-foot"><span>LayerPulse · Confidential · RetailOperations</span><span class="doc-pgnum">4 / 8</span><span class="doc-confidential">Internal · Data Engineering</span></div>
+</div>
+
+<!-- ═══════════ PAGE 5 · POWER QUERY + REFRESH ROOT CAUSE ═══════════ -->
+<div class="doc-page">
+  <div class="doc-head"><div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Semantic Model Dossier</span></div><div class="doc-meta">RetailOperations · sources &amp; refresh</div></div>
+  <div class="doc-body">
+    <div class="heading-row"><h2><span class="h2-num">05</span>Power Query &amp; refresh</h2><span class="doc-fit ok">✓ Live</span></div>
+
+    <h3>Sources <span style="font-family:var(--mono);font-size:9pt;color:var(--gold);font-weight:600">12 of 13 tables carry M-code</span></h3>
+    <p style="font-size:9pt;color:var(--muted);margin:0 0 1mm">Every data table loads from a CSV via <code>Csv.Document(File.Contents(...))</code>. Representative M (DimStore):</p>
+    <pre class="mcode">let
+    Source = Csv.Document(
+        File.Contents("C:\Users\michi\generate_pbi\data\DimStore.csv"),
+        [Delimiter=",", Encoding=65001, QuoteStyle=QuoteStyle.Csv]
+    ),
+    #"Promoted Headers" = Table.PromoteHeaders(Source),
+    ...</pre>
+
+    <div class="callout warn" style="margin-top:3mm">
+      <div></div>
+      <div class="callout-body"><strong>⚠ ROOT CAUSE (explains §06):</strong> all 12 source tables read from a <strong>local desktop path</strong> (<code>C:\Users\michi\…</code>). The Fabric service has no line of sight to a workstation's file system, so <strong>every scheduled refresh fails by design.</strong> Fix = repoint to a service-reachable source (Lakehouse, OneLake, SharePoint, or blob) and the model lights up immediately — nothing else about it is broken.</div>
+    </div>
+
+    <div class="heading-row" style="margin-top:5mm"><h3 style="margin:0">Refresh health</h3></div>
+    <div class="kpi-grid">
+      <div class="kpi alert"><div class="kpi-l">Success rate</div><div class="kpi-v">0<span class="unit">%</span></div><div class="kpi-trend warn">band ≥ 99.6 → RED</div></div>
+      <div class="kpi alert"><div class="kpi-l">Attempts</div><div class="kpi-v">56</div><div class="kpi-trend warn">all Failed</div></div>
+      <div class="kpi alert"><div class="kpi-l">Last attempt</div><div class="kpi-v">Mar 1</div><div class="kpi-trend warn">stale 89 days</div></div>
+      <div class="kpi alert"><div class="kpi-l">Last success</div><div class="kpi-v">—</div><div class="kpi-trend warn">never recorded</div></div>
+    </div>
+    <p style="font-size:8.5pt;color:var(--muted);margin-top:2mm">Note: LP records that it failed and how often, but not the per-run error reason (refreshables carries no error field — backlog item). The cause here is inferred from the M-code, which is conclusive.</p>
+  </div>
+  <div class="doc-foot"><span>LayerPulse · Confidential · RetailOperations</span><span class="doc-pgnum">5 / 8</span><span class="doc-confidential">Internal · Data Engineering</span></div>
+</div>
+
+<!-- ═══════════ PAGE 6 · ADOPTION · CU · OWNERSHIP · GLOSSARY ═══════════ -->
+<div class="doc-page">
+  <div class="doc-head"><div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Semantic Model Dossier</span></div><div class="doc-meta">RetailOperations · usage &amp; governance</div></div>
+  <div class="doc-body">
+    <div class="heading-row"><h2><span class="h2-num">06</span>Adoption · CU · ownership · glossary</h2><span class="doc-fit partial">⚠ thin usage</span></div>
+
+    <h3>Adoption &amp; CU <span style="font-family:var(--mono);font-size:9pt;color:var(--gold);font-weight:600">last 30 days</span></h3>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-l">Distinct users</div><div class="kpi-v">2</div><div class="kpi-trend">94 events</div></div>
+      <div class="kpi"><div class="kpi-l">Operation kinds</div><div class="kpi-v">2</div><div class="kpi-trend">view / refresh-attempt</div></div>
+      <div class="kpi"><div class="kpi-l">CU consumed</div><div class="kpi-v">79<span class="unit"> CU-s</span></div><div class="kpi-trend">negligible</div></div>
+      <div class="kpi"><div class="kpi-l">Cost attributed</div><div class="kpi-v">$0</div><div class="kpi-trend">no cost rows</div></div>
+    </div>
+    <p style="font-size:8.5pt;color:var(--muted);margin-top:1mm">Consistent with a DEV model that never refreshes: almost no CU, almost no users. Not wasting money — just not delivering value.</p>
+
+    <div class="row2" style="display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-top:5mm">
+      <div>
+        <h3>Ownership &amp; stewardship <span class="doc-fit ok" style="font-size:7pt">✓ Live</span></h3>
+        <table>
+          <thead><tr><th>Role</th><th>Assignee</th><th>Set</th></tr></thead>
+          <tbody>
+            <tr><td><span class="band green">OWNER</span></td><td>michielq</td><td class="num">2026-05-28</td></tr>
+            <tr><td><span class="band violet" style="background:#ede9fe;color:#7c3aed">SME</span></td><td>michielq</td><td class="num">2026-05-28</td></tr>
+            <tr><td><span class="band sky" style="background:#e0f2fe;color:#0284c7">STEWARD</span></td><td>michielq</td><td class="num">2026-05-28</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:8pt;color:var(--muted);margin-top:1mm">3/3 roles assigned — fully accountable. (All one person here; in PROD these'd typically split.)</p>
+      </div>
+      <div>
+        <h3>Business glossary <span class="doc-fit partial" style="font-size:7pt">⚠ 2 of 47</span></h3>
+        <table>
+          <thead><tr><th>Measure</th><th>Term link</th></tr></thead>
+          <tbody>
+            <tr><td>Aged Inventory Value (90+ days)</td><td><span class="gloss">primary</span></td></tr>
+            <tr><td>Return Rate %</td><td><span class="gloss">primary</span></td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:8pt;color:var(--muted);margin-top:1mm">45 of 47 measures have no glossary term attached — opportunity to bind the rich descriptions (§04) to governed terms.</p>
+      </div>
+    </div>
+  </div>
+  <div class="doc-foot"><span>LayerPulse · Confidential · RetailOperations</span><span class="doc-pgnum">6 / 8</span><span class="doc-confidential">Internal · Data Engineering</span></div>
+</div>
+
+<!-- ═══════════ PAGE 7 · QUALITY ISSUES & DECISIONS ═══════════ -->
+<div class="doc-page">
+  <div class="doc-head"><div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Semantic Model Dossier</span></div><div class="doc-meta">RetailOperations · issues &amp; actions</div></div>
+  <div class="doc-body">
+    <div class="heading-row"><h2><span class="h2-num">07</span>Quality issues &amp; decisions</h2><span class="doc-fit partial">⚠ BPA-derived</span></div>
+    <p style="font-size:9.5pt;color:var(--ink-soft);margin:0 0 3mm">Each row = one rule match. Two fixes (1 + 2) move this model from "dead" to "earning."</p>
+    <table class="decisions-reg">
+      <thead><tr><th></th><th>Action · template + resolved slots</th><th>Owner</th><th>Due</th></tr></thead>
+      <tbody>
+        <tr><td class="dr-num">1</td><td>
+          <div class="dr-rule">R_REFRESH_DEAD</div><div class="dr-rule-meta">severity: HIGH · domain: RELIABILITY</div>
+          <div class="dr-action-template">Repoint <span class="slot">{source}</span> from local path to <span class="slot">{target}</span></div>
+          <div class="dr-slot-list"><span class="slot-k">source:</span>12 tables · Csv.Document(C:\Users\michi\…)<br/><span class="slot-k">target:</span>Lakehouse / OneLake / SharePoint / blob</div>
+          <div class="dr-impact">▸ ends 100% refresh failure · unlocks all 47 measures</div>
+        </td><td class="dr-owner"><span class="role">role: OWNER</span>michielq</td><td class="dr-due"><span class="computed">today + 3d</span>2026-05-31</td></tr>
+        <tr class="alt"><td class="dr-num">2</td><td>
+          <div class="dr-rule">R_NO_FORMAT_STRING</div><div class="dr-rule-meta">severity: MEDIUM · domain: HYGIENE</div>
+          <div class="dr-action-template">Apply format strings to <span class="slot">{measures}</span></div>
+          <div class="dr-slot-list"><span class="slot-k">measures:</span>47 (currency, %, integer per type)<br/><span class="slot-k">note:</span>status measures (SWITCH) are intentionally string</div>
+          <div class="dr-impact">▸ raises measure-hygiene 30 → 90 · numbers render correctly downstream</div>
+        </td><td class="dr-owner"><span class="role">role: SME</span>michielq</td><td class="dr-due"><span class="computed">today + 10d</span>2026-06-08</td></tr>
+        <tr><td class="dr-num">3</td><td>
+          <div class="dr-rule">R_MODEL_DESC_MISSING</div><div class="dr-rule-meta">severity: LOW · domain: GOVERNANCE</div>
+          <div class="dr-action-template">Add a model-level description + bind <span class="slot">{n}</span> measures to glossary</div>
+          <div class="dr-slot-list"><span class="slot-k">n:</span>45 unlinked measures</div>
+          <div class="dr-impact">▸ completes the governance picture (already 100% measure-described)</div>
+        </td><td class="dr-owner"><span class="role">role: STEWARD</span>michielq</td><td class="dr-due"><span class="computed">today + 14d</span>2026-06-12</td></tr>
+        <tr class="alt"><td class="dr-num">4</td><td>
+          <div class="dr-rule">R_PROMOTE_OR_RETIRE</div><div class="dr-rule-meta">severity: LOW · domain: ADOPTION</div>
+          <div class="dr-action-template">Decide: promote to PROD or retire</div>
+          <div class="dr-slot-list"><span class="slot-k">signal:</span>2 users / 30d · DEV-only · but well-built</div>
+        </td><td class="dr-owner"><span class="role">role: OWNER</span>michielq</td><td class="dr-due"><span class="computed">post-fix</span>review</td></tr>
+      </tbody>
+      <tfoot><tr><td colspan="2" style="text-align:right">SUMMARY · fixes 1 + 2 flip the verdict:</td><td colspan="2">dead → operational; ~13 dev-hours</td></tr></tfoot>
+    </table>
+  </div>
+  <div class="doc-foot"><span>LayerPulse · Confidential · RetailOperations</span><span class="doc-pgnum">7 / 8</span><span class="doc-confidential">Internal · Data Engineering</span></div>
+</div>
+
+<!-- ═══════════ PAGE 8 · LINEAGE + FINAL ═══════════ -->
+<div class="doc-page">
+  <div class="doc-head"><div class="doc-mark"><span class="dot"></span>LayerPulse<span class="mark-sep"></span><span class="doc-type">Semantic Model Dossier</span></div><div class="doc-meta">RetailOperations · lineage &amp; close</div></div>
+  <div class="doc-body">
+    <div class="heading-row"><h2><span class="h2-num">08</span>Lineage &amp; assessment</h2><span class="doc-fit ok">✓ Live</span></div>
+    <h3>Source → table → measure</h3>
+    <pre class="mcode" style="background:#0d1b2a;color:#d6e7f7">12 × local CSV  ──►  9 Dims + 3 Facts  ──►  47 measures (_Measures)
+   (C:\…)              (galaxy, 18 rels)        DAX · 100% documented
+        │                     │                        │
+   ✗ unreachable        ✓ clean model           ✓ rich logic
+   = refresh dead       = craftsmanship A       = locked behind the broken source</pre>
+
+    <div class="final-assessment" style="margin-top:4mm">
+      <table class="dim-assess">
+        <thead><tr><th>Dimension</th><th class="dim-rule" style="text-align:right">Rule</th><th style="text-align:right">Verdict</th></tr></thead>
+        <tbody>
+          <tr><td class="dim-name">Documentation</td><td class="dim-rule">DOC_COVERAGE</td><td class="dim-verdict">STRONG</td></tr>
+          <tr><td class="dim-name">Data modelling</td><td class="dim-rule">REL_INTEGRITY</td><td class="dim-verdict">STRONG</td></tr>
+          <tr><td class="dim-name">DAX richness</td><td class="dim-rule">MEASURE_LOGIC</td><td class="dim-verdict">STRONG</td></tr>
+          <tr><td class="dim-name">Measure hygiene</td><td class="dim-rule">FORMAT_STRING</td><td class="dim-verdict">WEAK</td></tr>
+          <tr><td class="dim-name">Reliability</td><td class="dim-rule">REFRESH</td><td class="dim-verdict">FAILED</td></tr>
+          <tr><td class="dim-name">Adoption</td><td class="dim-rule">ACTIVE_USERS</td><td class="dim-verdict">FAILED</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tmpl-rec" style="margin-top:4mm">
+      <h4>Templated recommendation · 5 slots</h4>
+      <div class="tmpl-string"><span class="slot">{model}</span> is one of the best-built models in the estate — <span class="slot">{measures}</span> documented measures on a clean <span class="slot">{rels}</span>-relationship star — but it is <span class="slot">{verdict}</span> because every refresh reads from a local path. Repoint the source and <span class="slot">{outcome}</span>.</div>
+      <div class="tmpl-resolved">
+        <span class="k">model =</span><span class="v">RetailOperations</span>
+        <span class="k">measures =</span><span class="v">47</span>
+        <span class="k">rels =</span><span class="v">18</span>
+        <span class="k">verdict =</span><span class="v">operationally dead</span>
+        <span class="k">outcome =</span><span class="v">it goes live with no further rework</span>
+      </div>
+      <div class="tmpl-output">"RetailOperations is one of the best-built models in the estate — 47 documented measures on a clean 18-relationship star — but it is operationally dead because every refresh reads from a local path. Repoint the source and it goes live with no further rework."</div>
+    </div>
+    <p style="font-family:var(--mono);font-size:8pt;color:var(--muted);margin-top:5mm">Generated 2026-05-28 · LP rule-set v3 · metadata/DAX/M-code/refresh/ownership/glossary verified read-only against production DB (env a4bd4bda…, dataset 0369c81e) · INTERNAL · quality score BPA-derived · Reader: Data Engineering</p>
+  </div>
+  <div class="doc-foot"><span>LayerPulse · Confidential · RetailOperations</span><span class="doc-pgnum">8 / 8</span><span class="doc-confidential">Internal · Data Engineering</span></div>
+</div>
+
+</div>
+</body>
+</html>
