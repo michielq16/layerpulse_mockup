@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Cost &amp; Usage v2 — SBM Offshore · LayerPulse [INTERNAL]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./finops.css"/>
+</head>
+<body>
+
+<div class="intbar"><b>INTERNAL · redesign mock · real data.</b> SBM Offshore (env <code>a4bd4bda…</code>) · all capacities. Cost = <code>cost_observations_v2</code> × <code>item_metadata</code> (share-of-bill, 99.7% workspace-resolved). Wasted-spend from cost × 30d activity. Not for public/review/.</div>
+
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><span class="logo"></span>LayerPulse.ai</div>
+    <div class="cust"><div class="n">SBM Production</div><div class="s">Managed by QaaS Consultancy B.V.</div></div>
+    <div class="navi"><span class="ic">▦</span>Overview</div>
+    <div class="navsec">Explore</div><div class="navi"><span class="ic">▤</span>Workspaces</div>
+    <div class="navsec">Semantic Model</div>
+    <div class="navi"><span class="ic">◫</span>Models &amp; Measures</div><div class="navi"><span class="ic">⎇</span>Lineage</div><div class="navi"><span class="ic">▢</span>Documents</div>
+    <div class="navsec">FinOps</div>
+    <a class="navi link" href="./capacity-v2.html"><span class="ic">◔</span>Capacity</a>
+    <a class="navi link" href="./workload-mix-v2.html"><span class="ic">◈</span>Workload Mix</a>
+    <div class="navi active"><span class="ic">$</span>Cost &amp; Usage</div>
+    <div class="navsec">Intelligence</div><div class="navi"><span class="ic">∿</span>Activity</div><div class="navi"><span class="ic">◔</span>Alerts</div>
+    <div class="navsec">Governance</div><div class="navi"><span class="ic">▤</span>Glossary</div><div class="navi"><span class="ic">◎</span>Governance</div>
+  </aside>
+
+  <div class="main">
+    <div class="top">
+      <div class="ttl">Customer Environment</div>
+      <div class="chips">
+        <span class="chip">Last 30 days <span class="x">×</span></span>
+        <span class="chip">All capacities <span class="x">×</span></span>
+        <span class="clear">Clear all</span>
+        <span class="pill">👤 Michiel ▾</span><span class="pill">🟧 SBM Offshore ▾</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <h1>Cost &amp; Usage</h1>
+      <div class="sub">Share-of-bill attribution for <b>SBM Production</b> · 2 capacities (SND + PRD) · <code>cost_observations_v2</code></div>
+
+      <div class="filterbar">
+        <span class="lbl">Scope</span><span class="pill">● All capacities · <span style="color:var(--muted)">2 × P1</span> ▾</span>
+        <span class="lbl" style="margin-left:8px">Range</span>
+        <span class="seg"><button>24h</button><button>7d</button><button class="on">30d</button><button>90d</button><button>Custom</button></span>
+      </div>
+
+      <div class="verdict ok">
+        <div><div class="lab">Attribution verdict</div><div class="val">WELL-ATTRIBUTED</div></div>
+        <div class="why">cost resolves to item + workspace at <b>99.7%</b> via item_metadata.<br/>Only the capacity-<b>SKU</b> rollup is gapped (workspaces.capacity_id NULL — candidate 1).</div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="l">Monthly run-rate</div><div class="v">$10K</div><div class="d ok">✓ fixed · 2 × P1 @ $5,000</div></div>
+        <div class="kpi"><div class="l">→ workspace</div><div class="v emerald">99.7<small>%</small></div><div class="d">3,140 / 3,150 cost rows resolved</div></div>
+        <div class="kpi"><div class="l">Top workspace</div><div class="v sky">$1,460<small>/mo</small></div><div class="d">SC Operations · 14.6% of bill</div></div>
+        <div class="kpi warn"><div class="l">Suspect waste</div><div class="v amber">$1.25K<small>/mo</small></div><div class="d warn">142 idle-looking dataflows (needs lineage)</div></div>
+      </div>
+
+      <div class="card">
+        <h3>Cost by workspace <span class="newtag">item_metadata bridge</span></h3>
+        <div class="tag">Share-of-bill rolled up to workspace · monthly run-rate = share × $10K · top 8</div>
+        <table>
+          <thead><tr><th>Workspace</th><th class="r">Share</th><th class="r">~$/mo</th><th>Bar</th></tr></thead>
+          <tbody id="ws"></tbody>
+        </table>
+      </div>
+
+      <div class="row2b">
+        <div class="card">
+          <h3>Cost vs activity <span class="newtag">where waste hides</span></h3>
+          <div class="tag">"Costed but no 30d activity," split by kind — the honesty check</div>
+          <table>
+            <thead><tr><th>Kind</th><th class="r">Idle items</th><th class="r">~$/mo</th><th>Valid waste signal?</th></tr></thead>
+            <tbody>
+              <tr><td><span class="typetag">Dataflow</span></td><td class="r num">142</td><td class="r num">$1,250</td><td><span class="dot dev"><b></b>no — ETL emits no views</span></td></tr>
+              <tr><td><span class="typetag">Dataset</span></td><td class="r num">4</td><td class="r num">$15</td><td><span class="dot idle"><b></b>yes</span></td></tr>
+              <tr><td><span class="typetag">Report</span></td><td class="r num">3</td><td class="r num">$3</td><td><span class="dot idle"><b></b>yes</span></td></tr>
+              <tr><td><span class="typetag">Other</span></td><td class="r num">3</td><td class="r num">$11</td><td><span class="dot idle"><b></b>yes</span></td></tr>
+            </tbody>
+          </table>
+          <div class="callout good"><b>Finding:</b> genuine user-facing waste is only ~<span class="num">$18/mo</span>. The user estate is well-utilized; the open $ is the dataflow blind spot →</div>
+        </div>
+
+        <div class="card">
+          <h3>Orphan-suspect dataflows <span class="newtag">needs lineage</span></h3>
+          <div class="tag">$ on dataflows with no observable consumer — confirm vs lineage before cutting</div>
+          <table>
+            <thead><tr><th>Dataflow</th><th>Workspace</th><th class="r">~$/mo</th></tr></thead>
+            <tbody id="df"></tbody>
+          </table>
+          <div class="callout"><b>⚠ Can't auto-confirm:</b> a dataflow with no views may feed an active dataset. Needs the <code>dataflow→dataset→report</code> edge (backlog candidate 3).</div>
+        </div>
+      </div>
+
+      <div class="card" style="background:#f8fafc">
+        <h3>How this cost is computed <span class="newtag">honesty</span></h3>
+        <div class="note" style="margin-top:6px">Premium is a <b>fixed</b> $10K/mo bill (2 × P1). LP allocates it by each item's <b>share of consumed CU</b> that day (<code>cu_share × monthly_cost</code>), recomputed daily and volume-weighted over the window. It is <b>not</b> consumption-priced — utilization over 100% (see Capacity) does <b>not</b> raise the bill. Capacity-<b>SKU</b>-level cost is a <b>✗ gap</b> until the capacity-identity bridge lands (candidate 1); workspace-level (above) works today.</div>
+      </div>
+
+      <div class="decide">
+        <div class="txt"><b>Spend is fully attributable and well-utilized.</b> The actionable $ is the <span class="gold">$1.25K/mo</span> of orphan-suspect dataflows — gated behind lineage, not a quick retire.<br/>Top spend (SC Operations <span class="gold">$1,460/mo</span>) is active and earning its capacity.</div>
+        <div class="btns"><a class="btn" href="./workload-mix-v2.html">By workload →</a><a class="btn ghost" href="./capacity-v2.html">Capacity pressure →</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WS=[['SC Operations',14.6,1460],['INTEGRA IM CAPA',5.6,561],['Operations – Management',5.3,527],['SBMConnect Analytics',4.6,464],['Operations – Monitoring',4.3,434],['COO Cost control department',4.2,420],['SBM Command Center',3.7,368],['SCM2 – Transactional',3.7,367]];
+const wsb=document.getElementById('ws');
+WS.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML=`<td><b>${r[0]}</b></td><td class="r num">${r[1]}%</td><td class="r num">$${r[2]}</td><td><div class="barcell"><div class="track"><div class="fill" style="width:${r[1]*6.5}%"></div></div></div></td>`;wsb.appendChild(tr);});
+const DF=[['VQR Microsite','SCM2 – Transactional',180],['FACT_WORK_ORDER_HISTORY','Operations – eReporting',134],['FACT_OBT_ETL','Operations – eReporting',125],['OperationalPerfResponsibility_NEW','Operations – Management',92],['AI_CONTROL_TOWER_LOGIC','Operations – Assets Integrity',75]];
+const dfb=document.getElementById('df');
+DF.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML=`<td><b>${r[0]}</b></td><td style="color:var(--ink-soft)">${r[1]}</td><td class="r num">$${r[2]}</td>`;dfb.appendChild(tr);});
+</script>
+</body>
+</html>

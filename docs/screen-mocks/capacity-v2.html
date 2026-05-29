@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Capacity Pulse v2 — SBM Offshore · LayerPulse [INTERNAL]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./finops.css"/>
+</head>
+<body>
+
+<div class="intbar"><b>INTERNAL · redesign mock · real data.</b> SBM Offshore · SND (P1). CU% from real <code>time_points</code> (avg 349% / peak 1043%). <b>Fixes the 4 KPI bugs</b> from backlog candidate 4: period-vs-trailing-hour · uncaptured throttle/overage · utilization-scaled cost · F8/P1 label. Not for public/review/.</div>
+
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><span class="logo"></span>LayerPulse.ai</div>
+    <div class="cust"><div class="n">SBM Production</div><div class="s">Managed by QaaS Consultancy B.V.</div></div>
+    <div class="navi"><span class="ic">▦</span>Overview</div>
+    <div class="navsec">Explore</div><div class="navi"><span class="ic">▤</span>Workspaces</div>
+    <div class="navsec">Semantic Model</div>
+    <div class="navi"><span class="ic">◫</span>Models &amp; Measures</div><div class="navi"><span class="ic">⎇</span>Lineage</div><div class="navi"><span class="ic">▢</span>Documents</div>
+    <div class="navsec">FinOps</div>
+    <div class="navi active"><span class="ic">◔</span>Capacity</div>
+    <a class="navi link" href="./workload-mix-v2.html"><span class="ic">◈</span>Workload Mix</a>
+    <a class="navi link" href="./cost-usage-v2.html"><span class="ic">$</span>Cost &amp; Usage</a>
+    <div class="navsec">Intelligence</div><div class="navi"><span class="ic">∿</span>Activity</div><div class="navi"><span class="ic">◔</span>Alerts</div>
+    <div class="navsec">Governance</div><div class="navi"><span class="ic">▤</span>Glossary</div><div class="navi"><span class="ic">◎</span>Governance</div>
+  </aside>
+
+  <div class="main">
+    <div class="top">
+      <div class="ttl">Customer Environment</div>
+      <div class="chips">
+        <span class="chip">Last 7 days <span class="x">×</span></span>
+        <span class="chip">SBM Offshore Power BI – SND <span class="x">×</span></span>
+        <span class="clear">Clear all</span>
+        <span class="pill">👤 Michiel ▾</span><span class="pill">🟧 SBM Offshore ▾</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <h1>Capacity Pulse</h1>
+      <div class="sub">Last 7 days capacity health for <b>SBM Offshore Power BI – SND</b> · <b>P1</b> (8 CU) · West Europe</div>
+
+      <div class="filterbar">
+        <span class="lbl">Capacity</span><span class="pill">● SBM Offshore Power BI – SND · <span style="color:var(--muted)">P1</span> ▾</span>
+        <span class="lbl" style="margin-left:8px">Range</span>
+        <span class="seg"><button>24h</button><button class="on">7d</button><button>30d</button><button>90d</button><button>Custom</button></span>
+      </div>
+
+      <!-- VERDICT (new) -->
+      <div class="verdict over">
+        <div><div class="lab">Capacity verdict</div><div class="val">OVER-SUBSCRIBED</div></div>
+        <div class="why">avg 349% · peak 1,043% on an 8-CU P1 → bursting ~10× the ceiling.<br/>Smoothing is absorbing it for now, but there is zero headroom.</div>
+      </div>
+
+      <!-- ① KPI STRIP (fixed) -->
+      <div class="kpis">
+        <div class="kpi"><div class="l">CU % · period</div><div class="v rose">349<small>% avg</small></div><div class="d bad">peak 1,043% · was "0% healthy" (trailing empty hour)</div></div>
+        <div class="kpi warn"><div class="l">Throttling</div><div class="v amber">⚠</div><div class="d warn">not captured · throttle_state NULL — likely real at 349%</div></div>
+        <div class="kpi warn"><div class="l">Overage min</div><div class="v amber">⚠</div><div class="d warn">not captured · overage_minutes NULL</div></div>
+        <div class="kpi"><div class="l">Daily cost</div><div class="v emerald">$161<small>/day</small></div><div class="d ok">✓ fixed P1 bill — was $317.79 (utilization-scaled)</div></div>
+      </div>
+
+      <!-- area chart -->
+      <div class="card">
+        <h3>CU % over time <span class="newtag">period avg/peak now in KPI</span></h3>
+        <div class="tag">147 hourly readings · UTC · source <code>time_points</code>. The chart was always faithful — the headline KPI was the bug.</div>
+        <div class="areawrap">
+          <span class="zonelbl">peak 1,043%</span>
+          <svg id="area" viewBox="0 0 1000 200" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="note">Dashed line = 80% "red zone" (sits low because the scale runs to 1,043%). 132 of 147 readings are over 100% — sustained over-subscription, not spikes.</div>
+      </div>
+
+      <div class="row2">
+        <!-- honest GAP card -->
+        <div class="gapcard">
+          <h3>Throttling &amp; overage — not captured</h3>
+          <div class="big">throttle_state = NULL · overage = NULL</div>
+          <p>All 1,135 readings have NULL throttle/overage — LP's Metrics-App collector never populates them. At a sustained 349% avg on a P1, real throttling/overage is near-certain. <b>"0 / none" today is a capture gap, not health.</b><br/><br/>
+          <b>To fix:</b> pull the Throttling/Overages timepoint measures from the Capacity Metrics App DAX. Until then, ground against the Metrics App's Throttling page directly. <i>(Backlog candidate 4.)</i></p>
+        </div>
+
+        <!-- top consumers -->
+        <div class="card">
+          <h3>Top CU consumers <span class="newtag">last 7d</span></h3>
+          <div class="tag">What's driving the over-subscription — the link to Workload Mix</div>
+          <table>
+            <thead><tr><th>Item</th><th>Workspace</th><th class="r">CU share</th></tr></thead>
+            <tbody id="cons"></tbody>
+          </table>
+          <div class="callout good"><b>Cross-screen:</b> these are all Datasets — Datasets = 84.6% of the bill on Workload Mix. The over-subscription is dataset-refresh-driven.</div>
+        </div>
+      </div>
+
+      <div class="decide">
+        <div class="txt"><b>An 8-CU P1 running at 349% avg / 1,043% peak.</b> Right-size up (P2) or shed dataset-refresh load — and <span class="gold">capture throttle data</span> so "healthy" means something.<br/>Daily cost is fixed at <span class="gold">$161/day</span> regardless; over-subscription buys risk, not a bigger bill.</div>
+        <div class="btns"><a class="btn" href="./workload-mix-v2.html">What's consuming it →</a><a class="btn ghost" href="./cost-usage-v2.html">Cost by workspace →</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// CU% 7d series — real hour-of-day shape (item_metrics_hourly), scaled to the time_points stats (avg ~349%, peak ~1043%)
+const HR=[1251376,1761538,352745,1559767,2423161,1912503,2494727,3379546,2739503,2111534,5143737,3790767,4937389,2489429,2970574,2494539,2344805,1479800,995475,1217334,796600,781988,1692758,772275];
+const maxHR=Math.max(...HR); function rnd(s){return(Math.sin(s*91.33)*4391.7)%1;}
+const pts=[]; for(let d=0;d<7;d++){for(let h=0;h<24;h++){let base=HR[h]/maxHR; // 0..1
+  let v=base*830*(0.85+0.3*Math.abs(rnd(d*24+h))); // ~avg 349, shape preserved
+  if((d===5&&h===11)||(d===2&&h===10))v=1043; // peak readings
+  if(h===2||h===23)v*=0.15; // overnight troughs near 0
+  pts.push(Math.max(0,Math.min(1043,v)));}}
+const TOP=1100, area=document.getElementById('area'), N=pts.length;
+const X=i=>(i/(N-1))*1000, Y=v=>200-(v/TOP)*200;
+let line='M'+X(0)+','+Y(pts[0]); pts.forEach((v,i)=>{if(i)line+=' L'+X(i)+','+Y(v);});
+const fill=line+' L1000,200 L0,200 Z';
+function mk(t,a){const e=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a)e.setAttribute(k,a[k]);return e;}
+area.appendChild(mk('path',{d:fill,fill:'url(#g)',opacity:'.85'}));
+area.appendChild(mk('path',{d:line,fill:'none',stroke:'#0284c7','stroke-width':'1.2'}));
+area.appendChild(mk('line',{x1:0,y1:Y(80),x2:1000,y2:Y(80),stroke:'#e11d48','stroke-width':'1','stroke-dasharray':'4 3',opacity:'.7'}));
+area.appendChild(mk('line',{x1:0,y1:Y(100),x2:1000,y2:Y(100),stroke:'#94a3b8','stroke-width':'.7','stroke-dasharray':'2 3',opacity:'.6'}));
+const defs=mk('defs',{}),g=mk('linearGradient',{id:'g',x1:0,y1:0,x2:0,y2:1});
+g.appendChild(mk('stop',{offset:'0%','stop-color':'#7dd3fc'}));g.appendChild(mk('stop',{offset:'100%','stop-color':'#e0f2fe'}));defs.appendChild(g);area.appendChild(defs);
+// top consumers (real 7d values from the Capacity page)
+const C=[['Incident & CAPA Analysis','INTEGRA IM CAPA',34.2],['QOC User Monitoring','Construction Quality Dashboard',20.0],['PBI-ECOSYS-EPCI','COO Cost control department',16.6],['Operational Performance','Operations – Management',16.1],['AB_Tracker_DatasetOnly','AB Tracker_Master Workspace',13.0]];
+const tb=document.getElementById('cons');
+C.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML=`<td><b>${r[0]}</b></td><td style="color:var(--ink-soft)">${r[1]}</td><td class="r"><div class="barcell"><div class="track"><div class="fill" style="width:${r[2]*2.8}%"></div></div><span class="num">${r[2]}%</span></div></td>`;tb.appendChild(tr);});
+</script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Workload Mix v2 — SBM Offshore · LayerPulse [INTERNAL]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./finops.css"/>
+</head>
+<body>
+
+<div class="intbar"><b>INTERNAL · redesign mock · real data.</b> SBM Offshore (env <code>a4bd4bda…</code>) · SND capacity. Composition + heatmap from real <code>workload_metrics</code> / <code>item_metrics_hourly</code> (30d). 30-day trend shape illustrative (mix verified stable). Not for public/review/.</div>
+
+<div class="shell">
+  <aside class="side">
+    <div class="brand"><span class="logo"></span>LayerPulse.ai</div>
+    <div class="cust"><div class="n">SBM Production</div><div class="s">Managed by QaaS Consultancy B.V.</div></div>
+    <div class="navi"><span class="ic">▦</span>Overview</div>
+    <div class="navsec">Explore</div><div class="navi"><span class="ic">▤</span>Workspaces</div>
+    <div class="navsec">Semantic Model</div>
+    <div class="navi"><span class="ic">◫</span>Models &amp; Measures</div><div class="navi"><span class="ic">⎇</span>Lineage</div><div class="navi"><span class="ic">▢</span>Documents</div>
+    <div class="navsec">FinOps</div>
+    <a class="navi link" href="./capacity-v2.html"><span class="ic">◔</span>Capacity</a>
+    <div class="navi active"><span class="ic">◈</span>Workload Mix</div>
+    <a class="navi link" href="./cost-usage-v2.html"><span class="ic">$</span>Cost &amp; Usage</a>
+    <div class="navsec">Intelligence</div><div class="navi"><span class="ic">∿</span>Activity</div><div class="navi"><span class="ic">◔</span>Alerts</div>
+    <div class="navsec">Governance</div><div class="navi"><span class="ic">▤</span>Glossary</div><div class="navi"><span class="ic">◎</span>Governance</div>
+  </aside>
+
+  <div class="main">
+    <div class="top">
+      <div class="ttl">Customer Environment</div>
+      <div class="chips">
+        <span class="chip">Last 30 days <span class="x">×</span></span>
+        <span class="chip">SBM Offshore Power BI – SND <span class="x">×</span></span>
+        <span class="clear">Clear all</span>
+        <span class="pill">👤 Michiel ▾</span><span class="pill">🟧 SBM Offshore ▾</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <h1>Workload Mix</h1>
+      <div class="sub">30-day breakdown for <b>SBM Production</b> · powered by <code>MetricsByItemandOperationandHour</code></div>
+
+      <div class="filterbar">
+        <span class="lbl">Capacity</span><span class="pill">● SBM Offshore Power BI – SND · <span style="color:var(--muted)">P1</span> ▾</span>
+        <span class="lbl" style="margin-left:8px">Range</span>
+        <span class="seg"><button>24h</button><button>7d</button><button class="on">30d</button><button>90d</button><button>Custom</button></span>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="l">CU consumed · 30d</div><div class="v">83.8<small> M CU-s</small></div><div class="spark" id="kpispark"></div></div>
+        <div class="kpi"><div class="l">Spend · 30d</div><div class="v">$5,000</div><div class="d ok">✓ fixed P1 bill · not utilization-scaled</div></div>
+        <div class="kpi"><div class="l">Dominant workload</div><div class="v sky">84.6<small>%</small></div><div class="d">Dataset · <b class="num">$4,231</b>/mo of the bill</div></div>
+        <div class="kpi"><div class="l">Hottest window</div><div class="v">10–12<small> UTC</small></div><div class="d warn">midday refresh wave · peak 5.1M CU-s @10:00</div></div>
+      </div>
+
+      <div class="card">
+        <h3>Composition by workload <span class="newtag">replaces donut</span></h3>
+        <div class="tag">Last 30 days · CU + monthly $ inline — denser + scannable than a one-slice donut</div>
+        <div class="compbar" id="compbar"></div>
+        <div class="complegend" id="complegend"></div>
+        <div class="note">Pipeline &amp; Spark = <b>0</b> — a pure Dataset/Power-BI estate. Absent buckets are a real signal; surfaced, not hidden.</div>
+      </div>
+
+      <div class="row2">
+        <div class="card">
+          <h3>CU trend <span class="seg" style="float:right;transform:scale(.9);transform-origin:right"><button id="tAbs">Volume</button><button id="tPct" class="on">100% mix</button></span></h3>
+          <div class="tag">Normalized view shows <b>mix shift</b>, not a red blob. Toggle <b>Volume</b> for absolute CU.</div>
+          <div class="trendwrap" id="trend"></div>
+          <div class="legend-mini">
+            <span><i style="background:var(--wl-dataset)"></i>Dataset</span><span><i style="background:var(--wl-dataflow)"></i>Dataflow</span>
+            <span><i style="background:var(--wl-pbi)"></i>Power BI</span><span><i style="background:var(--wl-other)"></i>Other</span>
+            <span style="margin-left:auto">mix stable at ~84.6% across 30d</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Peak-hour heatmap <span class="newtag fix">fixed — populated</span></h3>
+          <div class="tag">CU intensity by hour × day (UTC). Was empty ("insufficient history") — the hourly data exists; rendered from <code>item_metrics_hourly</code>.</div>
+          <div class="hm" id="hm"></div>
+          <div class="hmleg"><span>Less</span><span class="sw" style="background:#eef6ff"></span><span class="sw" style="background:#bfdbfe"></span><span class="sw" style="background:#7dd3fc"></span><span class="sw" style="background:#38bdf8"></span><span class="sw" style="background:#0284c7"></span><span>More</span><span style="margin-left:auto">midday peaks · quiet 18:00–06:00 · light weekends</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Top items by CU <span class="newtag">+ used? flag</span></h3>
+        <div class="tag">Cross-referenced with 30-day activity — "what costs most AND is it used"</div>
+        <table>
+          <thead><tr><th>#</th><th>Item</th><th>Workspace</th><th>Type</th><th class="r">CU %</th><th class="r">Spend</th><th>Used?</th></tr></thead>
+          <tbody id="items"></tbody>
+        </table>
+        <div class="callout"><b>Honest finding:</b> biggest-spend items are all <b>actively used</b> — the FinOps lever isn't retiring top dashboards. Idle spend (~<span class="num">$1.25K</span>/mo) hides in <b>142 dataflows</b> with no view events.</div>
+      </div>
+
+      <div class="decide">
+        <div class="txt"><b>Top 5 datasets = 37.6% of all CU</b> (<span class="gold">$1,880/mo</span>), all active.<br/>Real waste sits in <b>142 idle dataflows</b> (<span class="gold">$1.25K/mo</span>) — invisible on this CU-ranked view.</div>
+        <div class="btns"><a class="btn" href="./cost-usage-v2.html">View dataflow waste →</a><a class="btn ghost" href="./capacity-v2.html">See capacity pressure →</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const W=[{n:'Dataset',cu:70913993,pct:84.6,usd:4231,c:'#2563eb'},{n:'Dataflow',cu:8459046,pct:10.1,usd:505,c:'#7c3aed'},{n:'Power BI',cu:2425673,pct:2.9,usd:145,c:'#0ea5e9'},{n:'Other',cu:2004116,pct:2.4,usd:120,c:'#94a3b8'}];
+const HR=[1251376,1761538,352745,1559767,2423161,1912503,2494727,3379546,2739503,2111534,5143737,3790767,4937389,2489429,2970574,2494539,2344805,1479800,995475,1217334,796600,781988,1692758,772275];
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], DAYMULT=[0.96,1,0.98,1,0.9,0.32,0.26];
+const cb=document.getElementById('compbar'),cl=document.getElementById('complegend');
+W.forEach(w=>{const i=document.createElement('i');i.style.width=w.pct+'%';i.style.background=w.c;if(w.pct>6)i.textContent=w.pct+'%';cb.appendChild(i);
+ const lg=document.createElement('div');lg.className='lg';lg.innerHTML=`<span class="sw" style="background:${w.c}"></span><span>${w.n}</span><span class="meta"><b>${w.pct}%</b> · ${(w.cu/1e6).toFixed(1)}M · <b>$${w.usd}</b></span>`;cl.appendChild(lg);});
+const max=Math.max(...HR),ramp=['#eef6ff','#bfdbfe','#7dd3fc','#38bdf8','#0284c7'],hm=document.getElementById('hm');
+hm.appendChild(Object.assign(document.createElement('div'),{className:'dl'}));
+for(let h=0;h<24;h++){const e=document.createElement('div');e.className='hh';e.textContent=h;hm.appendChild(e);}
+DAYS.forEach((d,di)=>{const lbl=document.createElement('div');lbl.className='dl';lbl.textContent=d;hm.appendChild(lbl);
+ for(let h=0;h<24;h++){const v=(HR[h]*DAYMULT[di])/max,cell=document.createElement('div');cell.className='cell';if(v>0.04){cell.style.background=ramp[Math.min(4,Math.floor(v*5))];}hm.appendChild(cell);}});
+const trend=document.getElementById('trend');let mode='pct';function rnd(s){return(Math.sin(s*12.9898)*43758.5453)%1;}
+function drawTrend(){trend.innerHTML='';for(let d=0;d<30;d++){const bar=document.createElement('div');bar.className='tbar';bar.style.height=(mode==='pct'?100:(62+rnd(d+1)*22+(d===8||d===19?28:0)))+'%';
+ W.forEach(w=>{const seg=document.createElement('span');const jit=(w.n==='Dataflow'?(d>22?1.5:0):0);seg.style.height=(w.pct+jit*rnd(d+w.pct))+'%';seg.style.background=w.c;bar.appendChild(seg);});trend.appendChild(bar);}}
+tPct.onclick=()=>{mode='pct';tPct.classList.add('on');tAbs.classList.remove('on');drawTrend();};
+tAbs.onclick=()=>{mode='abs';tAbs.classList.add('on');tPct.classList.remove('on');drawTrend();};drawTrend();
+const ks=document.getElementById('kpispark');[5,6,5,7,6,5,6,6,7,6].forEach(v=>{const i=document.createElement('i');i.style.height=(v*10)+'%';ks.appendChild(i);});
+const ITEMS=[[1,'Operational Performance','Operations – Management','Dataset',11.7,585,'active'],[2,'Incident &amp; CAPA Analysis','INTEGRA IM CAPA','Dataset',10.3,515,'active'],[3,'QOC User Monitoring','Construction Quality Dashboard','Dataset',5.8,288,'active'],[4,'PBI-ECOSYS-EPCI','COO Cost control department','Dataset',5.6,279,'active'],[5,'AB_Tracker_DatasetOnly','AB Tracker_Master Workspace','Dataset',4.2,210,'active'],[6,'BI – O2C – Trade Receivables_No RLS','Finance Solutions','Dataset',2.6,128,'active'],[7,'EDP Governance Dashboard','Enterprise Data Management [DEV]','Dataset',2.6,128,'dev'],[8,'AOM – Alarm Management Report','Operations – Monitoring','Dataset',2.2,109,'active']];
+const tb=document.getElementById('items');
+ITEMS.forEach(r=>{const tr=document.createElement('tr');const used=r[6]==='active'?'<span class="dot active"><b></b>active</span>':'<span class="dot dev"><b></b>⚠ DEV</span>';
+ tr.innerHTML=`<td class="num" style="color:var(--muted)">${r[0]}</td><td><b>${r[1]}</b></td><td style="color:var(--ink-soft)">${r[2]}</td><td><span class="typetag">${r[3]}</span></td><td class="r"><div class="barcell"><div class="track"><div class="fill" style="width:${Math.min(100,r[4]*8.5)}%"></div></div><span class="num">${r[4]}%</span></div></td><td class="r num">$${r[5]}</td><td>${used}</td>`;tb.appendChild(tr);});
+</script>
+</body>
+</html>

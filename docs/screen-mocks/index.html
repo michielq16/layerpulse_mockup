@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FinOps screen-mock suite — SBM Offshore · LayerPulse [INTERNAL]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="./finops.css"/>
+<style>
+  .hub{max-width:1000px;margin:0 auto;padding:32px 24px}
+  .hub h1{font-size:24px} .hub .sub{font-size:13px;margin:4px 0 24px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .scard{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;transition:.15s}
+  .scard:hover{border-color:var(--sky);box-shadow:0 6px 20px rgba(2,132,199,.10);transform:translateY(-2px)}
+  .scard .ic{font-size:20px} .scard h3{font-size:15px;margin:8px 0 2px}
+  .scard .one{font-size:12px;color:var(--muted);min-height:32px}
+  .scard ul{list-style:none;margin:12px 0 0;border-top:1px solid var(--line);padding-top:10px}
+  .scard li{font-size:11.5px;color:var(--ink-soft);padding:2px 0;display:flex;gap:7px}
+  .scard li .fx{color:var(--emerald);font-weight:700} .scard li .nw{color:var(--sky);font-weight:700}
+  .go{margin-top:12px;font-size:12px;color:var(--sky);font-weight:600}
+  .rhyme{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:18px;font-size:12.5px;color:var(--ink-soft);line-height:1.6}
+  .rhyme b{color:var(--ink)} .rhyme code{font-family:var(--mono);background:#eef2f7;padding:1px 5px;border-radius:4px;font-size:11px}
+</style>
+</head>
+<body>
+<div class="intbar"><b>INTERNAL · redesign mock suite · real data.</b> SBM Offshore (env <code>a4bd4bda…</code>). Three FinOps screens, one design system (<code>finops.css</code>). Not for public/review/.</div>
+
+<div class="hub">
+  <h1>FinOps screen-mock suite <span style="font-size:13px;color:var(--muted);font-weight:500">· v2 redesign</span></h1>
+  <div class="sub">Three screens that <b>rhyme</b> — shared shell, KPI strip, cards, honesty chips, decision bars, and cross-links. Grounded in the live SBM tenant.</div>
+
+  <div class="grid">
+    <a class="scard" href="./capacity-v2.html">
+      <div class="ic">◔</div>
+      <h3>Capacity Pulse</h3>
+      <div class="one">Is the capacity healthy and right-sized?</div>
+      <ul>
+        <li><span class="fx">FIX</span> CU% headline = period avg/peak, not the trailing empty hour</li>
+        <li><span class="fx">FIX</span> Throttle/Overage shown as honest "not captured", not false 0</li>
+        <li><span class="fx">FIX</span> Daily cost $161 fixed (was $317.79 utilization-scaled)</li>
+        <li><span class="fx">FIX</span> P1 SKU (was mislabelled F8)</li>
+      </ul>
+      <div class="go">Open →</div>
+    </a>
+
+    <a class="scard" href="./workload-mix-v2.html">
+      <div class="ic">◈</div>
+      <h3>Workload Mix</h3>
+      <div class="one">What kind of work drives the CU?</div>
+      <ul>
+        <li><span class="nw">NEW</span> KPI strip + composition bar replaces the one-slice donut</li>
+        <li><span class="fx">FIX</span> Peak-hour heatmap populated (was empty)</li>
+        <li><span class="nw">NEW</span> Normalized trend toggle (mix-shift, not a red blob)</li>
+        <li><span class="nw">NEW</span> Top items + Used? flag + decision bar</li>
+      </ul>
+      <div class="go">Open →</div>
+    </a>
+
+    <a class="scard" href="./cost-usage-v2.html">
+      <div class="ic">$</div>
+      <h3>Cost &amp; Usage</h3>
+      <div class="one">Where does the bill go, and what's wasted?</div>
+      <ul>
+        <li><span class="nw">NEW</span> Cost by workspace (99.7% attributed via item_metadata)</li>
+        <li><span class="nw">NEW</span> Cost-vs-activity waste split (honest: ~$18/mo user waste)</li>
+        <li><span class="nw">NEW</span> Orphan-suspect dataflows ($1.25K/mo, needs lineage)</li>
+        <li><span class="nw">NEW</span> Share-of-bill explainer (fixed bill, not consumption-priced)</li>
+      </ul>
+      <div class="go">Open →</div>
+    </a>
+  </div>
+
+  <div class="rhyme">
+    <b>How they rhyme.</b> One <code>finops.css</code> design system: identical dark sidebar + filter bar, the same 4-up <b>KPI strip</b>, the same card + <b>verdict pill</b> + <b>decision-bar</b> pattern, a shared <b>workload colour palette</b> (Dataset blue · Dataflow violet · Power BI sky · Other slate) so colours mean the same thing on every screen, and the same <b>honesty chips</b> (<span style="color:var(--emerald);font-weight:700">✓ fixed</span> / <span style="color:var(--amber);font-weight:700">⚠ not captured</span> / <span style="color:var(--sky);font-weight:700">✗ gap</span>). Each decision bar <b>cross-links</b> the other two, so the FinOps story reads as one narrative: <i>capacity is over-subscribed → because Datasets dominate the mix → here's the bill and where it's wasted.</i>
+  </div>
+</div>
+</body>
+</html>
