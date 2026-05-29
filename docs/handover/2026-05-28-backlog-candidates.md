@@ -1,6 +1,12 @@
 # Proposed LP BACKLOG.md Tier rows — from the 2026-05-28 SBM production-DB audit
 
-**Status:** PROPOSAL. The mockup offers; the PO accepts into `../layerpulse/docs/BACKLOG.md`. Do **not** write the LP backlog directly.
+**Status:** ✅ **ALL ACCEPTED into LP `BACKLOG.md` (verified 2026-05-29) — three already shipping.** Do not re-propose. The mockup offers; the PO accepts — this round, the PO accepted all four:
+- **Candidate 1 (capacity-identity bridge)** → **T2.15 · SHIPPED PR #402** (`source capacity dimension from GetCapacitiesAsAdmin + link workspaces`).
+- **Candidate 2 (refresh-error capture)** → **T2.19 · Part 1 SHIPPED PR #408**; Part 2 (`serviceExceptionJson` per-dataset collector + migration 0039) remains.
+- **Candidate 3 (dataflow consumer graph)** → accepted as **Axis-3 orphan-detection scope-add** (folded into the lineage pillar, exactly as proposed — not a separate row).
+- **Candidate 4 (Capacity Pulse KPI fidelity)** → **T2.20 · parts 1+3 SHIPPED PR #407**; throttle/overage DAX capture (part 2) remains; SKU "F8" (part 4) ruled an **intentional** P1→F8 relabel, not a bug.
+
+_Original proposal preserved below for the audit trail._
 **Origin:** read-only audit of the SBM production tenant while grounding the Perfect-Document persona series. Each candidate is a real product gap that blocks a persona doc from being production-grade. Full evidence: `docs/research/2026-05-28-production-db-content-map.md`. Dedup-checked against BACKLOG.md (559 lines) on 2026-05-28.
 **Row format** (Tier 1): `| # | Title | Source | Estimate | Validation plan | Dependency |`
 
